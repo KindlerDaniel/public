@@ -1,0 +1,15 @@
+# Docker Compose Version definieren
+version: '3.8'
+
+services:
+  frontend:
+    # Build-Konfiguration für den "frontend"-Service
+    build:
+      context: ./frontend      # Der Build-Kontext ist das Verzeichnis, in dem sich das Dockerfile befindet
+      dockerfile: Dockerfile   # Das Dockerfile wird aus dem Kontext (./frontend) genommen
+    # Bind Mount: Der gesamte lokale "frontend"-Ordner wird in den Container unter "/app" eingebunden
+    volumes:
+      - ./frontend:/app
+    # Port-Mapping: Port 3000 auf dem Host wird an Port 80 im Container weitergeleitet
+    ports:
+      - "3000:80"
