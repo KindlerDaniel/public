@@ -1,8 +1,10 @@
+/* Layout der Haupt-App */
 .App {
   text-align: center;
   padding-top: 20px;
 }
 
+/* Allgemeiner Button-Stil */
 button {
   padding: 10px 20px;
   font-size: 16px;
@@ -12,14 +14,14 @@ button {
   transition: background-color 0.3s ease;
 }
 
-/* Standardzustand des Buttons */
-button:not(.red) {
+/* Standard-Button (nicht rot) */
+button:not(.blue) {
   background-color: #eee;
   color: #333;
 }
 
-/* Wenn der Button angeklickt wurde */
-button.red {
-  background-color: red;
+/* Roter Button */
+button.blue {
+  background-color: blue;
   color: white;
 }

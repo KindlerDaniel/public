@@ -1,8 +1,10 @@
 services:
   frontend:
+    image: myproject/frontend:latest
     build:
       context: ./frontend      # Der Build-Kontext ist das Verzeichnis, in dem sich das Dockerfile befindet
       dockerfile: Dockerfile   # Das Dockerfile wird aus dem Kontext (./frontend) genommen
+
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public

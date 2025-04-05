@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/Header.tsx';
+import Footer from './components/Footer.tsx';
 
-const App: React.FC = () => {
+function App() {
   const [isRed, setIsRed] = useState(false);
 
   const handleClick = () => {
@@ -14,13 +14,13 @@ const App: React.FC = () => {
     <div className="App">
       <Header />
       <main>
-        <button className={isRed ? 'red' : ''} onClick={handleClick}>
+        <button className={isRed ? 'blue' : ''} onClick={handleClick}>
           Hey
         </button>
       </main>
       <Footer />
     </div>
   );
-};
+}
 
 export default App;

@@ -4,11 +4,13 @@ FROM node:18-alpine
 # Installiere Nginx, um das fertige React-Frontend später auszuliefern
 RUN apk add --no-cache nginx
 
+# Kopiere die Nginx-Konfiguration ins Image
+COPY nginx_default.conf /etc/nginx/http.d/default.conf
+
 # Setze das Arbeitsverzeichnis für den Container auf /app
 WORKDIR /app
 
 # Kopiere die package.json- und package-lock.json-Dateien aus dem aktuellen Verzeichnis
-# (Die package.json liegt jetzt in /app, nicht mehr in src)
 COPY package*.json ./
 
 # Installiere die Abhängigkeiten im Projekt
