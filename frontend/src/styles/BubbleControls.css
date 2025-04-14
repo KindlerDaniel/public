@@ -1,0 +1,132 @@
+.bubble-controls {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-md);
+    width: 280px;
+  }
+  
+  .controls-section {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .controls-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .controls-title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    margin-bottom: var(--spacing-sm);
+    color: var(--gray-text);
+  }
+  
+  .category-filters {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .category-filter {
+    flex: 1;
+    text-align: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--border-color);
+  }
+  
+  .category-filter.beauty {
+    color: var(--beauty-color);
+  }
+  
+  .category-filter.wisdom {
+    color: var(--wisdom-color);
+  }
+  
+  .category-filter.humor {
+    color: var(--humor-color);
+  }
+  
+  .category-filter.active.beauty {
+    background-color: var(--beauty-color);
+    color: white;
+    border-color: var(--beauty-color);
+  }
+  
+  .category-filter.active.wisdom {
+    background-color: var(--wisdom-color);
+    color: white;
+    border-color: var(--wisdom-color);
+  }
+  
+  .category-filter.active.humor {
+    background-color: var(--humor-color);
+    color: white;
+    border-color: var(--humor-color);
+  }
+  
+  .time-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  
+  .time-filter {
+    flex: 1;
+    min-width: calc(33% - var(--spacing-xs));
+    text-align: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--border-color);
+  }
+  
+  .time-filter.active {
+    background-color: var(--dark-background);
+    color: white;
+    border-color: var(--dark-background);
+  }
+  
+  .show-feed-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+  }
+  
+  .show-feed-checkbox {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .show-feed-checkbox:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .show-feed-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  .show-feed-label {
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }

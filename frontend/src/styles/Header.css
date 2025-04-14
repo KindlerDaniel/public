@@ -1,0 +1,232 @@
+.app-header {
+    background-color: #282c34;
+    color: white;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .app-header.scrolled {
+    background-color: rgba(40, 44, 52, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #61dafb;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  
+  .logo-tagline {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: -2px;
+  }
+  
+  .search-form {
+    flex-grow: 1;
+    max-width: 400px;
+    margin: 0 30px;
+    position: relative;
+  }
+  
+  .search-form input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: none;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-form input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+  }
+  
+  .search-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .search-form button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .search-form button:hover {
+    color: white;
+  }
+  
+  .main-nav {
+    display: flex;
+  }
+  
+  .main-nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+  }
+  
+  .nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .user-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .notifications-button {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+  }
+  
+  .notifications-button:hover {
+    opacity: 1;
+  }
+  
+  .user-avatar {
+    cursor: pointer;
+  }
+  
+  .user-avatar img {
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.2s;
+  }
+  
+  .user-avatar:hover img {
+    transform: scale(1.05);
+  }
+  
+  .mobile-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .mobile-menu {
+    display: none;
+    padding: 20px;
+    background-color: #282c34;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-menu nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .mobile-nav-link {
+    display: block;
+    padding: 12px 15px;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-search-form {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .mobile-search-form input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  .mobile-search-form button {
+    padding: 10px 15px;
+    background-color: #61dafb;
+    color: #282c34;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .search-form {
+      display: none;
+    }
+    
+    .main-nav {
+      display: none;
+    }
+    
+    .mobile-menu-button {
+      display: block;
+    }
+    
+    .mobile-menu {
+      display: block;
+    }
+    
+    .header-content {
+      padding: 10px 15px;
+    }
+  }

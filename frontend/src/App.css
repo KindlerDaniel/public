@@ -1,27 +1,278 @@
-/* Layout der Haupt-App */
+/* === Main App Layout === */
 .App {
-  text-align: center;
-  padding-top: 20px;
-}
-
-/* Allgemeiner Button-Stil */
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-/* Standard-Button (nicht rot) */
-button:not(.blue) {
-  background-color: #eee;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f8fa;
   color: #333;
 }
 
-/* Roter Button */
-button.blue {
-  background-color: blue;
+.app-content {
+  flex: 1;
+  padding: 20px;
+  margin-bottom: 60px; /* Space for footer */
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* === Button Styles === */
+button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* Primary button */
+button.primary {
+  background-color: #0066cc;
   color: white;
+}
+
+button.primary:hover {
+  background-color: #0055aa;
+}
+
+/* Secondary button */
+button.secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+button.secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Blue button (from original) */
+button.blue {
+  background-color: #0066cc;
+  color: white;
+}
+
+button.blue:hover {
+  background-color: #0055aa;
+}
+
+/* Danger button */
+button.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.danger:hover {
+  background-color: #c82333;
+}
+
+/* Success button */
+button.success {
+  background-color: #28a745;
+  color: white;
+}
+
+button.success:hover {
+  background-color: #218838;
+}
+
+/* Small button */
+button.small {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Large button */
+button.large {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* Icon button */
+button.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* === Card Styles === */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-content {
+  margin-bottom: 16px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #eaeaea;
+}
+
+/* === Form Elements === */
+input, textarea, select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #0066cc;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* === Utility Classes === */
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .app-content {
+    padding: 12px;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+}
+
+/* === Animation === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* === View-specific styles === */
+.view-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  min-height: 500px;
+}
+
+/* Error state */
+.error {
+  text-align: center;
+  padding: 40px;
+}
+
+.error h2 {
+  color: #dc3545;
+  margin-bottom: 20px;
 }
