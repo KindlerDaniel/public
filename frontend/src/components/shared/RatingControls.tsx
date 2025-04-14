@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAppContext } from '../../context/AppContext';
 import '../../styles/RatingControls.css';
 
 interface RatingControlsProps {
@@ -9,62 +8,68 @@ interface RatingControlsProps {
     wisdom: number;
     humor: number;
   };
-  isContent: boolean; // true für Content, false für Kommentar
-  mini?: boolean; // Kompakte Ansicht für Vorschau
+  userRating?: {
+    beauty?: boolean;
+    wisdom?: boolean;
+    humor?: boolean;
+  };
+  onRate?: (type: 'beauty' | 'wisdom' | 'humor', value: boolean) => void;
+  isContent?: boolean;
+  mini?: boolean;
+  small?: boolean;
 }
 
 const RatingControls: React.FC<RatingControlsProps> = ({ 
   contentId, 
   ratings, 
-  isContent,
-  mini = false
+  userRating = {},
+  onRate,
+  isContent = true,
+  mini = false,
+  small = false
 }) => {
-  const { rateContent, rateComment } = useAppContext();
-
   // Handler für das Rating
-  const handleRate = (category: 'beauty' | 'wisdom' | 'humor', value: number) => {
-    if (isContent) {
-      rateContent(contentId, category, value);
-    } else {
-      rateComment(contentId, category, value);
+  const handleRate = (category: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
+    if (onRate) {
+      onRate(category, value);
     }
   };
 
   return (
-    <div className={`rating-controls ${mini ? 'mini' : ''}`}>
-      <div className="rating-item beauty">
+    <div className={`rating-controls ${mini ? 'mini' : ''} ${small ? 'small' : ''}`}>
+      <div className={`rating-item beauty ${userRating.beauty ? 'active' : ''}`}>
         <span className="rating-label">Beauty</span>
         <div className="rating-value">
-          <span className="rating-number">{ratings.beauty.toFixed(1)}</span>
+          <span className="rating-number">{ratings.beauty}</span>
           <button 
             className="rating-button" 
-            onClick={() => handleRate('beauty', 1)}
+            onClick={() => handleRate('beauty', !userRating.beauty)}
           >
             ❤️
           </button>
         </div>
       </div>
       
-      <div className="rating-item wisdom">
+      <div className={`rating-item wisdom ${userRating.wisdom ? 'active' : ''}`}>
         <span className="rating-label">Wisdom</span>
         <div className="rating-value">
-          <span className="rating-number">{ratings.wisdom.toFixed(1)}</span>
+          <span className="rating-number">{ratings.wisdom}</span>
           <button 
             className="rating-button" 
-            onClick={() => handleRate('wisdom', 1)}
+            onClick={() => handleRate('wisdom', !userRating.wisdom)}
           >
             🧠
           </button>
         </div>
       </div>
       
-      <div className="rating-item humor">
+      <div className={`rating-item humor ${userRating.humor ? 'active' : ''}`}>
         <span className="rating-label">Humor</span>
         <div className="rating-value">
-          <span className="rating-number">{ratings.humor.toFixed(1)}</span>
+          <span className="rating-number">{ratings.humor}</span>
           <button 
             className="rating-button" 
-            onClick={() => handleRate('humor', 1)}
+            onClick={() => handleRate('humor', !userRating.humor)}
           >
             😄
           </button>
