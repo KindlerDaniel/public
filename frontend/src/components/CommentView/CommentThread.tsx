@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import RatingControls from '../shared/RatingControls';
-import { Comment } from '../../types';
+import RatingControls from '../shared/RatingControls.tsx';
+import { Comment } from '../../types.ts';
 
 interface CommentThreadProps {
   comment: Comment;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCommentsForContent } from '../../utils/mockData';
-import RatingControls from '../shared/RatingControls';
+import RatingControls from '../shared/RatingControls.tsx';
 
 interface Comment {
   id: string;

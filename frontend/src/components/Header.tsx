@@ -1,6 +1,6 @@
 // Header.tsx
 import React, { useState, useEffect } from 'react';
-import '../styles/Header.css';
+import '../styles/header-footer.css';
 
 interface NavItem {
   name: string;

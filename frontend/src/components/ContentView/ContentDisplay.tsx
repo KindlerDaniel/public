@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ContentItem } from '../../types';
-import { getContentById } from '../../utils/mockData';
-import RatingControls from '../shared/RatingControls';
+import { ContentItem } from '../../types.ts';
+import { getContentById } from '../../utils/mockData.js';
+import RatingControls from '../shared/RatingControls.tsx';
 
 interface ContentDisplayProps {
   contentId?: string;

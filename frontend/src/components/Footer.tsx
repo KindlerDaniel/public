@@ -1,6 +1,6 @@
 // Footer.tsx
 import React, { useState } from 'react';
-import '../styles/Footer.css';
+import '../styles/header-footer.css';
 
 interface FooterLink {
   name: string;

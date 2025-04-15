@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import BubbleControls from './BubbleControls';
+import BubbleControls from './BubbleControls.tsx';
 import { BubbleContent } from '../../types';
 import { getBubbleCoordinates } from '../../utils/mockData';
 

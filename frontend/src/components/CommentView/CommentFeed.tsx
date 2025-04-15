@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import CommentThread from './CommentThread';
-import FilterControls from '../shared/FilterControls';
-import { Comment, Filters } from '../../types';
-import { getCommentsForContent } from '../../utils/mockData';
+import CommentThread from './CommentThread.tsx';
+import FilterControls from '../shared/FilterControls.tsx';
+import { Comment, Filters } from '../../types.ts';
+import { getCommentsForContent } from '../../utils/mockData.js';
 
 interface CommentFeedProps {
   contentId?: string;
