@@ -1,0 +1,269 @@
+/* CommentView spezifische Styles */
+.comment-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.comment-view-content {
+  display: flex;
+  height: calc(100vh - 160px); /* Header + Footer + ModeSelector Höhe */
+  overflow: hidden;
+}
+
+/* Linker Bereich - Inhalt und Feed */
+.comment-view-left {
+  width: 280px;
+  border-right: 1px solid var(--border-color);
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mittlerer Bereich - Kommentare */
+.comment-view-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-color);
+}
+
+/* Rechter Bereich - Kommentar-Graph */
+.comment-view-right {
+  width: 300px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  padding: var(--spacing-md);
+}
+
+/* Inhaltsvorschau im linken Bereich */
+.content-preview {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.content-preview-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.content-preview-title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  margin: 0;
+}
+
+.media-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.preview-media {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Feed-Toggle */
+.feed-toggle {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+}
+
+.feed-toggle button {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background-color: #f5f5f5;
+  color: var(--text-color);
+}
+
+.feed-toggle button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Feed im linken Bereich */
+.related-feed {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Kommentar-Feed im mittleren Bereich */
+.comment-feed {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.comment-feed-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background-color: white;
+}
+
+.comment-feed-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+}
+
+/* Kommentar-Formular */
+.comment-form {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+}
+
+.comment-form button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+}
+
+.comment-form button:hover {
+  background-color: #2980b9;
+}
+
+/* Kommentarbereich */
+.comments-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.loading, .no-comments {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-lg);
+  color: var(--gray-text);
+  height: 100%;
+}
+
+/* Kommentar-Graph im rechten Bereich */
+.comment-graph {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-graph h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+}
+
+.comment-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.history-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  font-weight: bold;
+}
+
+.history-node:hover {
+  transform: scale(1.1);
+}
+
+.history-node.active {
+  background-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+}
+
+.graph-help {
+  font-size: var(--font-size-sm);
+  color: var(--gray-text);
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.comment-graph-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-text);
+  text-align: center;
+}
+
+.comment-graph-placeholder p {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+/* Anpassungen für mobile Geräte */
+@media (max-width: 768px) {
+  .comment-view-content {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .comment-view-left,
+  .comment-view-center,
+  .comment-view-right {
+    width: 100%;
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .comment-feed-header {
+    padding: var(--spacing-sm);
+  }
+  
+  .comment-form {
+    padding: var(--spacing-sm);
+  }
+  
+  .comments-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .comment-graph {
+    padding: var(--spacing-sm);
+  }
+}

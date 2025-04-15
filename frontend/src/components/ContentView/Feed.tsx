@@ -1,37 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import ContentCard from '../shared/ContentCard';
 import { getFeedContent } from '../../utils/mockData';
+import { ContentItem, Filters } from '../../types';
 import '../../styles/Feed.css';
 
 interface FeedProps {
   compact?: boolean;
   limit?: number;
   onSelectContent?: (contentId: string) => void;
-}
-
-interface ContentItem {
-  id: string;
-  type: string;
-  title: string;
-  content: string;
-  author: any;
-  date: string;
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
+  filters?: Filters;
 }
 
 const Feed: React.FC<FeedProps> = ({ 
   compact = false, 
   limit = 10,
-  onSelectContent
+  onSelectContent,
+  filters = { beauty: false, wisdom: false, humor: false, timeRange: 'all' }
 }) => {
   const [feedType, setFeedType] = useState<string>('trending');
   const [feedItems, setFeedItems] = useState<ContentItem[]>([]);
@@ -43,10 +27,15 @@ const Feed: React.FC<FeedProps> = ({
     setLoading(true);
     
     // Lade Mock-Daten
-    const items = getFeedContent(feedType);
-    setFeedItems(items.slice(0, limit));
-    setLoading(false);
-  }, [feedType, limit]);
+    try {
+      const items = getFeedContent(feedType, filters);
+      setFeedItems(items.slice(0, limit));
+    } catch (error) {
+      console.error('Fehler beim Laden des Feeds:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [feedType, limit, filters]);
 
   // Handler für Tab-Wechsel
   const handleTabChange = (type: string) => {

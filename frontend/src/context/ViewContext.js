@@ -24,7 +24,7 @@ const initialState = {
 };
 
 // Erstellen des Contexts
-const ViewContext = createContext();
+const ViewContext = createContext(initialState);
 
 // Provider-Komponente
 export const ViewProvider = ({ children }) => {

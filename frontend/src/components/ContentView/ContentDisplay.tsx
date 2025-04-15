@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ContentItem } from '../../types';
 import '../../styles/ContentDisplay.css';
-import { getContentById, updateContentRating } from '../../utils/mockData';
+import { getContentById } from '../../utils/mockData';
 import RatingControls from '../shared/RatingControls';
 
 interface ContentDisplayProps {
   contentId?: string;
-  content?: ContentItem; // Hinzugefügt, damit Inhalte auch direkt übergeben werden können
+  content?: ContentItem | null; // Ermöglicht explizite null-Übergabe
   compact?: boolean;
   onViewComments?: () => void;
   onSwitchToBubbleView?: () => void;
   onSwitchToCommentView?: () => void;
 }
-
 
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ 
   contentId, 
@@ -23,7 +22,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   onSwitchToCommentView
 }) => {
   const [content, setContent] = useState<ContentItem | null>(initialContent || null);
-  const [loading, setLoading] = useState<boolean>(!initialContent);
+  const [loading, setLoading] = useState<boolean>(!initialContent && Boolean(contentId));
   const [error, setError] = useState<string | null>(null);
 
   // Lade Inhalt basierend auf contentId
@@ -64,17 +63,26 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
     if (!content) return;
     
     // In einer echten Implementierung würde hier ein API-Aufruf stehen
-    const updatedContent = updateContentRating(content.id, type, value);
-    if (updatedContent) {
-      setContent({
-        ...content,
-        ratings: updatedContent.ratings,
+    // Aktualisierung des lokalen Zustands, ohne updateContentRating zu verwenden
+    // (um potenzielle Typprobleme zu vermeiden)
+    setContent(prevContent => {
+      if (!prevContent) return null;
+      
+      const currentRating = prevContent.userRating?.[type] || false;
+      const ratingDiff = currentRating === value ? 0 : (value ? 1 : -1);
+      
+      return {
+        ...prevContent,
         userRating: {
-          ...content.userRating,
+          ...prevContent.userRating,
           [type]: value
+        },
+        ratings: {
+          ...prevContent.ratings,
+          [type]: prevContent.ratings[type] + ratingDiff
         }
-      });
-    }
+      };
+    });
   };
 
   // Formatiert das Datum

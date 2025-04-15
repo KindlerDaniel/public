@@ -1,26 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CommentThread from './CommentThread';
 import FilterControls from '../shared/FilterControls';
-import RatingControls from '../shared/RatingControls';
+import { Comment, Filters } from '../../types';
 import '../../styles/CommentView.css';
-
-interface Comment {
-  id: string;
-  author: string;
-  content: string;
-  date: string;
-  replies: Comment[];
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-}
 
 interface CommentFeedProps {
   contentId?: string;
@@ -36,7 +18,7 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [newComment, setNewComment] = useState<string>('');
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     beauty: false,
     wisdom: false,
     humor: false,
@@ -127,6 +109,40 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
     setNewComment('');
   };
 
+  const handleReply = (commentId: string, content: string) => {
+    // Funktion zum rekursiven Suchen und Hinzufügen einer Antwort
+    const addReply = (commentList: Comment[]): Comment[] => {
+      return commentList.map(comment => {
+        if (comment.id === commentId) {
+          const newReply: Comment = {
+            id: `reply-${Date.now()}`,
+            author: 'CurrentUser', // In a real implementation, this would be the logged-in user
+            content: content,
+            date: new Date().toISOString(),
+            replies: [],
+            ratings: { beauty: 0, wisdom: 0, humor: 0 }
+          };
+          
+          return {
+            ...comment,
+            replies: [...comment.replies, newReply]
+          };
+        }
+        
+        if (comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: addReply(comment.replies)
+          };
+        }
+        
+        return comment;
+      });
+    };
+    
+    setComments(addReply(comments));
+  };
+
   const filterComments = (commentList: Comment[]): Comment[] => {
     return commentList.filter(comment => {
       // If no filters are active, show all comments
@@ -215,7 +231,7 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
             <CommentThread 
               key={comment.id} 
               comment={comment} 
-              onReply={() => {}} 
+              onReply={handleReply} 
               onRate={handleRateComment}
             />
           ))

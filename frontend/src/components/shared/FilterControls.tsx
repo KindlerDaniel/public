@@ -1,12 +1,6 @@
 import React from 'react';
+import { Filters } from '../../types';
 import '../../styles/FilterControls.css';
-
-interface Filters {
-  beauty: boolean;
-  wisdom: boolean;
-  humor: boolean;
-  timeRange: string;
-}
 
 interface FilterControlsProps {
   filters?: Filters;
