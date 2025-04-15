@@ -1,41 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { ContentItem } from '../../types';
 import CommentFeed from './CommentFeed';
 import ContentDisplay from '../ContentView/ContentDisplay';
 import Feed from '../ContentView/Feed';
 import '../../styles/CommentView.css';
 import ModeSelector from '../shared/ModeSelector';
 
-interface ContentItem {
-  id: string;
-  type: 'text' | 'image' | 'video' | 'audio';
-  title: string;
-  content: string;
-  author: string;
-  date: string;
-  thumbnailUrl?: string;
-  mediaUrl?: string;
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-}
 
 interface CommentViewProps {
   contentId?: string;
+  onSwitchToContentView?: () => void;
 }
 
-const CommentView: React.FC<CommentViewProps> = ({ contentId }) => {
+const CommentView: React.FC<CommentViewProps> = ({ contentId, onSwitchToContentView }) => {
   const [content, setContent] = useState<ContentItem | null>(null);
   const [showFeed, setShowFeed] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [commentHistory, setCommentHistory] = useState<string[]>([]);
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
+  const [currentMode, setCurrentMode] = useState<string>('society');
 
   useEffect(() => {
     // Mock content fetch
@@ -49,7 +32,11 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId }) => {
             type: 'text',
             title: 'Die Zukunft der sozialen Medien: Ein neuer Ansatz',
             content: 'In der sich ständig weiterentwickelnden Landschaft der sozialen Medien sehen wir einen neuen Trend: Plattformen, die nicht auf persönliche Daten, sondern auf hochwertige Inhalte setzen. Dieser Ansatz priorisiert Qualität über Quantität und fördert tiefgründige Gespräche anstelle von oberflächlichen Interaktionen.\n\nDurch die Implementierung eines Vertrauenssystems können Nutzer sicherstellen, dass der Inhalt, den sie sehen, von vertrauenswürdigen Quellen stammt. Dies führt zu einer gesünderen Online-Umgebung, in der Fehlinformationen weniger leicht verbreitet werden können.\n\nWas meint ihr zu diesem Ansatz?',
-            author: 'ContentCreator',
+            author: {
+              id: '1', // Eine eindeutige ID
+              name: 'ContentCreator', // Der Name des Autors
+              trustScore: 75 // Ein Trust-Score-Wert
+            },
             date: '2025-04-05T14:30:00',
             ratings: { beauty: 45, wisdom: 78, humor: 12 }
           };
@@ -70,11 +57,6 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId }) => {
     setShowFeed(!showFeed);
   };
 
-  const handleCommentThreadSelect = (threadId: string) => {
-    setCurrentThreadId(threadId);
-    setCommentHistory(prev => [...prev, threadId]);
-  };
-
   const handleNavigateHistory = (index: number) => {
     const historyCopy = [...commentHistory];
     const threadId = historyCopy[index];
@@ -82,6 +64,10 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId }) => {
     // Truncate history to this point
     setCommentHistory(historyCopy.slice(0, index + 1));
     setCurrentThreadId(threadId);
+  };
+  
+  const handleModeChange = (mode: string) => {
+    setCurrentMode(mode);
   };
 
   const renderCommentGraph = () => {
@@ -106,7 +92,10 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId }) => {
 
   return (
     <div className="comment-view">
-      <ModeSelector />
+      <ModeSelector 
+        currentMode={currentMode} 
+        onModeChange={handleModeChange} 
+      />
       
       <div className="comment-view-content">
         {/* Left side - Content and Feed */}

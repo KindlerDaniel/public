@@ -1,12 +1,15 @@
 import React from 'react';
-import '../../styles/ModeSelector.css'; // Korrektur des Pfads für CSS-Import
+import '../../styles/ModeSelector.css';
 
 interface ModeSelectorProps {
-  currentMode: string;
-  onModeChange: (mode: string) => void;
+  currentMode?: string;
+  onModeChange?: (mode: string) => void;
 }
 
-const ModeSelector: React.FC<ModeSelectorProps> = ({ currentMode, onModeChange }) => {
+const ModeSelector: React.FC<ModeSelectorProps> = ({ 
+  currentMode = 'society', 
+  onModeChange = () => {} 
+}) => {
   const modes = [
     { id: 'society', label: 'Society' },
     { id: 'group', label: 'Group' },

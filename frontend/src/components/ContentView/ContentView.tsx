@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../../styles/ContentView.css';
 import Feed from './Feed';
 import ContentDisplay from './ContentDisplay';

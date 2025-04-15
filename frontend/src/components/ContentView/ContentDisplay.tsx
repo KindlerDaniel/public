@@ -1,55 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import { ContentItem } from '../../types';
 import '../../styles/ContentDisplay.css';
 import { getContentById, updateContentRating } from '../../utils/mockData';
 import RatingControls from '../shared/RatingControls';
 
 interface ContentDisplayProps {
   contentId?: string;
+  content?: ContentItem; // Hinzugefügt, damit Inhalte auch direkt übergeben werden können
   compact?: boolean;
   onViewComments?: () => void;
   onSwitchToBubbleView?: () => void;
   onSwitchToCommentView?: () => void;
 }
 
-interface ContentItem {
-  id: string;
-  type: string;
-  title: string;
-  content: string;
-  author: {
-    id: string;
-    name: string;
-    trustScore: number;
-  };
-  date: string;
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-  tags?: string[];
-  mediaUrl?: string;
-  thumbnail?: string;
-}
 
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ 
   contentId, 
+  content: initialContent, // Erlaubt Übergabe von Inhalten direkt
   compact = false,
   onViewComments,
   onSwitchToBubbleView,
   onSwitchToCommentView
 }) => {
-  const [content, setContent] = useState<ContentItem | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [content, setContent] = useState<ContentItem | null>(initialContent || null);
+  const [loading, setLoading] = useState<boolean>(!initialContent);
   const [error, setError] = useState<string | null>(null);
 
   // Lade Inhalt basierend auf contentId
   useEffect(() => {
+    if (initialContent) {
+      // Wenn Inhalt direkt übergeben wurde, nicht laden
+      setContent(initialContent);
+      setLoading(false);
+      return;
+    }
+    
     if (!contentId) {
       setContent(null);
       setLoading(false);
@@ -72,7 +57,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [contentId]);
+  }, [contentId, initialContent]);
 
   // Handler für das Bewerten von Inhalten
   const handleRate = (type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
@@ -115,7 +100,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
             <video 
               className="content-media"
               controls
-              poster={content.thumbnail}
+              poster={content.thumbnailUrl}
             >
               <source src={content.mediaUrl || ''} type="video/mp4" />
               Dein Browser unterstützt das Video-Tag nicht.

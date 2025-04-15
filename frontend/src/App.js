@@ -5,6 +5,8 @@ import Footer from './components/Footer.tsx';
 import BubbleView from './components/BubbleView/BubbleView.tsx';
 import CommentView from './components/CommentView/CommentView.tsx';
 import ContentView from './components/ContentView/ContentView.tsx';
+import { AppProvider } from './context/AppContext';
+import { ViewProvider } from './context/ViewContext';
 
 // View mode constants
 const VIEW_MODES = {
@@ -82,13 +84,17 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Header />
-      <main className="app-content">
-        {renderCurrentView()}
-      </main>
-      <Footer />
-    </div>
+    <AppProvider>
+      <ViewProvider>
+        <div className="App">
+          <Header />
+          <main className="app-content">
+            {renderCurrentView()}
+          </main>
+          <Footer />
+        </div>
+      </ViewProvider>
+    </AppProvider>
   );
 }
 

@@ -1,13 +1,15 @@
 import React from 'react';
 import '../../styles/FilterControls.css';
 
+interface Filters {
+  beauty: boolean;
+  wisdom: boolean;
+  humor: boolean;
+  timeRange: string;
+}
+
 interface FilterControlsProps {
-  filters?: {
-    beauty: boolean;
-    wisdom: boolean;
-    humor: boolean;
-    timeRange: string;
-  };
+  filters?: Filters;
   onFilterChange?: (type: string, value: boolean | string) => void;
 }
 
