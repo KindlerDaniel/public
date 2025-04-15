@@ -1,6 +1,5 @@
 import React from 'react';
 import { Filters } from '../../types';
-import '../../styles/FilterControls.css';
 
 interface FilterControlsProps {
   filters?: Filters;

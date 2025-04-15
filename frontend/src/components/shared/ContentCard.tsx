@@ -1,28 +1,9 @@
 import React from 'react';
-import '../../styles/ContentCard.css';
 import RatingControls from './RatingControls';
+import { ContentItem } from '../../types';
 
 interface ContentCardProps {
-  content: {
-    id: string;
-    type: string;
-    title: string;
-    content: string;
-    author: any;
-    date: string;
-    ratings: {
-      beauty: number;
-      wisdom: number;
-      humor: number;
-    };
-    userRating?: {
-      beauty?: boolean;
-      wisdom?: boolean;
-      humor?: boolean;
-    };
-    thumbnail?: string;
-    mediaUrl?: string;
-  };
+  content: ContentItem;
   selected?: boolean;
   compact?: boolean;
   onClick?: () => void;
@@ -51,7 +32,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
         return (
           <div className="content-card-media video">
             <img 
-              src={content.thumbnail || "/api/placeholder/320/180"} 
+              src={content.thumbnailUrl || "/api/placeholder/320/180"} 
               alt={content.title}
             />
             <div className="play-button">▶</div>
@@ -61,7 +42,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
         return (
           <div className="content-card-media image">
             <img 
-              src={content.content || "/api/placeholder/320/180"} 
+              src={typeof content.content === 'string' ? content.content : "/api/placeholder/320/180"} 
               alt={content.title}
             />
           </div>
@@ -84,6 +65,12 @@ const ContentCard: React.FC<ContentCardProps> = ({
       default:
         return null;
     }
+  };
+
+  // Handler für Rating
+  const handleRate = (type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
+    // In einer echten Implementierung würde hier ein API-Aufruf stehen
+    console.log(`Rating für ${content.id}, Kategorie ${type}: ${value}`);
   };
 
   return (
@@ -113,18 +100,12 @@ const ContentCard: React.FC<ContentCardProps> = ({
         
         <div className="content-card-footer">
           <div className="content-card-ratings">
-            <div className="content-card-rating content-card-beauty">
-              <span className="content-card-rating-icon">❤️</span>
-              <span>{content.ratings.beauty}</span>
-            </div>
-            <div className="content-card-rating content-card-wisdom">
-              <span className="content-card-rating-icon">🧠</span>
-              <span>{content.ratings.wisdom}</span>
-            </div>
-            <div className="content-card-rating content-card-humor">
-              <span className="content-card-rating-icon">😄</span>
-              <span>{content.ratings.humor}</span>
-            </div>
+            <RatingControls 
+              ratings={content.ratings}
+              userRating={content.userRating || {}}
+              onRate={handleRate}
+              mini
+            />
           </div>
           
           <div className="content-card-actions">

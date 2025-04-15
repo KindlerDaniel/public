@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import '../../styles/BubbleControls.css';
 
 interface BubbleControlsProps {
   onZoomChange: (zoom: number) => void;

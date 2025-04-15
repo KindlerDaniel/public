@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import ContentCard from '../shared/ContentCard';
 import { getFeedContent } from '../../utils/mockData';
 import { ContentItem, Filters } from '../../types';
-import '../../styles/Feed.css';
 
 interface FeedProps {
   compact?: boolean;

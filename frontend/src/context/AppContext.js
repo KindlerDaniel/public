@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import { mockContents, mockComments } from '../utils/mockData';
+import { mockContents as initialContents } from '../utils/mockData';
 
 // Erstellen des Contexts
 const AppContext = createContext();
@@ -7,8 +7,8 @@ const AppContext = createContext();
 // Provider-Komponente für den App-weiten Zustand
 export const AppProvider = ({ children }) => {
   // Mock-Daten für die Entwicklung
-  const [contents, setContents] = useState(mockContents);
-  const [comments, setComments] = useState(mockComments);
+  const [contents, setContents] = useState(initialContents);
+  const [comments, setComments] = useState({});
   
   // Ausgewählter Modus (Society, Group, etc.)
   const [currentMode, setCurrentMode] = useState('society');
@@ -26,20 +26,56 @@ export const AppProvider = ({ children }) => {
     setContents(prevContents => 
       prevContents.map(content => 
         content.id === contentId 
-          ? { ...content, ratings: { ...content.ratings, [category]: value }} 
+          ? { 
+              ...content, 
+              ratings: { 
+                ...content.ratings, 
+                [category]: content.ratings[category] + (value ? 1 : -1) 
+              },
+              userRating: {
+                ...content.userRating,
+                [category]: value
+              }
+            } 
           : content
       )
     );
   };
   
-  const rateComment = (commentId, category, value) => {
-    setComments(prevComments => 
-      prevComments.map(comment => 
-        comment.id === commentId 
-          ? { ...comment, ratings: { ...comment.ratings, [category]: value }} 
-          : comment
-      )
-    );
+  const rateComment = (contentId, commentId, category, value) => {
+    if (!comments[contentId]) return;
+    
+    const updateCommentRating = (commentsList) => {
+      return commentsList.map(comment => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            ratings: {
+              ...comment.ratings,
+              [category]: comment.ratings[category] + (value ? 1 : -1)
+            },
+            userRating: {
+              ...comment.userRating,
+              [category]: value
+            }
+          };
+        }
+        
+        if (comment.replies && comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: updateCommentRating(comment.replies)
+          };
+        }
+        
+        return comment;
+      });
+    };
+    
+    setComments(prevComments => ({
+      ...prevComments,
+      [contentId]: updateCommentRating(prevComments[contentId] || [])
+    }));
   };
   
   // Kommentar hinzufügen
@@ -51,27 +87,61 @@ export const AppProvider = ({ children }) => {
       text,
       author: 'Current User',
       timestamp: new Date().toISOString(),
-      ratings: { beauty: 0, wisdom: 0, humor: 0 }
+      ratings: { beauty: 0, wisdom: 0, humor: 0 },
+      userRating: {},
+      replies: []
     };
     
-    setComments(prevComments => [...prevComments, newComment]);
+    setComments(prevComments => ({
+      ...prevComments,
+      [contentId]: [newComment, ...(prevComments[contentId] || [])]
+    }));
+    
     return newComment;
   };
   
   // Antwort auf Kommentar hinzufügen
   const addReply = (contentId, parentCommentId, text) => {
-    const newComment = {
-      id: `comment-${Date.now()}`,
+    if (!comments[contentId]) return null;
+    
+    const newReply = {
+      id: `reply-${Date.now()}`,
       contentId,
       parentId: parentCommentId,
       text,
       author: 'Current User',
       timestamp: new Date().toISOString(),
-      ratings: { beauty: 0, wisdom: 0, humor: 0 }
+      ratings: { beauty: 0, wisdom: 0, humor: 0 },
+      userRating: {},
+      replies: []
     };
     
-    setComments(prevComments => [...prevComments, newComment]);
-    return newComment;
+    const addReplyToComments = (commentsList, targetId) => {
+      return commentsList.map(comment => {
+        if (comment.id === targetId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply]
+          };
+        }
+        
+        if (comment.replies && comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: addReplyToComments(comment.replies, targetId)
+          };
+        }
+        
+        return comment;
+      });
+    };
+    
+    setComments(prevComments => ({
+      ...prevComments,
+      [contentId]: addReplyToComments(prevComments[contentId] || [], parentCommentId)
+    }));
+    
+    return newReply;
   };
   
   // Werte, die über den Context bereitgestellt werden

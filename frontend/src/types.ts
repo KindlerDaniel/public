@@ -1,3 +1,4 @@
+// frontend/src/types.ts
 export interface ContentItem {
     id: string;
     type: string;
@@ -42,6 +43,7 @@ export interface ContentItem {
     };
   }
   
+  // Neue vereinheitlichte Strukturen, die sowohl mit mockData als auch mit den Komponenten kompatibel sind
   export interface CommentItem {
     id: string;
     contentId: string;
@@ -66,4 +68,14 @@ export interface ContentItem {
     wisdom: boolean;
     humor: boolean;
     timeRange: string;
+  }
+  
+  // Einheitliche Struktur für die Bubble-Ansicht
+  export interface BubbleContent {
+    id: string;
+    x: number;
+    y: number;
+    z?: number;
+    title: string;
+    type: 'video' | 'photo' | 'audio' | 'text';
   }

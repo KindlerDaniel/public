@@ -3,9 +3,8 @@ import { ContentItem } from '../../types';
 import CommentFeed from './CommentFeed';
 import ContentDisplay from '../ContentView/ContentDisplay';
 import Feed from '../ContentView/Feed';
-import '../../styles/CommentView.css';
 import ModeSelector from '../shared/ModeSelector';
-
+import { getContentById } from '../../utils/mockData';
 
 interface CommentViewProps {
   contentId?: string;
@@ -21,31 +20,53 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId, onSwitchToContentV
   const [currentMode, setCurrentMode] = useState<string>('society');
 
   useEffect(() => {
-    // Mock content fetch
+    // Lade den Inhalt basierend auf contentId
+    if (!contentId) {
+      setContent(null);
+      setLoading(false);
+      return;
+    }
+
     const fetchContent = async () => {
       setLoading(true);
       try {
-        // In a real implementation, this would be an API call
-        setTimeout(() => {
-          const mockContent: ContentItem = {
-            id: contentId || '12345',
+        // Versuche, echte Daten aus der mockData zu laden
+        const contentData = getContentById(contentId);
+        if (contentData) {
+          setContent(contentData);
+        } else {
+          // Fallback zu Mock-Daten, wenn kein Inhalt gefunden wurde
+          setContent({
+            id: contentId,
             type: 'text',
             title: 'Die Zukunft der sozialen Medien: Ein neuer Ansatz',
-            content: 'In der sich ständig weiterentwickelnden Landschaft der sozialen Medien sehen wir einen neuen Trend: Plattformen, die nicht auf persönliche Daten, sondern auf hochwertige Inhalte setzen. Dieser Ansatz priorisiert Qualität über Quantität und fördert tiefgründige Gespräche anstelle von oberflächlichen Interaktionen.\n\nDurch die Implementierung eines Vertrauenssystems können Nutzer sicherstellen, dass der Inhalt, den sie sehen, von vertrauenswürdigen Quellen stammt. Dies führt zu einer gesünderen Online-Umgebung, in der Fehlinformationen weniger leicht verbreitet werden können.\n\nWas meint ihr zu diesem Ansatz?',
+            content: 'In der sich ständig weiterentwickelnden Landschaft der sozialen Medien sehen wir einen neuen Trend: Plattformen, die nicht auf persönliche Daten, sondern auf hochwertige Inhalte setzen.',
             author: {
-              id: '1', // Eine eindeutige ID
-              name: 'ContentCreator', // Der Name des Autors
-              trustScore: 75 // Ein Trust-Score-Wert
+              id: '1',
+              name: 'ContentCreator',
+              trustScore: 75
             },
             date: '2025-04-05T14:30:00',
             ratings: { beauty: 45, wisdom: 78, humor: 12 }
-          };
-          
-          setContent(mockContent);
-          setLoading(false);
-        }, 800);
+          });
+        }
       } catch (error) {
-        console.error('Error fetching content:', error);
+        console.error('Fehler beim Laden des Inhalts:', error);
+        // Fallback zu Mock-Daten im Fehlerfall
+        setContent({
+          id: contentId,
+          type: 'text',
+          title: 'Die Zukunft der sozialen Medien: Ein neuer Ansatz',
+          content: 'In der sich ständig weiterentwickelnden Landschaft der sozialen Medien sehen wir einen neuen Trend: Plattformen, die nicht auf persönliche Daten, sondern auf hochwertige Inhalte setzen.',
+          author: {
+            id: '1',
+            name: 'ContentCreator',
+            trustScore: 75
+          },
+          date: '2025-04-05T14:30:00',
+          ratings: { beauty: 45, wisdom: 78, humor: 12 }
+        });
+      } finally {
         setLoading(false);
       }
     };
@@ -68,6 +89,11 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId, onSwitchToContentV
   
   const handleModeChange = (mode: string) => {
     setCurrentMode(mode);
+  };
+
+  const handleAddToHistory = (threadId: string) => {
+    setCommentHistory(prev => [...prev, threadId]);
+    setCurrentThreadId(threadId);
   };
 
   const renderCommentGraph = () => {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import '../../styles/ContentView.css';
 import Feed from './Feed';
 import ContentDisplay from './ContentDisplay';
 import Comments from './Comments';
 import FilterControls from '../shared/FilterControls';
 import ModeSelector from '../shared/ModeSelector';
+import { Filters } from '../../types';
 
 interface ContentViewProps {
   contentId?: string;
@@ -20,6 +20,12 @@ const ContentView: React.FC<ContentViewProps> = ({
   const [showFeed, setShowFeed] = useState<boolean>(true);
   const [showComments, setShowComments] = useState<boolean>(false);
   const [currentMode, setCurrentMode] = useState<string>('society');
+  const [filters, setFilters] = useState<Filters>({
+    beauty: false,
+    wisdom: false,
+    humor: false,
+    timeRange: 'all'
+  });
 
   const handleToggleFeed = () => {
     setShowFeed(!showFeed);
@@ -31,6 +37,13 @@ const ContentView: React.FC<ContentViewProps> = ({
 
   const handleModeChange = (mode: string) => {
     setCurrentMode(mode);
+  };
+
+  const handleFilterChange = (type: string, value: boolean | string) => {
+    setFilters(prev => ({
+      ...prev,
+      [type]: value as any
+    }));
   };
 
   return (
@@ -53,7 +66,10 @@ const ContentView: React.FC<ContentViewProps> = ({
                 Hide Feed
               </button>
             </div>
-            <Feed />
+            <Feed 
+              filters={filters} 
+              onSelectContent={(id) => console.log(`Selected content: ${id}`)}
+            />
           </div>
         )}
         
@@ -69,7 +85,10 @@ const ContentView: React.FC<ContentViewProps> = ({
           )}
           
           <div className="filter-controls-container">
-            <FilterControls />
+            <FilterControls 
+              filters={filters}
+              onFilterChange={handleFilterChange}
+            />
           </div>
           
           <ContentDisplay 

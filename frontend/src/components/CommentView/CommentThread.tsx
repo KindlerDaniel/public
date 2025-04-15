@@ -1,24 +1,6 @@
 import React, { useState } from 'react';
 import RatingControls from '../shared/RatingControls';
-import '../../styles/CommentThread.css';
-
-interface Comment {
-  id: string;
-  author: string;
-  content: string;
-  date: string;
-  replies: Comment[];
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-}
+import { Comment } from '../../types';
 
 interface CommentThreadProps {
   comment: Comment;

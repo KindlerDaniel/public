@@ -1,17 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import BubbleControls from './BubbleControls';
-import '../../styles/BubbleView.css';
+import { BubbleContent } from '../../types';
+import { getBubbleCoordinates } from '../../utils/mockData';
 
 interface BubbleViewProps {
   onContentSelect?: (contentId: string) => void;
-}
-
-interface BubbleContent {
-  id: string;
-  x: number;
-  y: number;
-  title: string;
-  type: 'video' | 'photo' | 'audio' | 'text';
 }
 
 const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
@@ -27,16 +20,45 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const [timeInterval, setTimeInterval] = useState<string>('day');
 
   useEffect(() => {
-    // Hier würden Sie Daten basierend auf den Kategorien und dem Zeitintervall laden
-    // Mock-Daten für die Demonstration
-    const mockContents: BubbleContent[] = [
-      { id: '1', x: 0.3, y: 0.2, title: 'Content 1', type: 'video' },
-      { id: '2', x: 0.7, y: 0.5, title: 'Content 2', type: 'photo' },
-      { id: '3', x: 0.4, y: 0.8, title: 'Content 3', type: 'text' },
-      { id: '4', x: 0.2, y: 0.6, title: 'Content 4', type: 'audio' },
-    ];
-    setContents(mockContents);
+    // Daten basierend auf den Kategorien und dem Zeitintervall laden
+    // Konvertiere die mockData in das BubbleContent-Format
+    try {
+      const bubbleCoordinates = getBubbleCoordinates();
+      const mappedContents: BubbleContent[] = bubbleCoordinates.map(coord => ({
+        id: coord.id,
+        x: coord.position.x,
+        y: coord.position.y,
+        z: coord.position.z,
+        title: `Content ${coord.id}`, // Dies würde in einer echten Implementierung aus den echten Daten kommen
+        type: determineContentType(coord.category) // Hilfsfunction, um den Typ zu bestimmen
+      }));
+      setContents(mappedContents);
+    } catch (error) {
+      console.error('Fehler beim Laden der Bubble-Daten:', error);
+      // Fallback zu Mock-Daten
+      const mockContents: BubbleContent[] = [
+        { id: '1', x: 0.3, y: 0.2, title: 'Content 1', type: 'video' },
+        { id: '2', x: 0.7, y: 0.5, title: 'Content 2', type: 'photo' },
+        { id: '3', x: 0.4, y: 0.8, title: 'Content 3', type: 'text' },
+        { id: '4', x: 0.2, y: 0.6, title: 'Content 4', type: 'audio' },
+      ];
+      setContents(mockContents);
+    }
   }, [selectedCategories, timeInterval]);
+
+  // Hilfsfunction, um den Typ basierend auf der Kategorie zu bestimmen
+  const determineContentType = (category: string): 'video' | 'photo' | 'audio' | 'text' => {
+    switch (category) {
+      case 'beauty':
+        return 'photo';
+      case 'wisdom':
+        return 'text';
+      case 'humor':
+        return 'video';
+      default:
+        return 'text';
+    }
+  };
 
   useEffect(() => {
     if (!canvasRef.current) return;

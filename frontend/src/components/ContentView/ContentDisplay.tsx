@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ContentItem } from '../../types';
-import '../../styles/ContentDisplay.css';
 import { getContentById } from '../../utils/mockData';
 import RatingControls from '../shared/RatingControls';
 
@@ -62,9 +61,6 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   const handleRate = (type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
     if (!content) return;
     
-    // In einer echten Implementierung würde hier ein API-Aufruf stehen
-    // Aktualisierung des lokalen Zustands, ohne updateContentRating zu verwenden
-    // (um potenzielle Typprobleme zu vermeiden)
     setContent(prevContent => {
       if (!prevContent) return null;
       

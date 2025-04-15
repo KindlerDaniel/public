@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CommentThread from './CommentThread';
 import FilterControls from '../shared/FilterControls';
 import { Comment, Filters } from '../../types';
-import '../../styles/CommentView.css';
+import { getCommentsForContent } from '../../utils/mockData';
 
 interface CommentFeedProps {
   contentId?: string;
@@ -26,59 +26,90 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
   });
 
   useEffect(() => {
-    // Mock comment data fetch
+    if (!contentId) {
+      setComments([]);
+      setLoading(false);
+      return;
+    }
+
+    // Daten für Kommentare laden
     const fetchComments = async () => {
       setLoading(true);
       try {
-        // In a real implementation, this would be an API call
-        // using the contentId to get comments for a specific content
-        setTimeout(() => {
-          const mockComments: Comment[] = [
-            {
-              id: '1',
-              author: 'User123',
-              content: 'Dies ist ein interessanter Beitrag!',
-              date: '2025-04-10T10:30:00',
-              replies: [
-                {
-                  id: '1-1',
-                  author: 'JaneDoe',
-                  content: 'Ich stimme dir völlig zu. Besonders der zweite Punkt ist wichtig.',
-                  date: '2025-04-10T11:15:00',
-                  replies: [],
-                  ratings: { beauty: 5, wisdom: 12, humor: 2 }
-                }
-              ],
-              ratings: { beauty: 10, wisdom: 25, humor: 5 }
-            },
-            {
-              id: '2',
-              author: 'ContentExpert',
-              content: 'Aus meiner Erfahrung kann ich sagen, dass dieser Ansatz sehr effektiv ist. Wir haben ähnliche Methoden verwendet und großartige Ergebnisse erzielt.',
-              date: '2025-04-11T09:45:00',
-              replies: [],
-              ratings: { beauty: 8, wisdom: 32, humor: 0 }
-            },
-            {
-              id: '3',
-              author: 'HumorGuy',
-              content: 'Das erinnert mich an die Zeit, als ich versuchte, meine Katze zu programmieren. Sie hat nur mit "Syntax Error: Miau" geantwortet! 😂',
-              date: '2025-04-12T14:20:00',
-              replies: [],
-              ratings: { beauty: 2, wisdom: 1, humor: 45 }
-            }
-          ];
-          setComments(mockComments);
-          setLoading(false);
-        }, 500);
+        // Versuche, echte Daten aus der mockData zu laden
+        const commentsData = getCommentsForContent(contentId);
+        
+        // Konvertiere die Daten in das erwartete Format
+        const formattedComments: Comment[] = commentsData.map(comment => ({
+          id: comment.id,
+          author: comment.author,
+          content: comment.text,
+          date: comment.timestamp,
+          ratings: comment.ratings,
+          userRating: comment.userRating || {},
+          replies: formatReplies(comment.replies || [])
+        }));
+        
+        setComments(formattedComments);
       } catch (error) {
-        console.error('Error fetching comments:', error);
+        console.error('Fehler beim Laden der Kommentare:', error);
+        // Fallback zu Mock-Daten
+        const mockComments: Comment[] = [
+          {
+            id: '1',
+            author: 'User123',
+            content: 'Dies ist ein interessanter Beitrag!',
+            date: '2025-04-10T10:30:00',
+            replies: [
+              {
+                id: '1-1',
+                author: 'JaneDoe',
+                content: 'Ich stimme dir völlig zu. Besonders der zweite Punkt ist wichtig.',
+                date: '2025-04-10T11:15:00',
+                replies: [],
+                ratings: { beauty: 5, wisdom: 12, humor: 2 }
+              }
+            ],
+            ratings: { beauty: 10, wisdom: 25, humor: 5 }
+          },
+          {
+            id: '2',
+            author: 'ContentExpert',
+            content: 'Aus meiner Erfahrung kann ich sagen, dass dieser Ansatz sehr effektiv ist.',
+            date: '2025-04-11T09:45:00',
+            replies: [],
+            ratings: { beauty: 8, wisdom: 32, humor: 0 }
+          },
+          {
+            id: '3',
+            author: 'HumorGuy',
+            content: 'Das erinnert mich an die Zeit, als ich versuchte, meine Katze zu programmieren!',
+            date: '2025-04-12T14:20:00',
+            replies: [],
+            ratings: { beauty: 2, wisdom: 1, humor: 45 }
+          }
+        ];
+        setComments(mockComments);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchComments();
   }, [contentId]);
+
+  // Hilfsfunktion zum Formatieren von verschachtelten Antworten
+  const formatReplies = (replies: any[]): Comment[] => {
+    return replies.map(reply => ({
+      id: reply.id,
+      author: reply.author,
+      content: reply.text || reply.content,
+      date: reply.timestamp || reply.date,
+      ratings: reply.ratings,
+      userRating: reply.userRating || {},
+      replies: formatReplies(reply.replies || [])
+    }));
+  };
 
   const handleFilterChange = (type: string, value: boolean | string) => {
     setFilters(prev => ({
@@ -93,12 +124,12 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !contentId) return;
 
-    // In a real implementation, this would be an API call to submit the comment
+    // In einer echten Implementierung würde hier ein API-Aufruf erfolgen
     const newCommentObj: Comment = {
       id: `new-${Date.now()}`,
-      author: 'CurrentUser', // In a real implementation, this would be the logged-in user
+      author: 'CurrentUser', // In einer echten Implementierung wäre das der eingeloggte Benutzer
       content: newComment,
       date: new Date().toISOString(),
       replies: [],
@@ -116,7 +147,7 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
         if (comment.id === commentId) {
           const newReply: Comment = {
             id: `reply-${Date.now()}`,
-            author: 'CurrentUser', // In a real implementation, this would be the logged-in user
+            author: 'CurrentUser', // In einer echten Implementierung wäre das der eingeloggte Benutzer
             content: content,
             date: new Date().toISOString(),
             replies: [],
@@ -145,12 +176,12 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
 
   const filterComments = (commentList: Comment[]): Comment[] => {
     return commentList.filter(comment => {
-      // If no filters are active, show all comments
+      // Wenn keine Filter aktiv sind, zeige alle Kommentare
       if (!filters.beauty && !filters.wisdom && !filters.humor) {
         return true;
       }
 
-      // Apply filters based on ratings
+      // Wende Filter basierend auf Bewertungen an
       if (filters.beauty && comment.ratings.beauty > 0) return true;
       if (filters.wisdom && comment.ratings.wisdom > 0) return true;
       if (filters.humor && comment.ratings.humor > 0) return true;
@@ -165,11 +196,11 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
   const filteredComments = filterComments(comments);
 
   const handleRateComment = (commentId: string, type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
-    // Function to recursively find and update the comment
+    // Funktion zum rekursiven Suchen und Aktualisieren des Kommentars
     const updateComment = (commentList: Comment[]): Comment[] => {
       return commentList.map(comment => {
         if (comment.id === commentId) {
-          // Toggle the rating
+          // Toggle der Bewertung
           const currentRating = comment.userRating?.[type] || false;
           const ratingDiff = currentRating ? -1 : 1;
           
@@ -186,7 +217,7 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
           };
         }
         
-        // Recursively search in replies
+        // Rekursiv in Antworten suchen
         if (comment.replies.length > 0) {
           return {
             ...comment,

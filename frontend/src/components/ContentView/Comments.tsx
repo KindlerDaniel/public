@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getCommentsForContent } from '../../utils/mockData';
-import '../../styles/Comments.css';
 import RatingControls from '../shared/RatingControls';
-
-interface CommentsProps {
-  contentId?: string;
-}
 
 interface Comment {
   id: string;
   contentId: string;
-  parentId: string | null;
-  text: string;
   author: string;
+  text: string;
   timestamp: string;
   ratings: {
     beauty: number;
@@ -24,6 +18,11 @@ interface Comment {
     wisdom?: boolean;
     humor?: boolean;
   };
+  replies?: Comment[];
+}
+
+interface CommentsProps {
+  contentId?: string;
 }
 
 const Comments: React.FC<CommentsProps> = ({ contentId }) => {
@@ -39,14 +38,13 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
       return;
     }
 
-    setLoading(true);
     try {
-      // In einer echten Implementierung würde hier ein API-Aufruf stehen
-      const commentsData = getCommentsForContent(contentId);
-      setComments(commentsData);
+      // Fetch comments for the current content
+      const fetchedComments = getCommentsForContent(contentId);
+      setComments(fetchedComments || []);
+      setLoading(false);
     } catch (error) {
-      console.error('Fehler beim Laden der Kommentare:', error);
-    } finally {
+      console.error("Error fetching comments:", error);
       setLoading(false);
     }
   }, [contentId]);
@@ -55,71 +53,45 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
     e.preventDefault();
     if (!newComment.trim() || !contentId) return;
 
-    // In einer echten Implementierung würde hier ein API-Aufruf erfolgen
-    const now = new Date().toISOString();
+    // Normally this would be an API call to save the comment
     const newCommentObj: Comment = {
       id: `comment-${Date.now()}`,
       contentId,
-      parentId: null,
+      author: 'Aktueller Benutzer',
       text: newComment,
-      author: 'Aktueller Benutzer', // In einer echten App würde das der aktuelle Benutzer sein
-      timestamp: now,
-      ratings: { beauty: 0, wisdom: 0, humor: 0 }
+      timestamp: new Date().toISOString(),
+      ratings: { beauty: 0, wisdom: 0, humor: 0 },
+      replies: []
     };
 
-    setComments([newCommentObj, ...comments]);
+    setComments(prevComments => [newCommentObj, ...prevComments]);
     setNewComment('');
   };
 
   const handleReply = (parentId: string) => {
-    // Implementierung für Antworten auf Kommentare
-    console.log('Antwort auf Kommentar:', parentId);
-    // In einer vollständigen Implementierung würde hier ein Antwortformular angezeigt
+    // Implementation for replying to comments
+    console.log('Replying to comment:', parentId);
   };
 
   const handleRateComment = (commentId: string, type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
-    setComments(prevComments => 
+    setComments(prevComments =>
       prevComments.map(comment => {
         if (comment.id === commentId) {
-          const currentValue = comment.userRating?.[type] || false;
-          const ratingDiff = value === currentValue ? 0 : (value ? 1 : -1);
-          
           return {
             ...comment,
+            ratings: {
+              ...comment.ratings,
+              [type]: comment.ratings[type] + (value ? 1 : -1)
+            },
             userRating: {
               ...comment.userRating,
               [type]: value
-            },
-            ratings: {
-              ...comment.ratings,
-              [type]: comment.ratings[type] + ratingDiff
             }
           };
         }
         return comment;
       })
     );
-  };
-
-  const sortComments = (comments: Comment[]) => {
-    switch (sortBy) {
-      case 'newest':
-        return [...comments].sort((a, b) => 
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        );
-      case 'oldest':
-        return [...comments].sort((a, b) => 
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-        );
-      case 'beauty':
-        return [...comments].sort((a, b) => b.ratings.beauty - a.ratings.beauty);
-      case 'wisdom':
-        return [...comments].sort((a, b) => b.ratings.wisdom - a.ratings.wisdom);
-      case 'humor':
-        return [...comments].sort((a, b) => b.ratings.humor - a.ratings.humor);
-      default:
-        return comments;
-    }
   };
 
   const formatDate = (dateString: string) => {
@@ -133,6 +105,23 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
     }).format(date);
   };
 
+  const sortComments = () => {
+    return [...comments].sort((a, b) => {
+      if (sortBy === 'newest') {
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      } else if (sortBy === 'oldest') {
+        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+      } else if (sortBy === 'beauty') {
+        return b.ratings.beauty - a.ratings.beauty;
+      } else if (sortBy === 'wisdom') {
+        return b.ratings.wisdom - a.ratings.wisdom;
+      } else if (sortBy === 'humor') {
+        return b.ratings.humor - a.ratings.humor;
+      }
+      return 0;
+    });
+  };
+
   return (
     <div className="comments-container">
       <div className="comments-header">
@@ -140,10 +129,10 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
           Kommentare <span className="comments-count">({comments.length})</span>
         </h3>
         <div className="comments-actions">
-          <select 
-            className="filter-dropdown"
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
+            className="sort-select"
           >
             <option value="newest">Neueste zuerst</option>
             <option value="oldest">Älteste zuerst</option>
@@ -154,7 +143,7 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
         </div>
       </div>
       
-      <form className="new-comment-form" onSubmit={handleCommentSubmit}>
+      <form className="comment-form" onSubmit={handleCommentSubmit}>
         <textarea 
           className="comment-input"
           placeholder="Schreibe einen Kommentar..."
@@ -174,44 +163,50 @@ const Comments: React.FC<CommentsProps> = ({ contentId }) => {
         {loading ? (
           <div className="comments-loading">Kommentare werden geladen...</div>
         ) : comments.length > 0 ? (
-          sortComments(comments).map(comment => (
+          sortComments().map(comment => (
             <div key={comment.id} className="comment-item">
               <div className="comment-header">
                 <span className="comment-author">{comment.author}</span>
-                <span className="comment-timestamp">{formatDate(comment.timestamp)}</span>
+                <span className="comment-timestamp">{formatTime(comment.timestamp)}</span>
               </div>
               <div className="comment-content">{comment.text}</div>
-              <div className="comment-actions">
-                <div className="comment-buttons">
+              <div className="comment-footer">
+                <RatingControls 
+                  contentId={comment.id}
+                  ratings={comment.ratings}
+                  userRating={comment.userRating}
+                  onRate={(type, value) => handleRateComment(comment.id, type, value)}
+                  small
+                />
+                <div className="comment-actions">
                   <button 
-                    className="comment-button"
+                    className="comment-reply-button"
                     onClick={() => handleReply(comment.id)}
                   >
                     Antworten
                   </button>
                 </div>
-                <div className="comment-ratings">
-                  <RatingControls 
-                    contentId={comment.id}
-                    ratings={comment.ratings}
-                    userRating={comment.userRating}
-                    onRate={(type, value) => handleRateComment(comment.id, type, value)}
-                    isContent={false}
-                    mini={true}
-                    small={true}
-                  />
-                </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="comments-empty">
-            <p>Noch keine Kommentare. Sei der Erste, der einen Kommentar schreibt!</p>
-          </div>
+          <div className="comments-empty">Keine Kommentare vorhanden</div>
         )}
       </div>
     </div>
   );
+};
+
+// Helper function to format timestamp
+const formatTime = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  return new Intl.DateTimeFormat('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
 };
 
 export default Comments;

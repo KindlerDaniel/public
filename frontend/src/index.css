@@ -1,13 +1,92 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* 
+ * index.css - Haupt-Stylesheet für die Anwendung
+ * Diese Datei importiert alle anderen CSS-Dateien und stellt sicher,
+ * dass sie in der richtigen Reihenfolge geladen werden.
+ */
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+/* 
+ * Design-Tokens und CSS-Variablen
+ * Muss als erstes geladen werden, damit andere Dateien die Variablen verwenden können
+ */
+ @import './Variables.css';
+
+ /* 
+  * Gemeinsame Basis-Styles und Utility-Klassen
+  * Enthält Reset-Styles, Typografie-Grundlagen und Layout-Utilities
+  */
+ @import './common.css';
+ 
+ /* 
+  * Komponenten-spezifische Styles
+  * Enthält Styles für wiederverwendbare Komponenten wie Cards, Buttons, etc.
+  */
+ @import './components.css';
+ 
+ /* 
+  * Header und Footer Styles
+  * Enthält alle Styles für Header und Footer der Anwendung
+  */
+ @import './header-footer.css';
+ 
+ /* 
+  * Ansichtsspezifische Styles
+  * Enthält Styles für die drei Hauptansichten der Anwendung
+  */
+ @import './views/bubble-view.css';
+ @import './views/content-view.css';
+ @import './views/comment-view.css';
+ 
+ /* 
+  * Globale Anwendungsstile 
+  * Diese Stile überschreiben spezifische Komponenten-Stile,
+  * daher müssen sie zuletzt importiert werden
+  */
+ 
+ /* Grundlegendes App-Layout */
+ .app {
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+ }
+ 
+ /* Hauptinhaltsbereich */
+ .main-content {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   padding: var(--spacing-md);
+   max-width: 1400px;
+   margin: 0 auto;
+   width: 100%;
+ }
+ 
+ /* Anpassung für den Abstand zum Footer */
+ .app-content {
+   margin-bottom: 60px; /* Space for fixed footer */
+ }
+ 
+ /* Generische Zustände */
+ .loading {
+   text-align: center;
+   padding: var(--spacing-lg);
+   color: var(--gray-text);
+ }
+ 
+ .error {
+   color: var(--accent-color);
+   text-align: center;
+   padding: var(--spacing-lg);
+ }
+ 
+ .empty-state {
+   text-align: center;
+   padding: var(--spacing-lg);
+   color: var(--gray-text);
+ }
+ 
+ /* Mobile Anpassungen */
+ @media (max-width: 768px) {
+   .main-content {
+     padding: var(--spacing-sm);
+   }
+ }
