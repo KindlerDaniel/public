@@ -1,20 +1,25 @@
 /* === Main App Layout === */
 .App {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
   background-color: #f5f8fa;
   color: #333;
 }
 
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
 .app-content {
   flex: 1;
   padding: 20px;
-  margin-bottom: 60px; /* Space for footer */
   max-width: 1400px;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  transition: all 0.3s ease;
 }
 
 /* === Button Styles === */

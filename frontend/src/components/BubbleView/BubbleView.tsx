@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import BubbleControls from './BubbleControls.tsx';
 import { BubbleContent } from '../../types';
 import { getBubbleCoordinates } from '../../utils/mockData';
 
@@ -9,8 +8,11 @@ interface BubbleViewProps {
 
 const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState<number>(1);
-  const [speed, setSpeed] = useState<number>(5);
+  const [rotation, setRotation] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [lastMousePos, setLastMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [contents, setContents] = useState<BubbleContent[]>([]);
   const [selectedCategories, setSelectedCategories] = useState({
     beautiful: true,
@@ -77,6 +79,38 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
+    // Mouse wheel handler for zoom
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = -Math.sign(e.deltaY) * 0.1;
+      const newZoom = Math.max(0.5, Math.min(2, zoom + delta));
+      setZoom(newZoom);
+    };
+
+    // Mouse drag handlers for rotation
+    const handleMouseDown = (e: MouseEvent) => {
+      setIsDragging(true);
+      setLastMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const dx = e.clientX - lastMousePos.x;
+        const dy = e.clientY - lastMousePos.y;
+        
+        setRotation(prev => ({
+          x: prev.x + dy * 0.005,
+          y: prev.y + dx * 0.005
+        }));
+        
+        setLastMousePos({ x: e.clientX, y: e.clientY });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
     // Zeichne den Bubble-Hintergrund
     const drawBubble = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -98,20 +132,55 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fillStyle = gradient;
       ctx.fill();
+
+      // Apply 3D rotation effect
+      const transform3D = (x: number, y: number, z: number) => {
+        // Simple 3D rotation
+        const rx = rotation.x;
+        const ry = rotation.y;
+        
+        // Rotate around Y axis
+        const cosa = Math.cos(ry);
+        const sina = Math.sin(ry);
+        const y1 = y;
+        const z1 = z * cosa - x * sina;
+        const x1 = z * sina + x * cosa;
+        
+        // Rotate around X axis
+        const cosb = Math.cos(rx);
+        const sinb = Math.sin(rx);
+        const y2 = y1 * cosb - z1 * sinb;
+        const z2 = y1 * sinb + z1 * cosb;
+        const x2 = x1;
+        
+        // Calculate 2D position with perspective
+        const scale = 400 / (400 + z2);
+        const x2d = centerX + x2 * radius * scale;
+        const y2d = centerY + y2 * radius * scale;
+        
+        return { x: x2d, y: y2d, scale };
+      };
       
-      // Zeichne Content-Punkte
+      // Zeichne Content-Punkte mit 3D-Effekt
       contents.forEach(content => {
-        const x = centerX + (content.x - 0.5) * radius * 2;
-        const y = centerY + (content.y - 0.5) * radius * 2;
+        // Convert from [0,1] space to [-1,1] space
+        const x = (content.x - 0.5) * 2;
+        const y = (content.y - 0.5) * 2;
+        const z = content.z ? (content.z - 0.5) * 2 : 0;
+        
+        const transformed = transform3D(x, y, z);
         
         // Nur zeichnen, wenn der Punkt innerhalb der Bubble liegt
         const distanceFromCenter = Math.sqrt(
-          Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+          Math.pow(transformed.x - centerX, 2) + Math.pow(transformed.y - centerY, 2)
         );
         
         if (distanceFromCenter <= radius) {
+          // Scale point size with perspective
+          const pointSize = 8 * transformed.scale;
+          
           ctx.beginPath();
-          ctx.arc(x, y, 8, 0, Math.PI * 2);
+          ctx.arc(transformed.x, transformed.y, pointSize, 0, Math.PI * 2);
           
           // Verschiedene Farben basierend auf dem Content-Typ
           switch (content.type) {
@@ -131,10 +200,15 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
           
           ctx.fill();
           
-          // Titel anzeigen bei hover (in einem echten Projekt wäre dies ein Event)
+          // Scale text size with perspective
+          const fontSize = Math.max(10, 12 * transformed.scale);
+          ctx.font = `${fontSize}px Arial`;
           ctx.fillStyle = 'black';
-          ctx.font = '12px Arial';
-          ctx.fillText(content.title, x + 12, y);
+          
+          // Nur Titel anzeigen, wenn der Punkt nahe genug ist
+          if (transformed.scale > 0.7) {
+            ctx.fillText(content.title, transformed.x + pointSize + 2, transformed.y + 5);
+          }
         }
       });
     };
@@ -158,16 +232,44 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       const centerY = canvas.height / 2;
       const radius = Math.min(canvas.width, canvas.height) * 0.45 * zoom;
       
-      // Überprüfe, ob ein Content geklickt wurde
+      // Content detection with 3D rotation
       contents.forEach(content => {
-        const contentX = centerX + (content.x - 0.5) * radius * 2;
-        const contentY = centerY + (content.y - 0.5) * radius * 2;
+        // Convert from [0,1] space to [-1,1] space
+        const cx = (content.x - 0.5) * 2;
+        const cy = (content.y - 0.5) * 2;
+        const cz = content.z ? (content.z - 0.5) * 2 : 0;
+        
+        // Apply 3D transformations
+        const rx = rotation.x;
+        const ry = rotation.y;
+        
+        // Rotate around Y axis
+        const cosa = Math.cos(ry);
+        const sina = Math.sin(ry);
+        const y1 = cy;
+        const z1 = cz * cosa - cx * sina;
+        const x1 = cz * sina + cx * cosa;
+        
+        // Rotate around X axis
+        const cosb = Math.cos(rx);
+        const sinb = Math.sin(rx);
+        const y2 = y1 * cosb - z1 * sinb;
+        const z2 = y1 * sinb + z1 * cosb;
+        const x2 = x1;
+        
+        // Calculate 2D position with perspective
+        const scale = 400 / (400 + z2);
+        const x2d = centerX + x2 * radius * scale;
+        const y2d = centerY + y2 * radius * scale;
+        
+        // Scale hit detection with perspective
+        const hitSize = 12 * scale;
         
         const distance = Math.sqrt(
-          Math.pow(contentX - x, 2) + Math.pow(contentY - y, 2)
+          Math.pow(x2d - x, 2) + Math.pow(y2d - y, 2)
         );
         
-        if (distance <= 8) {
+        if (distance <= hitSize) {
           if (onContentSelect) {
             onContentSelect(content.id);
           }
@@ -175,27 +277,23 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       });
     };
 
+    // Add event listeners
     canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('wheel', handleWheel);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       canvas.removeEventListener('click', handleCanvasClick);
+      canvas.removeEventListener('wheel', handleWheel);
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [contents, zoom, onContentSelect]);
-
-  const handleZoomChange = (newZoom: number) => {
-    setZoom(newZoom);
-  };
-
-  const handleSpeedChange = (newSpeed: number) => {
-    setSpeed(newSpeed);
-  };
-
-  const handleReset = () => {
-    setZoom(1);
-    setSpeed(5);
-  };
+  }, [contents, zoom, rotation, isDragging, lastMousePos, onContentSelect]);
 
   const handleCategoryChange = (category: 'beautiful' | 'funny' | 'wise') => {
     setSelectedCategories(prev => ({
@@ -209,18 +307,16 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   };
 
   return (
-    <div className="bubble-view">
+    <div className="bubble-view" ref={containerRef}>
       <div className="bubble-container">
-        <canvas ref={canvasRef} className="bubble-canvas"></canvas>
+        <canvas 
+          ref={canvasRef} 
+          className="bubble-canvas"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        ></canvas>
       </div>
       
-      <div className="controls-container">
-        <BubbleControls 
-          onZoomChange={handleZoomChange}
-          onSpeedChange={handleSpeedChange}
-          onReset={handleReset}
-        />
-        
+      <div className="category-time-controls">
         <div className="category-filters">
           <h3>Kategorien:</h3>
           <div className="filter-options">

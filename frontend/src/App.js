@@ -1,12 +1,11 @@
 import React from 'react';
 import './App.css';
-import Header from './components/Header.tsx';
-import Footer from './components/Footer.tsx';
 import BubbleView from './components/BubbleView/BubbleView.tsx';
 import CommentView from './components/CommentView/CommentView.tsx';
 import ContentView from './components/ContentView/ContentView.tsx';
 import { AppProvider } from './context/AppContext.js';
 import { ViewProvider, ViewTypes, useViewContext } from './context/ViewContext.js';
+import Sidebar from './components/Sidebar.tsx';
 
 function App() {
   // Anstatt lokalen Zustand zu verwalten, verwenden wir den ViewContext
@@ -14,6 +13,8 @@ function App() {
     const { 
       currentView, 
       contentId,
+      currentMode,
+      setCurrentMode,
       navigateToBubbleView,
       navigateToContentView,
       navigateToCommentView
@@ -60,11 +61,15 @@ function App() {
 
     return (
       <div className="App">
-        <Header />
-        <main className="app-content">
-          {renderCurrentView()}
-        </main>
-        <Footer />
+        <div className="app-layout">
+          <Sidebar 
+            currentMode={currentMode} 
+            onModeChange={setCurrentMode}
+          />
+          <main className="app-content">
+            {renderCurrentView()}
+          </main>
+        </div>
       </div>
     );
   };

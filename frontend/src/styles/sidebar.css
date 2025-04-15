@@ -1,0 +1,109 @@
+.sidebar {
+    width: 60px;
+    height: 100vh;
+    background-color: var(--dark-background);
+    color: var(--light-text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    transition: width 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .sidebar:hover {
+    width: 180px;
+  }
+  
+  .sidebar-logo {
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+    white-space: nowrap;
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+  }
+  
+  .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-nav-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: transparent;
+    border: none;
+    color: var(--light-text);
+    opacity: 0.7;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-size: 16px;
+  }
+  
+  .sidebar-nav-button:hover, 
+  .sidebar-nav-button.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+  }
+  
+  .sidebar-icon {
+    margin-right: 12px;
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+  }
+  
+  .sidebar-label {
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar:hover .sidebar-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  /* App Layout für Seitenleiste */
+  .app-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .app-content {
+    flex: 1;
+    margin-left: 60px;
+    overflow-x: hidden;
+    width: calc(100% - 60px);
+  }
+  
+  /* Responsive Anpassungen */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 50px;
+    }
+    
+    .app-content {
+      margin-left: 50px;
+      width: calc(100% - 50px);
+    }
+  }
