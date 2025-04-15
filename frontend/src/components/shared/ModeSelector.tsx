@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/ModeSelector.css';
+import '../../styles/ModeSelector.css'; // Korrektur des Pfads für CSS-Import
 
 interface ModeSelectorProps {
   currentMode: string;
@@ -16,12 +16,12 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({ currentMode, onModeChange }
 
   return (
     <div className="mode-selector">
-      <span className="mode-label">Mode:</span>
-      <div className="mode-buttons">
+      <span className="mode-selector-label">Mode:</span>
+      <div className="mode-options">
         {modes.map((mode) => (
           <button
             key={mode.id}
-            className={`mode-button ${currentMode === mode.id ? 'active' : ''}`}
+            className={`mode-option ${mode.id} ${currentMode === mode.id ? 'active' : ''}`}
             onClick={() => onModeChange(mode.id)}
           >
             {mode.label}

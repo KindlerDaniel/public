@@ -164,3 +164,99 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
         <p>Wähle einen Inhalt aus dem Feed aus oder kehre zur Kugel-Ansicht zurück.</p>
         
         {onSwitchToBubbleView && (
+          <button 
+            className="switch-view-button"
+            onClick={onSwitchToBubbleView}
+          >
+            Zur Kugel-Ansicht
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`content-display ${compact ? 'compact' : ''}`}>
+      <div className="content-display-header">
+        <div className="content-header-info">
+          <h1 className="content-title">{content.title}</h1>
+          <div className="content-author">
+            von {content.author.name} • {formatDate(content.date)}
+          </div>
+        </div>
+        
+        <div className="content-action-buttons">
+          {onViewComments && (
+            <button 
+              className="view-comments-button"
+              onClick={onViewComments}
+            >
+              Kommentare
+            </button>
+          )}
+          
+          {onSwitchToCommentView && (
+            <button 
+              className="switch-comments-view-button"
+              onClick={onSwitchToCommentView}
+            >
+              Zur Kommentar-Ansicht
+            </button>
+          )}
+          
+          {onSwitchToBubbleView && (
+            <button 
+              className="switch-bubble-view-button"
+              onClick={onSwitchToBubbleView}
+            >
+              Zur Kugel-Ansicht
+            </button>
+          )}
+        </div>
+      </div>
+      
+      <div className="content-body">
+        {/* Medien-Inhalte (Bild, Video, Audio) */}
+        {renderMedia()}
+        
+        {/* Textinhalt */}
+        {content.type === 'text' && (
+          <div className="content-text">
+            {typeof content.content === 'string' ? content.content : 'Kein Inhalt verfügbar'}
+          </div>
+        )}
+        
+        {/* Tags */}
+        {content.tags && content.tags.length > 0 && (
+          <div className="content-tags">
+            {content.tags.map(tag => (
+              <span key={tag} className="content-tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      <div className="content-footer">
+        <div className="content-ratings">
+          <RatingControls 
+            contentId={content.id}
+            ratings={content.ratings}
+            userRating={content.userRating}
+            onRate={handleRate}
+          />
+        </div>
+        
+        {onViewComments && (
+          <button 
+            className="new-comment-button"
+            onClick={onViewComments}
+          >
+            Kommentar schreiben
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ContentDisplay;

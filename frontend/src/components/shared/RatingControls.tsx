@@ -2,7 +2,7 @@ import React from 'react';
 import '../../styles/RatingControls.css';
 
 interface RatingControlsProps {
-  contentId: string;
+  contentId?: string; // contentId optional gemacht
   ratings: {
     beauty: number;
     wisdom: number;
