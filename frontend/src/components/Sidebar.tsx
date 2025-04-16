@@ -8,10 +8,26 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
   const modes = [
-    { id: 'society', label: 'Gesellschaft', icon: '🌍' },
-    { id: 'group', label: 'Gruppen', icon: '👥' },
-    { id: 'chat', label: 'Chat', icon: '💬' },
-    { id: 'personal', label: 'Profil', icon: '👤' }
+    { 
+      id: 'society', 
+      label: 'Gesellschaft', 
+      iconPath: '/assets/icons/society_icon.svg'
+    },
+    { 
+      id: 'group', 
+      label: 'Gruppen', 
+      iconPath: '/assets/icons/group_icon.svg'
+    },
+    { 
+      id: 'chat', 
+      label: 'Chat', 
+      iconPath: '/assets/icons/chat_icon.svg'
+    },
+    { 
+      id: 'personal', 
+      label: 'Profil', 
+      iconPath: '/assets/icons/person_icon.svg'
+    }
   ];
 
   return (
@@ -26,7 +42,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
                 onClick={() => onModeChange(mode.id)}
                 title={mode.label}
               >
-                <span className="sidebar-icon">{mode.icon}</span>
+              <span className="sidebar-icon">
+                <img src={mode.iconPath} alt={mode.label} className="sidebar-icon-img" />
+              </span>
                 <span className="sidebar-label">{mode.label}</span>
               </button>
             </li>

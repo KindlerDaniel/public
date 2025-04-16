@@ -14,7 +14,7 @@
   position: relative;
   overflow: hidden;
   /* Seichter Farbverlauf von hellem zu dunklerem Blaugrau */
-  background: linear-gradient(to bottom, #deeaf5 0%, #537896 100%);
+  background: linear-gradient(to bottom, #d2dce6 0%, #334c61 100%);
 }
 
 .bubble-container {

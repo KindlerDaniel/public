@@ -117,8 +117,8 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Zeichne einen Kreis für die Bubble
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2 - canvas.height * 0.1; // Verschiebung nach oben
+      const centerX = canvas.width / 2 - canvas.width * 0.05; // Verschiebung nach links
+      const centerY = canvas.height / 2 - canvas.height * 0.07; // Verschiebung nach oben
       const radius = Math.min(canvas.width, canvas.height) * 0.45 * zoom;
       
       // Farbverlauf für das Bubble-Design - undurchsichtig
