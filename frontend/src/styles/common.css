@@ -13,18 +13,21 @@
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
+    overflow: hidden; /* Verhindert Scrollbars */
   }
   
   .app {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Verhindert Scrollbars */
   }
   
   .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Verhindert Scrollbars */
   }
   
   /* Gemeinsame Komponenten-Styles */

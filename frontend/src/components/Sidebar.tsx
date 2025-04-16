@@ -16,9 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
 
   return (
     <div className="sidebar">
-      <div className="sidebar-logo">
-        <span className="logo-text">Public</span>
-      </div>
+      {/* Logo-Bereich entfernt */}
       <nav className="sidebar-nav">
         <ul>
           {modes.map((mode) => (

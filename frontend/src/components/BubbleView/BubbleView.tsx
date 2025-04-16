@@ -98,9 +98,10 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         const dx = e.clientX - lastMousePos.x;
         const dy = e.clientY - lastMousePos.y;
         
+        // Korrigierte Drehrichtung
         setRotation(prev => ({
-          x: prev.x + dy * 0.005,
-          y: prev.y + dx * 0.005
+          x: prev.x - dy * 0.005, // Vorzeichen umgekehrt
+          y: prev.y - dx * 0.005  // Vorzeichen umgekehrt
         }));
         
         setLastMousePos({ x: e.clientX, y: e.clientY });
@@ -117,21 +118,52 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       
       // Zeichne einen Kreis für die Bubble
       const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      const centerY = canvas.height / 2 - canvas.height * 0.1; // Verschiebung nach oben
       const radius = Math.min(canvas.width, canvas.height) * 0.45 * zoom;
       
-      // Farbverlauf für das Bubble-Design
+      // Farbverlauf für das Bubble-Design - undurchsichtig
       const gradient = ctx.createRadialGradient(
-        centerX, centerY, radius * 0.7,
+        centerX, centerY, 0,
         centerX, centerY, radius
       );
-      gradient.addColorStop(0, 'rgba(100, 150, 255, 0.8)');
-      gradient.addColorStop(1, 'rgba(50, 100, 200, 0.6)');
+      gradient.addColorStop(0, 'rgba(120, 170, 255, 1.0)');
+      gradient.addColorStop(0.7, 'rgba(80, 130, 230, 1.0)');
+      gradient.addColorStop(1, 'rgba(50, 100, 200, 1.0)');
       
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fillStyle = gradient;
       ctx.fill();
+
+      // Sortiere Content-Punkte nach Z-Tiefe für korrekte Überlappung
+      const sortedContents = [...contents].sort((a, b) => {
+        const za = a.z || 0;
+        const zb = b.z || 0;
+        
+        // Berechne Z-Werte nach 3D-Transformation
+        const rx = rotation.x;
+        const ry = rotation.y;
+        
+        // Zu 3D-Koordinaten
+        const ax = (a.x - 0.5) * 2;
+        const ay = (a.y - 0.5) * 2;
+        const az = (za - 0.5) * 2;
+        
+        const bx = (b.x - 0.5) * 2;
+        const by = (b.y - 0.5) * 2;
+        const bz = (zb - 0.5) * 2;
+        
+        // Rotiere A
+        const az1 = az * Math.cos(ry) - ax * Math.sin(ry);
+        const az2 = ay * Math.sin(rx) + az1 * Math.cos(rx);
+        
+        // Rotiere B
+        const bz1 = bz * Math.cos(ry) - bx * Math.sin(ry);
+        const bz2 = by * Math.sin(rx) + bz1 * Math.cos(rx);
+        
+        // Sortieren von hinten nach vorne
+        return az2 - bz2;
+      });
 
       // Apply 3D rotation effect
       const transform3D = (x: number, y: number, z: number) => {
@@ -158,11 +190,12 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         const x2d = centerX + x2 * radius * scale;
         const y2d = centerY + y2 * radius * scale;
         
-        return { x: x2d, y: y2d, scale };
+        // Liefere auch Z-Wert zurück für Sichtbarkeitsprüfung
+        return { x: x2d, y: y2d, scale, z: z2 };
       };
       
       // Zeichne Content-Punkte mit 3D-Effekt
-      contents.forEach(content => {
+      sortedContents.forEach(content => {
         // Convert from [0,1] space to [-1,1] space
         const x = (content.x - 0.5) * 2;
         const y = (content.y - 0.5) * 2;
@@ -170,11 +203,13 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         
         const transformed = transform3D(x, y, z);
         
-        // Nur zeichnen, wenn der Punkt innerhalb der Bubble liegt
+        // Überprüfen, ob Punkt auf der Vorderseite (positive Z-Werte)
+        // und ob der Punkt innerhalb der Bubble liegt
         const distanceFromCenter = Math.sqrt(
           Math.pow(transformed.x - centerX, 2) + Math.pow(transformed.y - centerY, 2)
         );
         
+        // Nur zeichnen, wenn der Punkt innerhalb der Bubble liegt und auf der Vorderseite ist
         if (distanceFromCenter <= radius) {
           // Scale point size with perspective
           const pointSize = 8 * transformed.scale;
@@ -229,7 +264,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       const y = e.clientY - rect.top;
       
       const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      const centerY = canvas.height / 2 - canvas.height * 0.1; // Verschiebung nach oben
       const radius = Math.min(canvas.width, canvas.height) * 0.45 * zoom;
       
       // Content detection with 3D rotation
@@ -269,7 +304,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
           Math.pow(x2d - x, 2) + Math.pow(y2d - y, 2)
         );
         
-        if (distance <= hitSize) {
+        if (distance <= hitSize && z2 > 0) { // Nur klickbar, wenn auf der Vorderseite
           if (onContentSelect) {
             onContentSelect(content.id);
           }

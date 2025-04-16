@@ -42,51 +42,61 @@
   * daher müssen sie zuletzt importiert werden
   */
  
- /* Grundlegendes App-Layout */
- .app {
-   min-height: 100vh;
-   display: flex;
-   flex-direction: column;
- }
- 
- /* Hauptinhaltsbereich */
- .main-content {
-   flex: 1;
-   display: flex;
-   flex-direction: column;
-   padding: var(--spacing-md);
-   max-width: 1400px;
-   margin: 0 auto;
-   width: 100%;
- }
- 
- /* Anpassung für den Abstand zum Footer */
- .app-content {
-   margin-bottom: 60px; /* Space for fixed footer */
- }
- 
- /* Generische Zustände */
- .loading {
-   text-align: center;
-   padding: var(--spacing-lg);
-   color: var(--gray-text);
- }
- 
- .error {
-   color: var(--accent-color);
-   text-align: center;
-   padding: var(--spacing-lg);
- }
- 
- .empty-state {
-   text-align: center;
-   padding: var(--spacing-lg);
-   color: var(--gray-text);
- }
- 
- /* Mobile Anpassungen */
- @media (max-width: 768px) {
-   .main-content {
-     padding: var(--spacing-sm);
-   }
- }
+/* Verhindern von Scrollbars auf der gesamten Seite */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Grundlegendes App-Layout */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Hauptinhaltsbereich */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Anpassung für den Abstand zum Footer */
+.app-content {
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+/* Generische Zustände */
+.loading {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--gray-text);
+}
+
+.error {
+  color: var(--accent-color);
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--gray-text);
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0;
+  }
+}

@@ -4,22 +4,24 @@
   min-height: 100vh;
   background-color: #f5f8fa;
   color: #333;
+  overflow: hidden; /* Verhindert Scrollbar */
 }
 
 .app-layout {
   display: flex;
   width: 100%;
   min-height: 100vh;
+  overflow: hidden; /* Verhindert Scrollbar */
 }
 
 .app-content {
   flex: 1;
-  padding: 20px;
   max-width: 1400px;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
   transition: all 0.3s ease;
+  overflow: hidden; /* Verhindert Scrollbar */
 }
 
 /* === Button Styles === */
@@ -240,7 +242,7 @@ label {
 /* === Responsive Design === */
 @media (max-width: 768px) {
   .app-content {
-    padding: 12px;
+    padding: 0;
   }
   
   .card {
