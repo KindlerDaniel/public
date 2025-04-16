@@ -12,19 +12,20 @@
   height: 100vh;
   width: 100%;
   position: relative;
-  overflow: hidden; /* Verhindert die Scrollbar */
+  overflow: hidden;
+  /* Seichter Farbverlauf von hellem zu dunklerem Blaugrau */
+  background: linear-gradient(to bottom, #deeaf5 0%, #537896 100%);
 }
 
 .bubble-container {
   flex: 1;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Erlaubt das Darstellen der gesamten Kugel, auch wenn sie über den Container hinausragt */
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Verschiebt die Kugel nach oben */
-  padding-top: 5vh; /* Zusätzlicher Abstand von oben */
+  justify-content: center; /* Kugel wird im Canvas zentriert, die Verschiebung erfolgt im JavaScript */
+  align-items: center; /* Zentriert vertikal */
 }
 
 .bubble-canvas {
