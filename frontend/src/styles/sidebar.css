@@ -50,15 +50,16 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 12px 15px;
+  padding: 18px 15px; /* Erhöhter vertikaler Abstand */
   background: transparent;
   border: none;
   color: var(--dark-background);
-  opacity: 0.7;
+  opacity: 0.85; /* Etwas hellere Darstellung */
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
   font-size: 16px;
+  margin-bottom: 8px; /* Zusätzlicher Abstand zwischen Buttons */
 }
 
 .sidebar-nav-button:hover, 
@@ -69,8 +70,8 @@
 
 .sidebar-icon {
   margin-right: 12px;
-  width: 24px;
-  height: 24px;
+  width: 24px; /* Größeres Icon-Container */
+  height: 24px; /* Größeres Icon-Container */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -78,21 +79,23 @@
 
 /* Neuer Style für die SVG-Icons */
 .sidebar-icon-img {
-  width: 24px;
-  height: 24px;
+  width: 40px; /* Größere Icons */
+  height: 40px; /* Größere Icons */
   display: block;
   fill: currentColor; /* Ermöglicht das Erben der Textfarbe */
   transition: transform 0.2s ease;
+  filter: brightness(1.2); /* Macht die Icons heller */
 }
 
 /* Leichte Animation beim Hover über Icons */
 .sidebar-nav-button:hover .sidebar-icon-img {
   transform: scale(1.1);
+  filter: brightness(1.4); /* Noch heller beim Hover */
 }
 
 /* Aktive Icons hervorheben */
 .sidebar-nav-button.active .sidebar-icon-img {
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
+  filter: brightness(1.4) drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
 }
 
 .sidebar-label {
@@ -100,6 +103,7 @@
   opacity: 0;
   transform: translateX(-20px);
   transition: all 0.3s ease;
+  font-size: 16px; /* Etwas größere Schrift */
 }
 
 .sidebar:hover .sidebar-label {
@@ -132,7 +136,7 @@
   }
   
   .sidebar-icon-img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 }
