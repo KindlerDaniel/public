@@ -1,124 +1,81 @@
 import React from 'react';
-import { Filters } from '../../types';
+import '../../styles/filter-controls.css';
 
-interface FilterControlsProps {
-  filters?: Filters;
-  onFilterChange?: (type: string, value: boolean | string) => void;
+// Definiert die Struktur des Kategorie-Filters
+export interface CategoryFilter {
+  positive: boolean;
+  negative: boolean;
 }
 
-const FilterControls: React.FC<FilterControlsProps> = ({ 
-  filters = { beauty: false, wisdom: false, humor: false, timeRange: 'all' },
-  onFilterChange = () => {}
+// Definiert alle Kategorie-Filterzustände
+export interface CategoryFilters {
+  beauty: CategoryFilter;
+  humor: CategoryFilter;
+  wisdom: CategoryFilter;
+}
+
+// Props der Komponente
+interface CategoryFilterButtonsProps {
+  categories: CategoryFilters;
+  onCategoryChange: (category: string, isPositive: boolean) => void;
+}
+
+/**
+ * Wiederverwendbare Komponente zur Anzeige von Kategorie-Filterbuttons
+ * Die Komponente zeigt drei Kategorien mit je zwei Buttons (positiv/negativ)
+ */
+const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({ 
+  categories, 
+  onCategoryChange 
 }) => {
-  const handleCategoryChange = (category: 'beauty' | 'wisdom' | 'humor') => {
-    onFilterChange(category, !filters[category]);
-  };
-
-  const handleTimeRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFilterChange('timeRange', e.target.value);
-  };
-
   return (
-    <div className="filter-controls">
-      <div className="filter-section">
-        <div className="filter-section-title">Kategorien</div>
-        <div className="filter-buttons">
-          <label className={`filter-checkbox ${filters.beauty ? 'active' : ''}`}>
-            <input 
-              type="checkbox" 
-              checked={filters.beauty} 
-              onChange={() => handleCategoryChange('beauty')} 
-            />
-            <span>Schön</span>
-          </label>
-          
-          <label className={`filter-checkbox ${filters.wisdom ? 'active' : ''}`}>
-            <input 
-              type="checkbox" 
-              checked={filters.wisdom} 
-              onChange={() => handleCategoryChange('wisdom')} 
-            />
-            <span>Weise</span>
-          </label>
-          
-          <label className={`filter-checkbox ${filters.humor ? 'active' : ''}`}>
-            <input 
-              type="checkbox" 
-              checked={filters.humor} 
-              onChange={() => handleCategoryChange('humor')} 
-            />
-            <span>Lustig</span>
-          </label>
-        </div>
+    <div className="category-filter-buttons">
+      <div className="category-group">
+        <button 
+          className={`category-button positive beauty ${categories.beauty.positive ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('beauty', true)}
+        >
+          schön
+        </button>
+        <button 
+          className={`category-button negative beauty ${categories.beauty.negative ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('beauty', false)}
+        >
+          unschön
+        </button>
       </div>
       
-      <div className="filter-section">
-        <div className="filter-section-title">Zeitraum</div>
-        <div className="time-filter">
-          <select 
-            value={filters.timeRange} 
-            onChange={handleTimeRangeChange}
-          >
-            <option value="hour">Letzte Stunde</option>
-            <option value="day">Heute</option>
-            <option value="week">Diese Woche</option>
-            <option value="month">Diesen Monat</option>
-            <option value="year">Dieses Jahr</option>
-            <option value="all">Alle Zeiten</option>
-          </select>
-        </div>
+      <div className="category-group">
+        <button 
+          className={`category-button positive humor ${categories.humor.positive ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('humor', true)}
+        >
+          lustig
+        </button>
+        <button 
+          className={`category-button negative humor ${categories.humor.negative ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('humor', false)}
+        >
+          unlustig
+        </button>
       </div>
       
-      {/* Anzeige der aktiven Filter als Tags */}
-      {(filters.beauty || filters.wisdom || filters.humor || filters.timeRange !== 'all') && (
-        <div className="active-filters">
-          {filters.beauty && (
-            <div className="filter-tag beauty">
-              Schön
-              <span 
-                className="filter-tag-remove" 
-                onClick={() => onFilterChange('beauty', false)}
-              >×</span>
-            </div>
-          )}
-          
-          {filters.wisdom && (
-            <div className="filter-tag wisdom">
-              Weise
-              <span 
-                className="filter-tag-remove" 
-                onClick={() => onFilterChange('wisdom', false)}
-              >×</span>
-            </div>
-          )}
-          
-          {filters.humor && (
-            <div className="filter-tag humor">
-              Lustig
-              <span 
-                className="filter-tag-remove" 
-                onClick={() => onFilterChange('humor', false)}
-              >×</span>
-            </div>
-          )}
-          
-          {filters.timeRange !== 'all' && (
-            <div className="filter-tag time">
-              {filters.timeRange === 'hour' && 'Letzte Stunde'}
-              {filters.timeRange === 'day' && 'Heute'}
-              {filters.timeRange === 'week' && 'Diese Woche'}
-              {filters.timeRange === 'month' && 'Diesen Monat'}
-              {filters.timeRange === 'year' && 'Dieses Jahr'}
-              <span 
-                className="filter-tag-remove" 
-                onClick={() => onFilterChange('timeRange', 'all')}
-              >×</span>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="category-group">
+        <button 
+          className={`category-button positive wisdom ${categories.wisdom.positive ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('wisdom', true)}
+        >
+          klug
+        </button>
+        <button 
+          className={`category-button negative wisdom ${categories.wisdom.negative ? 'selected' : ''}`}
+          onClick={() => onCategoryChange('wisdom', false)}
+        >
+          unklug
+        </button>
+      </div>
     </div>
   );
 };
 
-export default FilterControls;
+export default CategoryFilterButtons;

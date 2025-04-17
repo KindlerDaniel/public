@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BubbleContent } from '../../types';
 import { getBubbleCoordinates } from '../../utils/mockData';
+import CategoryFilterButtons, { CategoryFilters } from '../shared/FilterControls.tsx';
 
 interface BubbleViewProps {
   onContentSelect?: (contentId: string) => void;
@@ -14,26 +15,50 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [lastMousePos, setLastMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [contents, setContents] = useState<BubbleContent[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState({
-    beautiful: true,
-    funny: false,
-    wise: true,
+  
+  // Neues Filterkonzept
+  const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
+    beauty: { positive: false, negative: false },
+    humor: { positive: false, negative: false },
+    wisdom: { positive: false, negative: false }
   });
-  const [timeInterval, setTimeInterval] = useState<string>('day');
 
   useEffect(() => {
-    // Daten basierend auf den Kategorien und dem Zeitintervall laden
-    // Konvertiere die mockData in das BubbleContent-Format
+    // Daten basierend auf den Kategorien laden
     try {
       const bubbleCoordinates = getBubbleCoordinates();
-      const mappedContents: BubbleContent[] = bubbleCoordinates.map(coord => ({
+      
+      // Filtere Inhalte basierend auf Kategoriefiltern
+      const filteredCoordinates = bubbleCoordinates.filter(coord => {
+        // Wenn keine Filter aktiv sind, zeige alle Inhalte
+        if (!categoryFilters.beauty.positive && !categoryFilters.wisdom.positive && 
+            !categoryFilters.humor.positive && !categoryFilters.beauty.negative && 
+            !categoryFilters.wisdom.negative && !categoryFilters.humor.negative) {
+          return true;
+        }
+        
+        // Positive Filter
+        if (categoryFilters.beauty.positive && coord.category === 'beauty') return true;
+        if (categoryFilters.wisdom.positive && coord.category === 'wisdom') return true;
+        if (categoryFilters.humor.positive && coord.category === 'humor') return true;
+        
+        // Negative Filter (exkludieren bestimmte Kategorien)
+        if (categoryFilters.beauty.negative && coord.category !== 'beauty') return true;
+        if (categoryFilters.wisdom.negative && coord.category !== 'wisdom') return true;
+        if (categoryFilters.humor.negative && coord.category !== 'humor') return true;
+        
+        return false;
+      });
+      
+      const mappedContents: BubbleContent[] = filteredCoordinates.map(coord => ({
         id: coord.id,
         x: coord.position.x,
         y: coord.position.y,
         z: coord.position.z,
-        title: `Content ${coord.id}`, // Dies würde in einer echten Implementierung aus den echten Daten kommen
-        type: determineContentType(coord.category) // Hilfsfunction, um den Typ zu bestimmen
+        title: `Content ${coord.id}`, // In einer echten Implementierung aus tatsächlichen Daten
+        type: determineContentType(coord.category)
       }));
+      
       setContents(mappedContents);
     } catch (error) {
       console.error('Fehler beim Laden der Bubble-Daten:', error);
@@ -46,7 +71,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       ];
       setContents(mockContents);
     }
-  }, [selectedCategories, timeInterval]);
+  }, [categoryFilters]);
 
   // Hilfsfunction, um den Typ basierend auf der Kategorie zu bestimmen
   const determineContentType = (category: string): 'video' | 'photo' | 'audio' | 'text' => {
@@ -330,15 +355,20 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     };
   }, [contents, zoom, rotation, isDragging, lastMousePos, onContentSelect]);
 
-  const handleCategoryChange = (category: 'beautiful' | 'funny' | 'wise') => {
-    setSelectedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  const handleTimeIntervalChange = (interval: string) => {
-    setTimeInterval(interval);
+  // Handler für Kategorie-Änderungen
+  const handleCategoryChange = (category: string, isPositive: boolean) => {
+    setCategoryFilters(prev => {
+      const categoryKey = category as keyof CategoryFilters;
+      const currentValue = isPositive ? prev[categoryKey].positive : prev[categoryKey].negative;
+      
+      return {
+        ...prev,
+        [category]: {
+          ...prev[categoryKey],
+          [isPositive ? 'positive' : 'negative']: !currentValue
+        }
+      };
+    });
   };
 
   return (
@@ -351,52 +381,11 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         ></canvas>
       </div>
       
-      <div className="category-time-controls">
-        <div className="category-filters">
-          <h3>Kategorien:</h3>
-          <div className="filter-options">
-            <label>
-              <input 
-                type="checkbox" 
-                checked={selectedCategories.beautiful}
-                onChange={() => handleCategoryChange('beautiful')}
-              />
-              Schön
-            </label>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={selectedCategories.funny}
-                onChange={() => handleCategoryChange('funny')}
-              />
-              Lustig
-            </label>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={selectedCategories.wise}
-                onChange={() => handleCategoryChange('wise')}
-              />
-              Klug
-            </label>
-          </div>
-        </div>
-        
-        <div className="time-filter">
-          <h3>Zeitraum:</h3>
-          <select 
-            value={timeInterval}
-            onChange={(e) => handleTimeIntervalChange(e.target.value)}
-          >
-            <option value="hour">Letzte Stunde</option>
-            <option value="day">Heute</option>
-            <option value="week">Diese Woche</option>
-            <option value="month">Diesen Monat</option>
-            <option value="year">Dieses Jahr</option>
-            <option value="all">Alle Zeiten</option>
-          </select>
-        </div>
-      </div>
+      {/* Neue Filterkomponente */}
+      <CategoryFilterButtons
+        categories={categoryFilters}
+        onCategoryChange={handleCategoryChange}
+      />
     </div>
   );
 };
