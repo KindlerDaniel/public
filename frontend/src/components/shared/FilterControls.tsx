@@ -28,18 +28,43 @@ const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({
   categories, 
   onCategoryChange 
 }) => {
+  // Erweiterte Handler-Funktion für Kategorie-Änderungen
+  const handleCategoryClick = (category: string, isPositive: boolean) => {
+    // Wenn bereits die entgegengesetzte Option ausgewählt ist, deaktiviere sie automatisch
+    const categoryKey = category as keyof CategoryFilters;
+    const currentState = categories[categoryKey];
+    
+    // Wenn die positive Option geklickt wurde und die negative aktuell aktiv ist,
+    // oder wenn die negative Option geklickt wurde und die positive aktuell aktiv ist,
+    // müssen wir beide Aufrufe machen
+    if (isPositive && currentState.negative) {
+      // Deaktiviere zuerst die negative Option
+      onCategoryChange(category, false);
+      // Dann aktiviere/deaktiviere die positive Option
+      onCategoryChange(category, true);
+    } else if (!isPositive && currentState.positive) {
+      // Deaktiviere zuerst die positive Option
+      onCategoryChange(category, true);
+      // Dann aktiviere/deaktiviere die negative Option
+      onCategoryChange(category, false);
+    } else {
+      // Standardverhalten: einfach den Status umschalten
+      onCategoryChange(category, isPositive);
+    }
+  };
+
   return (
     <div className="category-filter-buttons">
       <div className="category-group">
         <button 
           className={`category-button positive beauty ${categories.beauty.positive ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('beauty', true)}
+          onClick={() => handleCategoryClick('beauty', true)}
         >
           schön
         </button>
         <button 
           className={`category-button negative beauty ${categories.beauty.negative ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('beauty', false)}
+          onClick={() => handleCategoryClick('beauty', false)}
         >
           unschön
         </button>
@@ -48,13 +73,13 @@ const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({
       <div className="category-group">
         <button 
           className={`category-button positive humor ${categories.humor.positive ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('humor', true)}
+          onClick={() => handleCategoryClick('humor', true)}
         >
           lustig
         </button>
         <button 
           className={`category-button negative humor ${categories.humor.negative ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('humor', false)}
+          onClick={() => handleCategoryClick('humor', false)}
         >
           unlustig
         </button>
@@ -63,13 +88,13 @@ const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({
       <div className="category-group">
         <button 
           className={`category-button positive wisdom ${categories.wisdom.positive ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('wisdom', true)}
+          onClick={() => handleCategoryClick('wisdom', true)}
         >
           klug
         </button>
         <button 
           className={`category-button negative wisdom ${categories.wisdom.negative ? 'selected' : ''}`}
-          onClick={() => onCategoryChange('wisdom', false)}
+          onClick={() => handleCategoryClick('wisdom', false)}
         >
           unklug
         </button>
