@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BubbleContent } from '../../types';
 import { getBubbleCoordinates } from '../../utils/mockData';
 import CategoryFilterButtons, { CategoryFilters } from '../shared/FilterControls.tsx';
+import TimeSelector, { TimeRange } from './TimeSelector.tsx';
 
 interface BubbleViewProps {
   onContentSelect?: (contentId: string) => void;
@@ -15,6 +16,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [lastMousePos, setLastMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [contents, setContents] = useState<BubbleContent[]>([]);
+  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>('all');
   
   // Neues Filterkonzept
   const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
@@ -71,7 +73,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       ];
       setContents(mockContents);
     }
-  }, [categoryFilters]);
+  }, [categoryFilters, selectedTimeRange]);
 
   // Hilfsfunction, um den Typ basierend auf der Kategorie zu bestimmen
   const determineContentType = (category: string): 'video' | 'photo' | 'audio' | 'text' => {
@@ -371,6 +373,12 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     });
   };
 
+  // Handler für Zeit-Änderungen
+  const handleTimeChange = (timeRange: TimeRange) => {
+    setSelectedTimeRange(timeRange);
+    // Hier könnten weitere Aktionen bei Zeitänderungen stattfinden
+  };
+
   return (
     <div className="bubble-view" ref={containerRef}>
       <div className="bubble-container">
@@ -381,11 +389,19 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         ></canvas>
       </div>
       
-      {/* Neue Filterkomponente */}
-      <CategoryFilterButtons
-        categories={categoryFilters}
-        onCategoryChange={handleCategoryChange}
-      />
+      <div className="controls-container">
+        {/* Kategoriefilter */}
+        <CategoryFilterButtons
+          categories={categoryFilters}
+          onCategoryChange={handleCategoryChange}
+        />
+        
+        {/* Neue Zeitselektor-Komponente */}
+        <TimeSelector 
+          selectedTime={selectedTimeRange}
+          onTimeChange={handleTimeChange}
+        />
+      </div>
     </div>
   );
 };

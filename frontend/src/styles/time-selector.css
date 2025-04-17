@@ -1,0 +1,95 @@
+/* Styles für den Zeit-Selektor */
+.time-selector {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    height: 40px;
+    margin: 20px auto 10px auto; /* Mehr Abstand nach oben */
+    padding: 0 10px;
+    background-color: #0c222f;
+    border-radius: 20px;
+  }
+  
+  /* Die durchgehende Linie, auf der die Perlen aufgereiht sind */
+  .time-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  
+  /* Button-Container für jede Perle mit Label */
+  .time-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    z-index: 2;
+  }
+  
+  /* Die Perlen selbst */
+  .time-pearl {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: white;
+    margin-bottom: 5px;
+    border: 2px solid white;
+    transition: all 0.2s ease;
+  }
+  
+  /* Ausgewählte Perle wird rot */
+  .time-button.selected .time-pearl {
+    background-color: #e74c3c;
+    border-color: white;
+    transform: scale(1.25);
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.7);
+  }
+  
+  /* Text-Label unter jeder Perle */
+  .time-label {
+    font-size: 10px;
+    color: white;
+    margin-top: 2px;
+    white-space: nowrap;
+    transform: rotate(-45deg) translateX(-5px);
+    transform-origin: top center;
+  }
+  
+  /* Hover-Effekt für besseres Feedback */
+  .time-button:hover .time-pearl {
+    transform: scale(1.2);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+  }
+  
+  .time-button.selected:hover .time-pearl {
+    transform: scale(1.3);
+  }
+  
+  /* Anpassungen für mobile Geräte */
+  @media (max-width: 480px) {
+    .time-selector {
+      max-width: 300px;
+    }
+    
+    .time-button {
+      width: 30px;
+    }
+    
+    .time-label {
+      font-size: 8px;
+      transform: rotate(-60deg) translateX(-5px);
+    }
+  }
