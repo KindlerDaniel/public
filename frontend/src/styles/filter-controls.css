@@ -1,88 +1,88 @@
 /* Styles für die Kategorie-Filter-Buttons */
 .category-filter-buttons {
     position: absolute;
-    bottom: 20px;
-    right: 20px; /* Position am rechten Rand */
+    bottom: 80px; /* Deutlich höher positioniert */
+    right: 20px;
     z-index: 10;
-    background-color: transparent; /* Hintergrund transparent */
-    padding: 5px; /* Kleineres Padding */
+    background-color: transparent; /* Transparenter Hintergrund */
+    padding: 10px;
     display: flex;
-    gap: 10px; /* Noch kleinerer Abstand zwischen den Kategoriegruppen */
-  }
+    gap: 10px;
+}
   
-  .category-group {
+.category-group {
     display: flex;
-    flex-direction: column; /* Buttons vertikal übereinander */
-    gap: 6px; /* Sehr kleiner Abstand zwischen den Buttons */
-  }
+    flex-direction: column;
+    gap: 8px; /* Größerer Abstand zwischen den Buttons */
+    padding: 5px;
+}
   
-  .category-button {
+.category-button {
     background-color: white;
-    border: 2px solid transparent; /* Transparenter Rand mit gleicher Breite wie selected */
+    border: 2px solid transparent;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s ease;
     text-align: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Kleinerer Schatten */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Leichter Schatten */
     display: flex;
     align-items: center;
-    justify-content: center; /* Zentriert den Text horizontal und vertikal */
-  }
+    justify-content: center;
+}
   
-  /* Größere positive Buttons */
-  .category-button.positive {
-    width: 65px;  /* Explizite Breite */
-    height: 25px; /* Explizite Höhe */
-    font-size: 13px;
+/* Größere positive Buttons */
+.category-button.positive {
+    width: 70px;
+    height: 30px;
+    font-size: 14px;
     font-weight: bold;
     border-radius: 6px;
-  }
+}
   
-  /* Kleinere negative Buttons - deutlich kleiner */
-  .category-button.negative {
-    width: 55px;  /* Explizite Breite - etwas schmaler */
-    height: 20px; /* Explizite Höhe - niedriger */
+/* Kleinere negative Buttons */
+.category-button.negative {
+    width: 60px;
+    height: 24px;
     font-size: 12px;
     border-radius: 5px;
-    margin-left: 5px; /* Etwas eingerückt */
-  }
+    margin-left: 5px;
+}
   
-  /* Hover-Effekte */
-  .category-button:hover {
+/* Hover-Effekte */
+.category-button:hover {
     background-color: #c2d6e7;
-  }
+    transform: translateY(-2px); /* Leichte Bewegung beim Hover */
+}
   
-  .category-button:active {
-    transform: translateY(0);
-  }
+.category-button:active {
+    transform: translateY(1px);
+}
   
-  /* Aktives Button-Styling mit hellgrünem Hintergrund */
-  .category-button.selected {
-    border-color: #2ecc71; /* Nur die Randfarbe ändern */
-    background-color: #8effad; /* Hellgrüne Farbe */
-    color: #333; /* Dunklerer Text für besseren Kontrast */
-  }
+/* Aktives Button-Styling mit hellgrünem Hintergrund */
+.category-button.selected {
+    border-color: #2ecc71;
+    background-color: #8effad;
+    color: #333;
+}
   
-  
-  /* Anpassungen für mobile Geräte */
-  @media (max-width: 768px) {
+/* Anpassungen für mobile Geräte */
+@media (max-width: 768px) {
     .category-filter-buttons {
-      padding: 12px;
-      bottom: 10px;
-      right: 10px;
-      gap: 12px;
-      flex-direction: column; /* Auf kleinen Bildschirmen untereinander */
+        padding: 12px;
+        bottom: 70px;
+        right: 10px;
+        gap: 12px;
     }
     
     .category-button.positive {
-      width: 90px; /* Breiter auf Mobilgeräten für bessere Berührbarkeit */
-      height: 36px; /* Höher auf Mobilgeräten für bessere Berührbarkeit */
-      font-size: 14px;
+        width: 90px;
+        height: 36px;
+        font-size: 14px;
     }
     
     .category-button.negative {
-      width: 75px; /* Breiter auf Mobilgeräten für bessere Berührbarkeit */
-      height: 28px; /* Höher auf Mobilgeräten für bessere Berührbarkeit */
-      font-size: 12px;
+        width: 75px;
+        height: 28px;
+        font-size: 12px;
     }
-  }
+}
