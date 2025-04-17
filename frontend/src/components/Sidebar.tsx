@@ -39,12 +39,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
               <button
                 className={`sidebar-nav-button ${currentMode === mode.id ? 'active' : ''}`}
                 onClick={() => onModeChange(mode.id)}
-                title={mode.label}
+                title={mode.label} // Behält den Tooltip bei
               >
-              <span className="sidebar-icon">
-                <img src={mode.iconPath} alt={mode.label} className="sidebar-icon-img" />
-              </span>
-                <span className="sidebar-label">{mode.label}</span>
+                <span className="sidebar-icon">
+                  <img src={mode.iconPath} alt={mode.label} className="sidebar-icon-img" />
+                </span>
+                {/* Label entfernt */}
               </button>
             </li>
           ))}

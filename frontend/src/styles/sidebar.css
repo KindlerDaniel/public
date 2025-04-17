@@ -1,5 +1,5 @@
 .sidebar {
-  width: 60px;
+  width: 50px; /* Schmaler gemacht */
   height: 100vh;
   /* Seichter Farbverlauf von hellem zu dunklerem Blaugrau - gleich wie in der BubbleView */
   background: linear-gradient(to bottom, #deeaf5 0%, #537896 100%);
@@ -10,14 +10,11 @@
   left: 0;
   top: 0;
   z-index: 100;
-  transition: width 0.3s ease;
   overflow: hidden;
   /* Dunkelgrauer Rand auf der rechten Seite */
   border-right: 2px solid #444444;
-}
-
-.sidebar:hover {
-  width: 180px;
+  /* Fixierte Breite - kein Ausklappen beim Hover */
+  transition: none;
 }
 
 .sidebar-logo {
@@ -50,15 +47,14 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 18px 15px; /* Erhöhter vertikaler Abstand */
+  justify-content: center; /* Zentriert die Icons */
+  padding: 18px 0; /* Horizontales Padding entfernt */
   background: transparent;
   border: none;
   color: var(--dark-background);
   opacity: 0.85; /* Etwas hellere Darstellung */
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: left;
-  font-size: 16px;
   margin-bottom: 8px; /* Zusätzlicher Abstand zwischen Buttons */
 }
 
@@ -69,9 +65,8 @@
 }
 
 .sidebar-icon {
-  margin-right: 12px;
-  width: 24px; /* Größeres Icon-Container */
-  height: 24px; /* Größeres Icon-Container */
+  width: 40px; /* Größeres Icon-Container */
+  height: 40px; /* Größeres Icon-Container */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,8 +78,11 @@
   height: 40px; /* Größere Icons */
   display: block;
   fill: currentColor; /* Ermöglicht das Erben der Textfarbe */
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
   filter: brightness(1.2); /* Macht die Icons heller */
+  border-radius: 20%; /* Abgerundete Icons */
+  background-color: rgba(255, 255, 255, 0.2); /* Leichter Hintergrund für bessere Sichtbarkeit */
+  padding: 4px; /* Innenabstand für besseres Aussehen */
 }
 
 /* Leichte Animation beim Hover über Icons */
@@ -98,17 +96,9 @@
   filter: brightness(1.4) drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
 }
 
+/* Versteckt die Textlabels vollständig */
 .sidebar-label {
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.3s ease;
-  font-size: 16px; /* Etwas größere Schrift */
-}
-
-.sidebar:hover .sidebar-label {
-  opacity: 1;
-  transform: translateX(0);
+  display: none;
 }
 
 /* App Layout für Seitenleiste */
@@ -119,24 +109,7 @@
 
 .app-content {
   flex: 1;
-  margin-left: 60px;
+  margin-left: 50px; /* Angepasst an die neue Sidebar-Breite */
   overflow-x: hidden;
-  width: calc(100% - 60px);
-}
-
-/* Responsive Anpassungen */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 50px;
-  }
-  
-  .app-content {
-    margin-left: 50px;
-    width: calc(100% - 50px);
-  }
-  
-  .sidebar-icon-img {
-    width: 24px;
-    height: 24px;
-  }
+  width: calc(100% - 50px); /* Angepasst an die neue Sidebar-Breite */
 }
