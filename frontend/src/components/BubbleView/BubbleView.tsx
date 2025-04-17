@@ -153,9 +153,9 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         centerX, centerY, 0,
         centerX, centerY, radius
       );
-      gradient.addColorStop(0, 'rgba(120, 170, 255, 1.0)');
-      gradient.addColorStop(0.7, 'rgba(80, 130, 230, 1.0)');
-      gradient.addColorStop(1, 'rgba(50, 100, 200, 1.0)');
+      gradient.addColorStop(0, 'rgb(114, 166, 255)');
+      gradient.addColorStop(0.7, 'rgb(129, 25, 124)');
+      gradient.addColorStop(1, 'rgb(0, 23, 68)');
       
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);

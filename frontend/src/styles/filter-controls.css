@@ -1,7 +1,7 @@
 /* Styles für die Kategorie-Filter-Buttons */
 .category-filter-buttons {
     position: absolute;
-    bottom: 80px; /* Deutlich höher positioniert */
+    bottom: 50px; /* Deutlich höher positioniert */
     right: 20px;
     z-index: 10;
     background-color: transparent; /* Transparenter Hintergrund */
@@ -33,7 +33,7 @@
 /* Größere positive Buttons */
 .category-button.positive {
     width: 70px;
-    height: 30px;
+    height: 27px;
     font-size: 14px;
     font-weight: bold;
     border-radius: 6px;
@@ -42,7 +42,7 @@
 /* Kleinere negative Buttons */
 .category-button.negative {
     width: 60px;
-    height: 24px;
+    height: 22px;
     font-size: 12px;
     border-radius: 5px;
     margin-left: 5px;
