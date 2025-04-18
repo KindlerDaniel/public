@@ -10,13 +10,13 @@ interface TimeSelectorProps {
 
 const TimeSelector: React.FC<TimeSelectorProps> = ({ selectedTime, onTimeChange }) => {
   const timeOptions: { value: TimeRange; label: string }[] = [
-    { value: 'all', label: 'Alle' },
-    { value: '5years', label: '5 Jahre' },
-    { value: 'year', label: 'Jahr' },
-    { value: 'month', label: 'Monat' },
-    { value: 'week', label: 'Woche' },
-    { value: 'day', label: 'Tag' },
-    { value: 'hour', label: 'Stunde' }
+    { value: 'all', label: 'ever' },
+    { value: '5years', label: '5 years' },
+    { value: 'year', label: 'last year' },
+    { value: 'month', label: 'month' },
+    { value: 'week', label: 'week' },
+    { value: 'day', label: 'day' },
+    { value: 'hour', label: 'hour' }
   ];
 
   return (

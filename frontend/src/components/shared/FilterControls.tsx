@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../styles/filter-controls.css';
 
 // Definiert die Struktur des Kategorie-Filters
@@ -20,87 +20,89 @@ interface CategoryFilterButtonsProps {
   onCategoryChange: (category: string, isPositive: boolean) => void;
 }
 
-/**
- * Wiederverwendbare Komponente zur Anzeige von Kategorie-Filterbuttons
- * Die Komponente zeigt drei Kategorien mit je zwei Buttons (positiv/negativ)
- */
-const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({ 
-  categories, 
-  onCategoryChange 
-}) => {
-  // Erweiterte Handler-Funktion für Kategorie-Änderungen
+// Mapping für Zusammenfassungstext
+const labelMap: Record<keyof CategoryFilters, { positive: string; negative: string }> = {
+  wisdom: { positive: 'wise', negative: 'stupid' },
+  beauty: { positive: 'beautiful', negative: 'repulsive' },
+  humor:  { positive: 'funny', negative: 'unfunny'  },
+};
+
+const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({ categories, onCategoryChange }) => {
+  const [hovered, setHovered] = useState(false);
+
   const handleCategoryClick = (category: string, isPositive: boolean) => {
-    // Wenn bereits die entgegengesetzte Option ausgewählt ist, deaktiviere sie automatisch
-    const categoryKey = category as keyof CategoryFilters;
-    const currentState = categories[categoryKey];
-    
-    // Wenn die positive Option geklickt wurde und die negative aktuell aktiv ist,
-    // oder wenn die negative Option geklickt wurde und die positive aktuell aktiv ist,
-    // müssen wir beide Aufrufe machen
-    if (isPositive && currentState.negative) {
-      // Deaktiviere zuerst die negative Option
+    const key = category as keyof CategoryFilters;
+    const current = categories[key];
+    if (isPositive && current.negative) {
       onCategoryChange(category, false);
-      // Dann aktiviere/deaktiviere die positive Option
       onCategoryChange(category, true);
-    } else if (!isPositive && currentState.positive) {
-      // Deaktiviere zuerst die positive Option
+    } else if (!isPositive && current.positive) {
       onCategoryChange(category, true);
-      // Dann aktiviere/deaktiviere die negative Option
       onCategoryChange(category, false);
     } else {
-      // Standardverhalten: einfach den Status umschalten
       onCategoryChange(category, isPositive);
     }
   };
 
+  // Feste Reihenfolge für die Zusammenfassung: wise, beautiful, funny
+  const orderedKeys: (keyof CategoryFilters)[] = ['wisdom', 'beauty', 'humor'];
+
+  // Labels gemäß Auswahl und Reihenfolge zusammenstellen
+  const selectedLabels = orderedKeys
+    .filter(key => categories[key].positive || categories[key].negative)
+    .map(key => categories[key].positive ? labelMap[key].positive : labelMap[key].negative);
+
+  const summaryText = selectedLabels.length > 0 ? selectedLabels.join(', ') : 'Keine Auswahl';
+
   return (
-    <div className="category-filter-buttons">
-      <div className="category-group">
-        <button 
-          className={`category-button positive beauty ${categories.beauty.positive ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('beauty', true)}
+    <div className="category-filter-container">
+      {!hovered ? (
+        <button
+          className={`summary-button ${selectedLabels.length > 0 ? 'selected' : ''}`}
+          onMouseEnter={() => setHovered(true)}
         >
-          schön
+          {summaryText}
         </button>
-        <button 
-          className={`category-button negative beauty ${categories.beauty.negative ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('beauty', false)}
-        >
-          unschön
-        </button>
-      </div>
-      
-      <div className="category-group">
-        <button 
-          className={`category-button positive humor ${categories.humor.positive ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('humor', true)}
-        >
-          lustig
-        </button>
-        <button 
-          className={`category-button negative humor ${categories.humor.negative ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('humor', false)}
-        >
-          unlustig
-        </button>
-      </div>
-      
-      <div className="category-group">
-        <button 
-          className={`category-button positive wisdom ${categories.wisdom.positive ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('wisdom', true)}
-        >
-          klug
-        </button>
-        <button 
-          className={`category-button negative wisdom ${categories.wisdom.negative ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('wisdom', false)}
-        >
-          unklug
-        </button>
-      </div>
+      ) : (
+        <div className="category-filter-buttons" onMouseLeave={() => setHovered(false)}>
+          {/* Wise */}
+          <div className="category-group">
+            <button
+              className={`category-button positive wisdom ${categories.wisdom.positive ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('wisdom', true)}
+            >wise</button>
+            <button
+              className={`category-button negative wisdom ${categories.wisdom.negative ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('wisdom', false)}
+            >stupid</button>
+          </div>
+          {/* Beautiful */}
+          <div className="category-group">
+            <button
+              className={`category-button positive beauty ${categories.beauty.positive ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('beauty', true)}
+            >beautiful</button>
+            <button
+              className={`category-button negative beauty ${categories.beauty.negative ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('beauty', false)}
+            >repulsive</button>
+          </div>
+          {/* Funny */}
+          <div className="category-group">
+            <button
+              className={`category-button positive humor ${categories.humor.positive ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('humor', true)}
+            >funny</button>
+            <button
+              className={`category-button negative humor ${categories.humor.negative ? 'selected' : ''}`}
+              onClick={() => handleCategoryClick('humor', false)}
+            >unfunny</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default CategoryFilterButtons;
+

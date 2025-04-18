@@ -1,88 +1,121 @@
-/* Styles für die Kategorie-Filter-Buttons */
-.category-filter-buttons {
+/* Container für Summary-Button und Filterbuttons */
+.category-filter-container {
     position: absolute;
-    bottom: 50px; /* Deutlich höher positioniert */
+    bottom: 50px;
     right: 20px;
     z-index: 10;
-    background-color: transparent; /* Transparenter Hintergrund */
+  }
+  
+  /* Gruppe der 6 Filterbuttons */
+  .category-filter-buttons {
+    background-color: transparent;
     padding: 10px;
     display: flex;
     gap: 10px;
-}
+  }
   
-.category-group {
+  .category-group {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Größerer Abstand zwischen den Buttons */
+    gap: 8px;
     padding: 5px;
-}
+  }
   
-.category-button {
+  .category-button {
     background-color: white;
     border: 2px solid transparent;
     cursor: pointer;
-    font-weight: 500;
     transition: all 0.2s ease;
     text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Leichter Schatten */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-}
+  }
   
-/* Größere positive Buttons */
-.category-button.positive {
+  /* Positive Filterbuttons */
+  .category-button.positive {
     width: 70px;
     height: 27px;
     font-size: 14px;
     font-weight: bold;
     border-radius: 6px;
-}
+  }
   
-/* Kleinere negative Buttons */
-.category-button.negative {
+  /* Negative Filterbuttons */
+  .category-button.negative {
     width: 60px;
     height: 22px;
     font-size: 12px;
     border-radius: 5px;
     margin-left: 5px;
-}
+  }
   
-/* Hover-Effekte */
-.category-button:hover {
+  /* Summary-Button (relativ verschoben) */
+  .summary-button {
+    position: relative;
+    left: -75px;   /* Verschiebung nach links zur zentralen Position */
+    top: -20px;     /* Verschiebung nach oben */
+    background-color: white;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    padding: 0 12px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+  }
+  
+  /* Hover- und Active-Effekte für alle Buttons */
+  .category-button:hover,
+  .summary-button:hover {
     background-color: #c2d6e7;
-    transform: translateY(-2px); /* Leichte Bewegung beim Hover */
-}
+    transform: translateY(-2px);
+  }
   
-.category-button:active {
+  .category-button:active,
+  .summary-button:active {
     transform: translateY(1px);
-}
+  }
   
-/* Aktives Button-Styling mit hellgrünem Hintergrund */
-.category-button.selected {
+  /* Ausgewählter Zustand */
+  .category-button.selected,
+  .summary-button.selected {
     border-color: #2ecc71;
     background-color: #8effad;
     color: #333;
-}
+  }
   
-/* Anpassungen für mobile Geräte */
-@media (max-width: 768px) {
-    .category-filter-buttons {
-        padding: 12px;
-        bottom: 70px;
-        right: 10px;
-        gap: 12px;
+  /* Mobile Anpassungen */
+  @media (max-width: 768px) {
+    .category-filter-container {
+      bottom: 70px;
+      right: 10px;
     }
-    
+  
     .category-button.positive {
-        width: 90px;
-        height: 36px;
-        font-size: 14px;
+      width: 90px;
+      height: 36px;
+      font-size: 14px;
     }
-    
+  
     .category-button.negative {
-        width: 75px;
-        height: 28px;
-        font-size: 12px;
+      width: 75px;
+      height: 28px;
+      font-size: 12px;
     }
-}
+  
+    .summary-button {
+      left: -160px;    /* angepasste Verschiebung für Mobile */
+      top: -30px;
+      height: 36px;
+      font-size: 14px;
+      padding: 0 16px;
+    }
+  }
+  
+  
+  

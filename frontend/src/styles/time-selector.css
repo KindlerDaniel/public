@@ -6,27 +6,27 @@
     align-items: center;
     width: 100%;
     max-width: 400px;
-    height: 40px;
-    margin: 20px auto 10px auto; /* Mehr Abstand nach oben */
+    height: 50px;
+    margin: 20px auto 10px auto;
     padding: 0 10px;
-    background-color: transparent; /* Hintergrund auf transparent geändert */
-    border-radius: 20px;
-  }
-  
-  /* Die durchgehende Linie, auf der die Perlen aufgereiht sind */
-  .time-line {
+    background-color: transparent;
+    border-radius: 25px;
+}
+
+/* Die durchgehende Linie, auf der die Perlen aufgereiht sind */
+.time-line {
     position: absolute;
     top: 50%;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 3px;
     background-color: white;
     transform: translateY(-50%);
     z-index: 1;
-  }
-  
-  /* Button-Container für jede Perle mit Label */
-  .time-button {
+}
+
+/* Button-Container für jede Perle mit Label */
+.time-button {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -35,64 +35,96 @@
     border: none;
     cursor: pointer;
     padding: 0;
-    width: 40px;
+    width: 50px;
     z-index: 2;
-  }
-  
-  /* Die Perlen selbst */
-  .time-pearl {
+    -webkit-tap-highlight-color: transparent; /* kein Tap‑Highlight auf Mobile */
+}
+
+/* Die Perlen selbst */
+.time-pearl {
     width: 12px;
     height: 12px;
     border-radius: 50%;
     background-color: white;
-    border: 2px solid white;
-    transition: background-color 0.2s ease;
+    /* kein Rand bei nicht ausgewählten Perlen */
+    transition: background-color 0.2s ease,
+                border 0.2s ease,
+                transform 0.2s ease;
     position: absolute;
     top: 0;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
-  
-  /* Ausgewählte Perle wird rot */
-  .time-button.selected .time-pearl {
-    background-color: #e74c3c;
-    border-color: white;
-  }
-  
-  /* Text-Label unter jeder Perle */
-  .time-label {
-    font-size: 10px;
+}
+
+/* Ausgewählte Perle: kräftiges Dunkelblau + feiner weißer Rand + Skalierung */
+.time-button.selected .time-pearl {
+    background-color: #003366;
+    border: 1px solid white;
+    transform: translate(-50%, -50%) scale(1.5); /* 50 % größer */
+    z-index: 3; /* über anderen Perlen */
+}
+
+/* Hover-Effekt */
+.time-button:hover .time-pearl {
+    background-color: #87CEFA;
+}
+
+/* Ausgewählte Perle beim Hover ebenfalls vergrößert behalten */
+.time-button.selected:hover .time-pearl {
+    background-color: #003366;
+    border: 1px solid white;
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Label unter der Perle */
+.time-label {
+    font-size: 12px;
     color: white;
+    font-weight: 200;        /* Standard-Gewicht */
     white-space: nowrap;
-    transform: rotate(-45deg) translateX(-5px);
-    transform-origin: top center;
     position: absolute;
-    top: 15px; /* Position unterhalb der Perle */
+    top: 20px;
     left: 50%;
     transform: translateX(-50%) rotate(-45deg);
-  }
-  
-  /* Hover-Effekt für besseres Feedback */
-  .time-button:hover .time-pearl {
-    background-color: #87CEFA; /* Hellblau */
-  }
-  
-  .time-button.selected:hover .time-pearl {
-    background-color: #e74c3c; /* Ausgewählte Perle behält die rote Farbe */
-  }
-  
-  /* Anpassungen für mobile Geräte */
-  @media (max-width: 480px) {
+    transform-origin: top center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease,
+                visibility 0.2s ease;
+}
+
+/* Labels beim Hovern des gesamten Selektors einblenden */
+.time-selector:hover .time-label {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Anpassungen für mobile Geräte */
+@media (max-width: 480px) {
     .time-selector {
-      max-width: 300px;
+        max-width: 300px;
+        height: 40px;
     }
-    
+
     .time-button {
-      width: 30px;
+        width: 40px;
     }
-    
+
+    .time-pearl {
+        width: 14px;
+        height: 14px;
+    }
+
     .time-label {
-      font-size: 8px;
-      transform: rotate(-60deg) translateX(-5px);
+        font-size: 10px;
+        top: 18px;
+        transform: translateX(-50%) rotate(-60deg);
     }
-  }
+}
+
+/* Focus‑ und Active‑Ring komplett ausschalten */
+.time-button:focus,
+.time-button:active {
+    outline: none;
+    box-shadow: none;
+}
