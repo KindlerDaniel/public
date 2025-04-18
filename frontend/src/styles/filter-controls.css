@@ -54,7 +54,6 @@
   /* Summary-Button (relativ verschoben) */
   .summary-button {
     position: relative;
-    left: -75px;   /* Verschiebung nach links zur zentralen Position */
     top: -20px;     /* Verschiebung nach oben */
     background-color: white;
     border: 2px solid transparent;
