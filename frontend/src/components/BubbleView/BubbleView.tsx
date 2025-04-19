@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BubbleContent } from '../../types';
-import { getBubbleCoordinates } from '../../utils/mockData';
-import CategoryFilterButtons, { CategoryFilters } from '../shared/FilterControls.tsx';
+import { BubbleContent } from '../../types.ts';
+import { getBubbleCoordinates } from '../../utils/mockData.js';
 import TimeSelector, { TimeRange } from './TimeSelector.tsx';
+import FilterControls, { CategoryProbabilities } from '../shared//FilterControls.tsx';
 
 interface BubbleViewProps {
   onContentSelect?: (contentId: string) => void;
@@ -18,38 +18,44 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const [contents, setContents] = useState<BubbleContent[]>([]);
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>('all');
   
-  // Neues Filterkonzept
-  const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
-    beauty: { positive: false, negative: false },
-    humor: { positive: false, negative: false },
-    wisdom: { positive: false, negative: false }
+  // State für die Kategorie-Wahrscheinlichkeiten
+  const [categoryProbabilities, setCategoryProbabilities] = useState<CategoryProbabilities>({
+    wise: 16.67,
+    stupid: 16.67,
+    beautiful: 16.67,
+    repulsive: 16.67,
+    funny: 16.67,
+    unfunny: 16.67
   });
 
   useEffect(() => {
-    // Daten basierend auf den Kategorien laden
+    // Daten basierend auf den Wahrscheinlichkeiten laden
     try {
       const bubbleCoordinates = getBubbleCoordinates();
       
-      // Filtere Inhalte basierend auf Kategoriefiltern
+      // Berechnung der relativen Wahrscheinlichkeiten für jede Hauptkategorie
+      const categoryWeights = {
+        wisdom: categoryProbabilities.wise / (categoryProbabilities.wise + categoryProbabilities.stupid),
+        beauty: categoryProbabilities.beautiful / (categoryProbabilities.beautiful + categoryProbabilities.repulsive),
+        humor: categoryProbabilities.funny / (categoryProbabilities.funny + categoryProbabilities.unfunny)
+      };
+      
+      // Wahrscheinlichkeitsbasierte Filterung der Koordinaten
       const filteredCoordinates = bubbleCoordinates.filter(coord => {
-        // Wenn keine Filter aktiv sind, zeige alle Inhalte
-        if (!categoryFilters.beauty.positive && !categoryFilters.wisdom.positive && 
-            !categoryFilters.humor.positive && !categoryFilters.beauty.negative && 
-            !categoryFilters.wisdom.negative && !categoryFilters.humor.negative) {
-          return true;
+        // Zufallswert zwischen 0 und 1 generieren
+        const rand = Math.random();
+        
+        // Mit der entsprechenden Kategorie-Wahrscheinlichkeit vergleichen
+        switch (coord.category) {
+          case 'wisdom':
+            return rand <= categoryWeights.wisdom;
+          case 'beauty':
+            return rand <= categoryWeights.beauty;
+          case 'humor':
+            return rand <= categoryWeights.humor;
+          default:
+            return true;
         }
-        
-        // Positive Filter
-        if (categoryFilters.beauty.positive && coord.category === 'beauty') return true;
-        if (categoryFilters.wisdom.positive && coord.category === 'wisdom') return true;
-        if (categoryFilters.humor.positive && coord.category === 'humor') return true;
-        
-        // Negative Filter (exkludieren bestimmte Kategorien)
-        if (categoryFilters.beauty.negative && coord.category !== 'beauty') return true;
-        if (categoryFilters.wisdom.negative && coord.category !== 'wisdom') return true;
-        if (categoryFilters.humor.negative && coord.category !== 'humor') return true;
-        
-        return false;
       });
       
       const mappedContents: BubbleContent[] = filteredCoordinates.map(coord => ({
@@ -73,7 +79,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       ];
       setContents(mockContents);
     }
-  }, [categoryFilters, selectedTimeRange]);
+  }, [categoryProbabilities, selectedTimeRange]);
 
   // Hilfsfunction, um den Typ basierend auf der Kategorie zu bestimmen
   const determineContentType = (category: string): 'video' | 'photo' | 'audio' | 'text' => {
@@ -357,26 +363,14 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     };
   }, [contents, zoom, rotation, isDragging, lastMousePos, onContentSelect]);
 
-  // Handler für Kategorie-Änderungen
-  const handleCategoryChange = (category: string, isPositive: boolean) => {
-    setCategoryFilters(prev => {
-      const categoryKey = category as keyof CategoryFilters;
-      const currentValue = isPositive ? prev[categoryKey].positive : prev[categoryKey].negative;
-      
-      return {
-        ...prev,
-        [category]: {
-          ...prev[categoryKey],
-          [isPositive ? 'positive' : 'negative']: !currentValue
-        }
-      };
-    });
+  // Handler für Wahrscheinlichkeitsänderungen
+  const handleProbabilityChange = (probabilities: CategoryProbabilities) => {
+    setCategoryProbabilities(probabilities);
   };
 
   // Handler für Zeit-Änderungen
   const handleTimeChange = (timeRange: TimeRange) => {
     setSelectedTimeRange(timeRange);
-    // Hier könnten weitere Aktionen bei Zeitänderungen stattfinden
   };
 
   return (
@@ -390,13 +384,12 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       </div>
       
       <div className="controls-container">
-        {/* Kategoriefilter */}
-        <CategoryFilterButtons
-          categories={categoryFilters}
-          onCategoryChange={handleCategoryChange}
+        {/* Neue wahrscheinlichkeitsbasierte Filter-Kontrollen */}
+        <FilterControls
+          onProbabilityChange={handleProbabilityChange}
         />
         
-        {/* Neue Zeitselektor-Komponente */}
+        {/* Zeit-Selektor */}
         <TimeSelector 
           selectedTime={selectedTimeRange}
           onTimeChange={handleTimeChange}
