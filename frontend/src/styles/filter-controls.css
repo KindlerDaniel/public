@@ -34,7 +34,7 @@
 
 /* Positive Filterbuttons */
 .category-button.positive {
-  width: 90px; /* Etwas breiter für Platz für Prozentanzahl */
+  width: 90px;
   height: 27px;
   font-size: 14px;
   font-weight: bold;
@@ -43,7 +43,7 @@
 
 /* Negative Filterbuttons */
 .category-button.negative {
-  width: 80px; /* Etwas breiter für Platz für Prozentanzahl */
+  width: 80px;
   height: 22px;
   font-size: 12px;
   border-radius: 5px;
@@ -53,7 +53,7 @@
 /* Summary-Button (relativ verschoben) */
 .summary-button {
   position: relative;
-  top: -20px;     /* Verschiebung nach oben */
+  top: -20px;
   background-color: white;
   border: 2px solid transparent;
   cursor: pointer;
@@ -62,10 +62,20 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   padding: 0 12px;
   height: 30px;
-  font-size: 14px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 6px;
-  min-width: 120px; /* Mindestbreite für Zusammenfassungstext */
+  min-width: 120px;
+}
+
+/* Container für den Zusammenfassungstext mit variabler Schriftgröße */
+.summary-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
 }
 
 /* Hover- und Active-Effekte für alle Buttons */
@@ -92,13 +102,6 @@
   to { background-color: var(--end-color); }
 }
 
-/* Prozent-Anzeige innerhalb der Buttons */
-.probability-value {
-  margin-left: 5px;
-  font-size: 10px;
-  opacity: 0.8;
-}
-
 /* Mobile Anpassungen */
 @media (max-width: 768px) {
   .category-filter-container {
@@ -119,13 +122,10 @@
   }
 
   .summary-button {
-    left: -160px;    /* angepasste Verschiebung für Mobile */
+    left: -160px;
     top: -30px;
     height: 36px;
-    font-size: 14px;
     padding: 0 16px;
     min-width: 140px;
   }
 }
-  
-  

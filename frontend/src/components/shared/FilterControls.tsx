@@ -19,13 +19,13 @@ interface FilterControlsProps {
 const FilterControls: React.FC<FilterControlsProps> = ({ 
   onProbabilityChange 
 }) => {
-  // Anfangszustand: Gleichmäßige Verteilung von 100% auf alle Buttons
+  // Anfangszustand: Wise 100%, alle anderen 0%
   const initialProbabilities: CategoryProbabilities = {
-    wise: 60,
+    wise: 100,
     stupid: 0,
-    beautiful: 20,
+    beautiful: 0,
     repulsive: 0,
-    funny: 20,
+    funny: 0,
     unfunny: 0
   };
 
@@ -40,6 +40,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   // Berechnet die Farbe basierend auf der Wahrscheinlichkeit
   const getProbabilityColor = (probability: number) => {
     // Von weiß nach grün überblenden bei steigender Wahrscheinlichkeit
+    // mit nicht-linearem Übergang für subtilere Farbänderungen
     
     // RGB-Werte für Weiß
     const r1 = 255, g1 = 255, b1 = 255;
@@ -47,10 +48,13 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     // RGB-Werte für Grün (2ecc71)
     const r2 = 46, g2 = 204, b2 = 113;
     
-    // Lineare Interpolation zwischen weiß und grün
-    const r = Math.round(r1 + (r2 - r1) * (probability / 100));
-    const g = Math.round(g1 + (g2 - g1) * (probability / 100));
-    const b = Math.round(b1 + (b2 - b1) * (probability / 100));
+    // Nicht-lineare Interpolation mit quadratischer Funktion
+    // Bewirkt einen sanfteren Übergang bei niedrigen Werten
+    const factor = Math.pow(probability / 100, 2);
+    
+    const r = Math.round(r1 + (r2 - r1) * factor);
+    const g = Math.round(g1 + (g2 - g1) * factor);
+    const b = Math.round(b1 + (b2 - b1) * factor);
     
     return `rgb(${r}, ${g}, ${b})`;
   };
@@ -248,16 +252,42 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     });
   };
 
-  // Text für den Zusammenfassungsbutton generieren
+  // Text für den Zusammenfassungsbutton generieren - angepasst ohne Prozentangaben
   const getSummaryText = () => {
-    const activeProbabilities = Object.entries(probabilities)
-      .filter(([_, value]) => value > 25) // Zeige nur Wahrscheinlichkeiten > 25% in der Zusammenfassung
-      .sort(([_, a], [__, b]) => b - a) // Sortiere absteigend nach Wahrscheinlichkeit
-      .map(([key, value]) => `${key} ${Math.round(value)}%`);
+    // Filter Kategorien mit p > 0
+    const activeCategories = Object.entries(probabilities)
+      .filter(([_, value]) => value > 0)
+      .sort(([_, a], [__, b]) => b - a); // Sortiere absteigend nach Wahrscheinlichkeit
     
-    return activeProbabilities.length > 0 
-      ? activeProbabilities.join(', ') 
-      : 'Gleichmäßig verteilt';
+    if (activeCategories.length === 0) {
+      return 'Gleichmäßig verteilt';
+    }
+    
+    // Rendern mit unterschiedlichen Schriftgrößen basierend auf den Wahrscheinlichkeiten
+    return (
+      <span className="summary-text">
+        {activeCategories.map(([key, value], index) => {
+          // Berechne Schriftgröße zwischen 13px und 17px basierend auf der Wahrscheinlichkeit
+          // für einen subtileren Unterschied
+          const fontSize = 13 + (value / 100) * 4;
+          
+          return (
+            <span 
+              key={key} 
+              style={{ 
+                fontSize: `${fontSize}px`,
+                fontWeight: value > 50 ? 'bold' : 'normal',
+                verticalAlign: 'middle', // Sorgt dafür, dass alle Texte gleich hoch erscheinen
+                lineHeight: '1'
+              }}
+            >
+              {key}
+              {index < activeCategories.length - 1 ? ', ' : ''}
+            </span>
+          );
+        })}
+      </span>
+    );
   };
 
   return (
