@@ -1,102 +1,364 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/filter-controls.css';
 
-// Definiert die Struktur des Kategorie-Filters
-export interface CategoryFilter {
-  positive: boolean;
-  negative: boolean;
-}
-
-// Definiert alle Kategorie-Filterzustände
-export interface CategoryFilters {
-  beauty: CategoryFilter;
-  humor: CategoryFilter;
-  wisdom: CategoryFilter;
+// Definiert die Struktur der Wahrscheinlichkeiten für jede Kategorie
+export interface CategoryProbabilities {
+  wise: number;
+  stupid: number;
+  beautiful: number;
+  repulsive: number;
+  funny: number;
+  unfunny: number;
 }
 
 // Props der Komponente
-interface CategoryFilterButtonsProps {
-  categories: CategoryFilters;
-  onCategoryChange: (category: string, isPositive: boolean) => void;
+interface FilterControlsProps {
+  onProbabilityChange: (probabilities: CategoryProbabilities) => void;
 }
 
-// Mapping für Zusammenfassungstext
-const labelMap: Record<keyof CategoryFilters, { positive: string; negative: string }> = {
-  wisdom: { positive: 'wise', negative: 'stupid' },
-  beauty: { positive: 'beautiful', negative: 'repulsive' },
-  humor:  { positive: 'funny', negative: 'unfunny'  },
-};
-
-const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({ categories, onCategoryChange }) => {
-  const [hovered, setHovered] = useState(false);
-
-  const handleCategoryClick = (category: string, isPositive: boolean) => {
-    const key = category as keyof CategoryFilters;
-    const current = categories[key];
-    if (isPositive && current.negative) {
-      onCategoryChange(category, false);
-      onCategoryChange(category, true);
-    } else if (!isPositive && current.positive) {
-      onCategoryChange(category, true);
-      onCategoryChange(category, false);
-    } else {
-      onCategoryChange(category, isPositive);
-    }
+const FilterControls: React.FC<FilterControlsProps> = ({ 
+  onProbabilityChange 
+}) => {
+  // Anfangszustand: Gleichmäßige Verteilung von 100% auf alle Buttons
+  const initialProbabilities: CategoryProbabilities = {
+    wise: 60,
+    stupid: 0,
+    beautiful: 20,
+    repulsive: 0,
+    funny: 20,
+    unfunny: 0
   };
 
-  // Feste Reihenfolge für die Zusammenfassung: wise, beautiful, funny
-  const orderedKeys: (keyof CategoryFilters)[] = ['wisdom', 'beauty', 'humor'];
+  const [probabilities, setProbabilities] = useState<CategoryProbabilities>(initialProbabilities);
+  // State zum Verfolgen von Mausaktionen
+  const [activeButton, setActiveButton] = useState<keyof CategoryProbabilities | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const incrementInterval = useRef<NodeJS.Timeout | null>(null);
+  const holdStartTime = useRef<number | null>(null);
+  const wasLongPressed = useRef(false);
 
-  // Labels gemäß Auswahl und Reihenfolge zusammenstellen
-  const selectedLabels = orderedKeys
-    .filter(key => categories[key].positive || categories[key].negative)
-    .map(key => categories[key].positive ? labelMap[key].positive : labelMap[key].negative);
+  // Berechnet die Farbe basierend auf der Wahrscheinlichkeit
+  const getProbabilityColor = (probability: number) => {
+    // Von weiß nach grün überblenden bei steigender Wahrscheinlichkeit
+    
+    // RGB-Werte für Weiß
+    const r1 = 255, g1 = 255, b1 = 255;
+    
+    // RGB-Werte für Grün (2ecc71)
+    const r2 = 46, g2 = 204, b2 = 113;
+    
+    // Lineare Interpolation zwischen weiß und grün
+    const r = Math.round(r1 + (r2 - r1) * (probability / 100));
+    const g = Math.round(g1 + (g2 - g1) * (probability / 100));
+    const b = Math.round(b1 + (b2 - b1) * (probability / 100));
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
-  const summaryText = selectedLabels.length > 0 ? selectedLabels.join(', ') : 'Keine Auswahl';
+  // Erhöht die Wahrscheinlichkeit für einen Button und reduziert die anderen proportional
+  const incrementProbability = (button: keyof CategoryProbabilities) => {
+    setProbabilities(prev => {
+      // Kopie der aktuellen Werte
+      const newProbabilities = { ...prev };
+      
+      // Gegensätzliche Paare definieren
+      const opposites: Record<keyof CategoryProbabilities, keyof CategoryProbabilities> = {
+        wise: 'stupid',
+        stupid: 'wise',
+        beautiful: 'repulsive',
+        repulsive: 'beautiful',
+        funny: 'unfunny',
+        unfunny: 'funny'
+      };
+      
+      // Setze den gegensätzlichen Button sofort auf 0
+      const oppositeButton = opposites[button];
+      newProbabilities[oppositeButton] = 0;
+      
+      // Erhöhe die Wahrscheinlichkeit des ausgewählten Buttons um 1%
+      const increment = 1;
+      newProbabilities[button] += increment;
+      
+      // Berechne die Summe der anderen Wahrscheinlichkeiten (außer dem Gegensatz-Button)
+      const otherButtons = Object.keys(newProbabilities).filter(
+        key => key !== button && key !== oppositeButton
+      ) as Array<keyof CategoryProbabilities>;
+      
+      const sumOthers = otherButtons.reduce(
+        (sum, key) => sum + newProbabilities[key], 
+        0
+      );
+      
+      // Reduziere die anderen proportional
+      if (sumOthers > 0) {
+        const reductionFactor = (sumOthers - increment) / sumOthers;
+        otherButtons.forEach(key => {
+          newProbabilities[key] *= reductionFactor;
+        });
+      }
+      
+      // Runde auf 2 Nachkommastellen und stell sicher, dass die Summe 100% ist
+      Object.keys(newProbabilities).forEach(key => {
+        newProbabilities[key as keyof CategoryProbabilities] = 
+          Math.round(newProbabilities[key as keyof CategoryProbabilities] * 100) / 100;
+      });
+      
+      // Ausgleichen für Rundungsfehler
+      const sum = Object.values(newProbabilities).reduce((a, b) => a + b, 0);
+      if (Math.abs(sum - 100) > 0.01) {
+        const adjustmentFactor = 100 / sum;
+        Object.keys(newProbabilities).forEach(key => {
+          newProbabilities[key as keyof CategoryProbabilities] *= adjustmentFactor;
+          newProbabilities[key as keyof CategoryProbabilities] = 
+            Math.round(newProbabilities[key as keyof CategoryProbabilities] * 100) / 100;
+        });
+      }
+      
+      return newProbabilities;
+    });
+  };
+
+  // Effekt für das kontinuierliche Inkrement beim Halten
+  useEffect(() => {
+    if (activeButton) {
+      // Starte das Intervall zum kontinuierlichen Inkrementieren
+      incrementInterval.current = setInterval(() => {
+        incrementProbability(activeButton);
+      }, 100); // Alle 100ms aktualisieren für eine flüssige Animation
+    }
+    
+    return () => {
+      if (incrementInterval.current) {
+        clearInterval(incrementInterval.current);
+        incrementInterval.current = null;
+      }
+    };
+  }, [activeButton]);
+
+  // Wenn sich die Wahrscheinlichkeiten ändern, informiere die übergeordnete Komponente
+  useEffect(() => {
+    onProbabilityChange(probabilities);
+  }, [probabilities, onProbabilityChange]);
+
+  // Handler für Mausaktionen
+  const handleMouseDown = (button: keyof CategoryProbabilities) => {
+    holdStartTime.current = Date.now();
+    wasLongPressed.current = false;
+    setActiveButton(button);
+  };
+
+  const handleMouseUp = () => {
+    const wasHeldLongEnough = 
+      holdStartTime.current && 
+      (Date.now() - holdStartTime.current > 250); // Länger als 250ms = Halten
+    
+    if (wasHeldLongEnough) {
+      // Es war ein langes Drücken, kein Klick verarbeiten
+      wasLongPressed.current = true;
+    } else if (activeButton && !wasLongPressed.current) {
+      // Es war ein kurzer Klick, handleClick ausführen
+      handleClick(activeButton);
+    }
+    
+    holdStartTime.current = null;
+    setActiveButton(null);
+  };
+
+  const handleMouseLeave = () => {
+    if (holdStartTime.current) {
+      const wasHeldLongEnough = Date.now() - holdStartTime.current > 250;
+      wasLongPressed.current = wasHeldLongEnough;
+    }
+    
+    holdStartTime.current = null;
+    setActiveButton(null);
+    setIsHovered(false);
+  };
+
+  // Wenn ein Button kurz geklickt wird, verteile die Wahrscheinlichkeit zu gleichen Teilen auf alle Buttons mit p > 0
+  const handleClick = (button: keyof CategoryProbabilities) => {
+    setProbabilities(prev => {
+      const newProbabilities = { ...prev };
+      
+      // Gegensätzliche Paare definieren
+      const opposites: Record<keyof CategoryProbabilities, keyof CategoryProbabilities> = {
+        wise: 'stupid',
+        stupid: 'wise',
+        beautiful: 'repulsive',
+        repulsive: 'beautiful',
+        funny: 'unfunny',
+        unfunny: 'funny'
+      };
+      
+      // Setze den gegensätzlichen Button auf 0
+      const oppositeButton = opposites[button];
+      newProbabilities[oppositeButton] = 0;
+      
+      // Prüfe, ob der Button bereits eine Wahrscheinlichkeit > 0 hat
+      if (newProbabilities[button] > 0) {
+        // Setze diesen Button auf 0
+        newProbabilities[button] = 0;
+        
+        // Sammle alle aktiven Buttons (nach dem Deaktivieren)
+        const activeButtons = Object.keys(newProbabilities).filter(
+          key => newProbabilities[key as keyof CategoryProbabilities] > 0
+        );
+        
+        // Wenn noch aktive Buttons übrig sind, verteile die 100% gleichmäßig
+        if (activeButtons.length > 0) {
+          const equalShare = 100 / activeButtons.length;
+          
+          Object.keys(newProbabilities).forEach(key => {
+            if (activeButtons.includes(key)) {
+              newProbabilities[key as keyof CategoryProbabilities] = equalShare;
+            } else {
+              newProbabilities[key as keyof CategoryProbabilities] = 0;
+            }
+          });
+        } else {
+          // Wenn keine aktiven Buttons übrig sind, setze diesen Button auf 100%
+          newProbabilities[button] = 100;
+        }
+      } else {
+        // Button aktivieren
+        // Sammle aktive Buttons (ohne den Gegensatz-Button)
+        const activeButtons = Object.keys(newProbabilities).filter(
+          key => (newProbabilities[key as keyof CategoryProbabilities] > 0 || key === button) && 
+                 key !== oppositeButton
+        );
+        
+        const equalShare = 100 / activeButtons.length;
+        
+        Object.keys(newProbabilities).forEach(key => {
+          if (activeButtons.includes(key)) {
+            newProbabilities[key as keyof CategoryProbabilities] = equalShare;
+          } else {
+            newProbabilities[key as keyof CategoryProbabilities] = 0;
+          }
+        });
+      }
+      
+      // Runde auf 2 Nachkommastellen
+      Object.keys(newProbabilities).forEach(key => {
+        newProbabilities[key as keyof CategoryProbabilities] = 
+          Math.round(newProbabilities[key as keyof CategoryProbabilities] * 100) / 100;
+      });
+      
+      return newProbabilities;
+    });
+  };
+
+  // Text für den Zusammenfassungsbutton generieren
+  const getSummaryText = () => {
+    const activeProbabilities = Object.entries(probabilities)
+      .filter(([_, value]) => value > 25) // Zeige nur Wahrscheinlichkeiten > 25% in der Zusammenfassung
+      .sort(([_, a], [__, b]) => b - a) // Sortiere absteigend nach Wahrscheinlichkeit
+      .map(([key, value]) => `${key} ${Math.round(value)}%`);
+    
+    return activeProbabilities.length > 0 
+      ? activeProbabilities.join(', ') 
+      : 'Gleichmäßig verteilt';
+  };
 
   return (
     <div className="category-filter-container">
-      {!hovered ? (
+      {!isHovered ? (
         <button
-          className={`summary-button ${selectedLabels.length > 0 ? 'selected' : ''}`}
-          onMouseEnter={() => setHovered(true)}
+          className="summary-button"
+          onMouseEnter={() => setIsHovered(true)}
         >
-          {summaryText}
+          {getSummaryText()}
         </button>
       ) : (
-        <div className="category-filter-buttons" onMouseLeave={() => setHovered(false)}>
-          {/* Wise */}
+        <div className="category-filter-buttons" onMouseLeave={handleMouseLeave}>
+          {/* Wise & Stupid */}
           <div className="category-group">
             <button
-              className={`category-button positive wisdom ${categories.wisdom.positive ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('wisdom', true)}
-            >wise</button>
+              className={`category-button positive wisdom ${probabilities.wise > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.wise > 0 
+                  ? getProbabilityColor(probabilities.wise) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('wise')}
+              onMouseUp={handleMouseUp}
+            >
+              wise
+            </button>
             <button
-              className={`category-button negative wisdom ${categories.wisdom.negative ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('wisdom', false)}
-            >stupid</button>
+              className={`category-button negative wisdom ${probabilities.stupid > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.stupid > 0 
+                  ? getProbabilityColor(probabilities.stupid) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('stupid')}
+              onMouseUp={handleMouseUp}
+            >
+              stupid
+            </button>
           </div>
-          {/* Beautiful */}
+          
+          {/* Beautiful & Repulsive */}
           <div className="category-group">
             <button
-              className={`category-button positive beauty ${categories.beauty.positive ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('beauty', true)}
-            >beautiful</button>
+              className={`category-button positive beauty ${probabilities.beautiful > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.beautiful > 0 
+                  ? getProbabilityColor(probabilities.beautiful) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('beautiful')}
+              onMouseUp={handleMouseUp}
+            >
+              beautiful
+            </button>
             <button
-              className={`category-button negative beauty ${categories.beauty.negative ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('beauty', false)}
-            >repulsive</button>
+              className={`category-button negative beauty ${probabilities.repulsive > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.repulsive > 0 
+                  ? getProbabilityColor(probabilities.repulsive) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('repulsive')}
+              onMouseUp={handleMouseUp}
+            >
+              repulsive
+            </button>
           </div>
-          {/* Funny */}
+          
+          {/* Funny & Unfunny */}
           <div className="category-group">
             <button
-              className={`category-button positive humor ${categories.humor.positive ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('humor', true)}
-            >funny</button>
+              className={`category-button positive humor ${probabilities.funny > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.funny > 0 
+                  ? getProbabilityColor(probabilities.funny) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('funny')}
+              onMouseUp={handleMouseUp}
+            >
+              funny
+            </button>
             <button
-              className={`category-button negative humor ${categories.humor.negative ? 'selected' : ''}`}
-              onClick={() => handleCategoryClick('humor', false)}
-            >unfunny</button>
+              className={`category-button negative humor ${probabilities.unfunny > 0 ? 'selected' : ''}`}
+              style={{
+                backgroundColor: probabilities.unfunny > 0 
+                  ? getProbabilityColor(probabilities.unfunny) 
+                  : 'white',
+                color: 'black'
+              }}
+              onMouseDown={() => handleMouseDown('unfunny')}
+              onMouseUp={handleMouseUp}
+            >
+              unfunny
+            </button>
           </div>
         </div>
       )}
@@ -104,5 +366,4 @@ const CategoryFilterButtons: React.FC<CategoryFilterButtonsProps> = ({ categorie
   );
 };
 
-export default CategoryFilterButtons;
-
+export default FilterControls;
