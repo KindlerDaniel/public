@@ -7,7 +7,7 @@
     width: 100%;
     max-width: 400px;
     height: 50px;
-    margin: 20px auto 10px auto;
+    margin: 20px auto 0px auto;
     padding: 0 10px;
     background-color: transparent;
     border-radius: 25px;
@@ -17,8 +17,8 @@
 .time-line {
     position: absolute;
     top: 50%;
-    left: 0;
-    width: 100%;
+    left: 10%;
+    width: 80%;
     height: 3px;
     background-color: white;
     transform: translateY(-50%);
@@ -83,7 +83,7 @@
     font-weight: 200;        /* Standard-Gewicht */
     white-space: nowrap;
     position: absolute;
-    top: 20px;
+    top: -40px;
     left: 50%;
     transform: translateX(-50%) rotate(-45deg);
     transform-origin: top center;
@@ -93,10 +93,31 @@
                 visibility 0.2s ease;
 }
 
-/* Labels beim Hovern des gesamten Selektors einblenden */
+/* Focus‑ und Active‑Ring komplett ausschalten */
+.time-button:focus,
+.time-button:active {
+    outline: none;
+    box-shadow: none;
+}
+
+/* 1) Grundsätzlich alle Labels ausblenden */
+.time-label {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* 2) Labels beim Hover UND das Label der ausgewählten Perle immer anzeigen */
 .time-selector:hover .time-label {
     opacity: 1;
     visibility: visible;
+}
+
+/* Label der ausgewählten Perle immer waagerecht anzeigen */
+.time-button.selected .time-label {
+    transform: translateX(-50%) rotate(0deg);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* Anpassungen für mobile Geräte */
@@ -120,11 +141,10 @@
         top: 18px;
         transform: translateX(-50%) rotate(-60deg);
     }
+
+    .time-button.selected .time-label {
+        transform: translateX(-50%) rotate(0deg);
+      }
 }
 
-/* Focus‑ und Active‑Ring komplett ausschalten */
-.time-button:focus,
-.time-button:active {
-    outline: none;
-    box-shadow: none;
-}
+

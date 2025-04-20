@@ -61,7 +61,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   
   // Erhöht die Wahrscheinlichkeit für einen Button und reduziert die anderen proportional
   const incrementProbability = (button: keyof CategoryProbabilities) => {
-    setProbabilities(prev => {
+      setProbabilities(prev => {
       // Kopie der aktuellen Werte
       const newProbabilities = { ...prev };
       
@@ -125,18 +125,22 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   // Effekt für das kontinuierliche Inkrement beim Halten
   useEffect(() => {
     if (activeButton) {
-      // Starte das Intervall zum kontinuierlichen Inkrementieren
-      incrementInterval.current = setInterval(() => {
-        incrementProbability(activeButton);
-      }, 20); // Alle 100ms aktualisieren für eine flüssige Animation
+      // Warte 250 ms, bevor das Inkrement‑Intervall startet
+      const startTimeout = setTimeout(() => {
+        incrementInterval.current = setInterval(() => {
+          incrementProbability(activeButton);
+        }, 20);
+      }, 250);
+  
+      return () => {
+        // räume sowohl Timeout als auch (falls gesetzt) das Intervall wieder auf
+        clearTimeout(startTimeout);
+        if (incrementInterval.current) {
+          clearInterval(incrementInterval.current);
+          incrementInterval.current = null;
+        }
+      };
     }
-    
-    return () => {
-      if (incrementInterval.current) {
-        clearInterval(incrementInterval.current);
-        incrementInterval.current = null;
-      }
-    };
   }, [activeButton]);
 
   // Wenn sich die Wahrscheinlichkeiten ändern, informiere die übergeordnete Komponente
@@ -181,6 +185,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 
   // Wenn ein Button kurz geklickt wird, verteile die Wahrscheinlichkeit zu gleichen Teilen auf alle Buttons mit p > 0
   const handleClick = (button: keyof CategoryProbabilities) => {
+
     setProbabilities(prev => {
       const newProbabilities = { ...prev };
       
@@ -200,6 +205,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       
       // Prüfe, ob der Button bereits eine Wahrscheinlichkeit > 0 hat
       if (newProbabilities[button] > 0) {
+        console.log(newProbabilities[button])
+
         // Setze diesen Button auf 0
         newProbabilities[button] = 0;
         
@@ -232,18 +239,18 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             key !== oppositeButton
           );
 
-        // Füge den gerade geklickten Button hinzu, falls noch nicht enthalten
-        if (!activeButtons.includes(button)) {
-          activeButtons.push(button);
-        }
+          // Füge den gerade geklickten Button hinzu, falls noch nicht enthalten
+          if (!activeButtons.includes(button)) {
+            activeButtons.push(button);
+          }
 
-        // Verteile die Gesamtwahrscheinlichkeit gleichmäßig
-        const equalShare = parseFloat((100 / activeButtons.length).toFixed(2));
-        (Object.keys(newProbabilities) as Array<keyof CategoryProbabilities>).forEach(key => {
-          newProbabilities[key] = activeButtons.includes(key)
-            ? equalShare
-            : 0;
-        });
+          // Verteile die Gesamtwahrscheinlichkeit gleichmäßig
+          const equalShare = parseFloat((100 / activeButtons.length).toFixed(2));
+          (Object.keys(newProbabilities) as Array<keyof CategoryProbabilities>).forEach(key => {
+            newProbabilities[key] = activeButtons.includes(key)
+              ? equalShare
+              : 0;
+          });
       }
       
       // Runde auf 2 Nachkommastellen
@@ -271,21 +278,25 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     return (
       <span className="summary-text">
         {activeCategories.map(([key, value], index) => {
+
           // Berechne Schriftgröße zwischen 13px und 17px basierend auf der Wahrscheinlichkeit
-          const fontSize = 13 + (value / 100) * 4;
-          
+          const min = 12;
+          const grow = 6;
+
+          const fontSize = min + (value / 100) * grow;
+
           return (
             <span 
               key={key} 
               style={{ 
                 fontSize: `${fontSize}px`,
-                fontWeight: value > 50 ? 'bold' : 'normal',
-                verticalAlign: 'middle', // Sorgt dafür, dass alle Texte gleich hoch erscheinen
-                lineHeight: '1'
+                // mapping: 0% → 100, 100% → 900
+                fontWeight: Math.round(500 + (value / 100) * 400),
+                verticalAlign: 'middle',
               }}
             >
+              {index > 0 && index < activeCategories.length ? '\u00A0|\u00A0' : ''}
               {key}
-              {index < activeCategories.length - 1 ? '\u00A0|\u00A0' : ''}
             </span>
           );
         })}

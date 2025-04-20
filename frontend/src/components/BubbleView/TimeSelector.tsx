@@ -12,7 +12,7 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({ selectedTime, onTimeChange 
   const timeOptions: { value: TimeRange; label: string }[] = [
     { value: 'all', label: 'ever' },
     { value: '5years', label: '5 years' },
-    { value: 'year', label: 'last year' },
+    { value: 'year', label: 'year' },
     { value: 'month', label: 'month' },
     { value: 'week', label: 'week' },
     { value: 'day', label: 'day' },
