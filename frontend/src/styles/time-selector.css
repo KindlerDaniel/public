@@ -83,7 +83,7 @@
     font-weight: 200;        /* Standard-Gewicht */
     white-space: nowrap;
     position: absolute;
-    top: -40px;
+    top: -35px;
     left: 50%;
     transform: translateX(-50%) rotate(-45deg);
     transform-origin: top center;
