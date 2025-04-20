@@ -36,7 +36,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   const incrementInterval = useRef<NodeJS.Timeout | null>(null);
   const holdStartTime = useRef<number | null>(null);
   const wasLongPressed = useRef(false);
-
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const getProbabilityColor = (probability: number) => {
     // Start‑Hue (Cyan) und End‑Hue (Magenta)
@@ -125,7 +125,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   // Effekt für das kontinuierliche Inkrement beim Halten
   useEffect(() => {
     if (activeButton) {
-      // Warte 250 ms, bevor das Inkrement‑Intervall startet
+      // Warte 250 ms, bevor das Inkrement‑Intervall startet
       const startTimeout = setTimeout(() => {
         incrementInterval.current = setInterval(() => {
           incrementProbability(activeButton);
@@ -172,7 +172,24 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     setActiveButton(null);
   };
 
+  const handleMouseEnter = () => {
+    // Verzögerung für den Hover-Effekt hinzufügen
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 50);
+  };
+
   const handleMouseLeave = () => {
+    // Timer löschen, wenn die Maus den Bereich verlässt
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
     if (holdStartTime.current) {
       const wasHeldLongEnough = Date.now() - holdStartTime.current > 250;
       wasLongPressed.current = wasHeldLongEnough;
@@ -304,12 +321,22 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     );
   };
 
+  // Cleanup-Effekt für den Hover-Timeout
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="category-filter-container">
       {!isHovered ? (
         <button
           className="summary-button"
-          onMouseEnter={() => setIsHovered(true)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           {getSummaryText()}
         </button>
