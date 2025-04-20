@@ -8,10 +8,14 @@
 
 /* Gruppe der 6 Filterbuttons */
 .category-filter-buttons {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   background-color: transparent;
   padding: 10px;
   display: flex;
   gap: 10px;
+  z-index: 20; /* Höherer z-index als der Button */
 }
 
 .category-group {
@@ -54,8 +58,8 @@
 .summary-button {
   position: relative;
   top: -20px;
-  background-color: white;
-  border: 2px solid transparent;
+  background-color: transparent !important; /* Immer transparent, auch beim Hover */
+  border: none !important; /* Nie einen Rand zeigen */
   cursor: pointer;
   padding: 0 12px;
   height: 30px;
@@ -64,7 +68,10 @@
   justify-content: center;
   border-radius: 6px;
   min-width: 120px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: none !important; /* Nie einen Schatten zeigen */
+  transition: transform 0.2s ease;
+  color: white !important; /* Immer weiße Schrift */
+  outline: none !important; /* Kein Fokus-Outline */
 }
 
 /* Pseudo‑Element für erweiterte linke Hover‑Zone */
@@ -84,18 +91,30 @@
   align-items: center;
   justify-content: center;
   line-height: 1.2;
+  color: white;
+  text-shadow: 0px 0px 3px rgba(0,0,0,0.5); /* Leichter Schatten für bessere Lesbarkeit */
 }
 
-/* Hover- und Active-Effekte für alle Buttons */
-.category-button:hover,
-.summary-button:hover {
+/* Hover- und Active-Effekte für Buttons */
+.category-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
-.category-button:active,
-.summary-button:active {
+.category-button:active {
   transform: translateY(1px);
+}
+
+/* Entferne alle Hover-Effekte für den Summary-Button */
+.summary-button:hover {
+  transform: none;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.summary-button:active {
+  transform: none;
 }
 
 /* Aktiver Button-Zustand */
@@ -139,5 +158,7 @@
     height: 36px;
     padding: 0 16px;
     min-width: 140px;
+    background-color: transparent;
+    color: white;
   }
 }
