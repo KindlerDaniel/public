@@ -60,7 +60,7 @@
 .time-button.selected .time-pearl {
     background-color: #003366;
     border: 1px solid white;
-    transform: translate(-50%, -50%) scale(1.5); /* 50 % größer */
+    transform: translate(-50%, -50%) scale(1.5); /* 50 % größer */
     z-index: 3; /* über anderen Perlen */
 }
 
@@ -85,7 +85,7 @@
     position: absolute;
     top: -35px;
     left: 50%;
-    transform: translateX(-50%) rotate(-45deg);
+    transform: translateX(-50%); /* Rotation entfernt, immer waagerecht */
     transform-origin: top center;
     opacity: 0;
     visibility: hidden;
@@ -107,17 +107,19 @@
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-/* 2) Labels beim Hover UND das Label der ausgewählten Perle immer anzeigen */
+/* 2) Labels beim Hover anzeigen */
 .time-selector:hover .time-label {
     opacity: 1;
     visibility: visible;
 }
 
-/* Label der ausgewählten Perle immer waagerecht anzeigen */
+/* Label der ausgewählten Perle immer anzeigen und waagerecht ausrichten */
 .time-button.selected .time-label {
-    transform: translateX(-50%) rotate(0deg);
+    transform: translateX(-50%); /* Rotation entfernt */
     font-size: 14px;
     font-weight: 600;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Anpassungen für mobile Geräte */
@@ -139,12 +141,10 @@
     .time-label {
         font-size: 10px;
         top: 18px;
-        transform: translateX(-50%) rotate(-60deg);
+        transform: translateX(-50%); /* Rotation entfernt */
     }
 
     .time-button.selected .time-label {
-        transform: translateX(-50%) rotate(0deg);
-      }
+        transform: translateX(-50%); /* Rotation entfernt */
+    }
 }
-
-
