@@ -37,28 +37,28 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   const holdStartTime = useRef<number | null>(null);
   const wasLongPressed = useRef(false);
 
-  // Berechnet die Farbe basierend auf der Wahrscheinlichkeit
-  const getProbabilityColor = (probability: number) => {
-    // Von weiß nach grün überblenden bei steigender Wahrscheinlichkeit
-    // mit nicht-linearem Übergang für subtilere Farbänderungen
-    
-    // RGB-Werte für Weiß
-    const r1 = 255, g1 = 255, b1 = 255;
-    
-    // RGB-Werte für Grün (2ecc71)
-    const r2 = 46, g2 = 204, b2 = 113;
-    
-    // Nicht-lineare Interpolation mit quadratischer Funktion
-    // Bewirkt einen sanfteren Übergang bei niedrigen Werten
-    const factor = Math.pow(probability / 100, 2);
-    
-    const r = Math.round(r1 + (r2 - r1) * factor);
-    const g = Math.round(g1 + (g2 - g1) * factor);
-    const b = Math.round(b1 + (b2 - b1) * factor);
-    
-    return `rgb(${r}, ${g}, ${b})`;
-  };
 
+  const getProbabilityColor = (probability: number) => {
+    // Start‑Hue (Cyan) und End‑Hue (Magenta)
+    const hStart = 170;
+    const hEnd   = 340;
+  
+    // Normierung auf [0…1]
+    const t = Math.max(0, Math.min(probability, 100)) / 100;
+  
+    // Hue linear interpolieren und modulo 360
+    const h = (hStart + (hEnd - hStart) * t) % 360;
+  
+    // Sättigung: mit Exponent 0.2 → sehr schneller Anstieg am Anfang, flacht stark ab
+    const s = Math.pow(t, 0.2) * 100;
+  
+    // Licht: von 100% (Weiß) auf 50% (normaler Farbton) linear
+    const l = 100 - 50 * t;
+  
+    return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`;
+  };
+  
+  
   // Erhöht die Wahrscheinlichkeit für einen Button und reduziert die anderen proportional
   const incrementProbability = (button: keyof CategoryProbabilities) => {
     setProbabilities(prev => {
@@ -128,7 +128,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       // Starte das Intervall zum kontinuierlichen Inkrementieren
       incrementInterval.current = setInterval(() => {
         incrementProbability(activeButton);
-      }, 100); // Alle 100ms aktualisieren für eine flüssige Animation
+      }, 20); // Alle 100ms aktualisieren für eine flüssige Animation
     }
     
     return () => {
@@ -224,21 +224,25 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           newProbabilities[button] = 100;
         }
       } else {
-        // Button aktivieren
-        // Sammle aktive Buttons (ohne den Gegensatz-Button)
-        const activeButtons = Object.keys(newProbabilities).filter(
-          key => (newProbabilities[key as keyof CategoryProbabilities] > 0 || key === button) && 
-                 key !== oppositeButton
-        );
-        
-        const equalShare = 100 / activeButtons.length;
-        
-        Object.keys(newProbabilities).forEach(key => {
-          if (activeButtons.includes(key)) {
-            newProbabilities[key as keyof CategoryProbabilities] = equalShare;
-          } else {
-            newProbabilities[key as keyof CategoryProbabilities] = 0;
-          }
+          // Button aktivieren
+          // Sammle alle bisher aktiven Buttons (ohne den Gegenspieler)
+          const activeButtons = (Object.keys(newProbabilities) as Array<keyof CategoryProbabilities>)
+          .filter(key =>
+            newProbabilities[key] > 0 &&
+            key !== oppositeButton
+          );
+
+        // Füge den gerade geklickten Button hinzu, falls noch nicht enthalten
+        if (!activeButtons.includes(button)) {
+          activeButtons.push(button);
+        }
+
+        // Verteile die Gesamtwahrscheinlichkeit gleichmäßig
+        const equalShare = parseFloat((100 / activeButtons.length).toFixed(2));
+        (Object.keys(newProbabilities) as Array<keyof CategoryProbabilities>).forEach(key => {
+          newProbabilities[key] = activeButtons.includes(key)
+            ? equalShare
+            : 0;
         });
       }
       
@@ -268,7 +272,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       <span className="summary-text">
         {activeCategories.map(([key, value], index) => {
           // Berechne Schriftgröße zwischen 13px und 17px basierend auf der Wahrscheinlichkeit
-          // für einen subtileren Unterschied
           const fontSize = 13 + (value / 100) * 4;
           
           return (
@@ -282,7 +285,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               }}
             >
               {key}
-              {index < activeCategories.length - 1 ? ', ' : ''}
+              {index < activeCategories.length - 1 ? '\u00A0|\u00A0' : ''}
             </span>
           );
         })}
