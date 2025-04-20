@@ -180,7 +180,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovered(true);
-    }, 50);
+    }, 60);
   };
 
   const handleMouseLeave = () => {
