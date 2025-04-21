@@ -26,6 +26,16 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     isPositive ? 'wisdom' : 'wisdom'
   } ${isSelected ? 'selected' : ''}`;
 
+  // Handle double click to set this button to 100%
+  const handleDoubleClick = () => {
+    // Emit custom event that FilterControls can listen for
+    const event = new CustomEvent('categoryDoubleClick', { 
+      detail: { category },
+      bubbles: true // This ensures the event bubbles up the DOM tree
+    });
+    document.dispatchEvent(event);
+  };
+
   return (
     <button
       className={buttonClassName}
@@ -35,6 +45,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       }}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
+      onDoubleClick={handleDoubleClick} // Add native double-click handler
     >
       {category}
     </button>
