@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CommentThread from './CommentThread.tsx';
-import FilterControls from '../shared/FilterControls.tsx';
 import { Comment, Filters } from '../../types.ts';
 import { getCommentsForContent } from '../../utils/mockData.js';
 
@@ -234,14 +233,6 @@ const CommentFeed: React.FC<CommentFeedProps> = ({
 
   return (
     <div className="comment-feed" style={{ maxHeight }}>
-      <div className="comment-feed-header">
-        <h3>Kommentare</h3>
-        <FilterControls 
-          onFilterChange={handleFilterChange}
-          filters={filters}
-        />
-      </div>
-
       {standalone && (
         <form className="comment-form" onSubmit={handleCommentSubmit}>
           <textarea

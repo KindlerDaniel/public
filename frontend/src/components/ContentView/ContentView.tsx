@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Feed from './Feed.tsx';
 import ContentDisplay from './ContentDisplay.tsx';
 import Comments from './Comments.tsx';
-import FilterControls from '../shared/FilterControls.tsx';
+import FilterControls from '../shared/FilterControls';
 import ModeSelector from '../shared/ModeSelector.tsx';
 import { Filters } from '../../types.ts';
 
@@ -83,14 +83,7 @@ const ContentView: React.FC<ContentViewProps> = ({
               Show Feed
             </button>
           )}
-          
-          <div className="filter-controls-container">
-            <FilterControls 
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
-          </div>
-          
+                    
           <ContentDisplay 
             contentId={contentId} 
             onViewComments={handleToggleComments}

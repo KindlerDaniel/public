@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BubbleContent } from '../../types.ts';
 import { getBubbleCoordinates } from '../../utils/mockData.js';
 import TimeSelector, { TimeRange } from './TimeSelector.tsx';
-import FilterControls, { CategoryProbabilities } from '../shared//FilterControls.tsx';
+import FilterControls from '../shared/FilterControls/index.tsx';
+import { CategoryProbabilities } from '../shared/FilterControls/types.ts';
 
 interface BubbleViewProps {
   onContentSelect?: (contentId: string) => void;
