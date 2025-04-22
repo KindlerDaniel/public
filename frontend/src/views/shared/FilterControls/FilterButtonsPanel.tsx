@@ -9,6 +9,7 @@ interface FilterButtonsPanelProps {
   getProbabilityColor: (probability: number) => string;
   incrementProbability: (button: CategoryKey) => void;
   handleClick: (button: CategoryKey) => void;
+  setCategoryTo100Percent: (button: CategoryKey) => void; // New prop
   onMouseLeave: () => void;
 }
 
@@ -17,6 +18,7 @@ const FilterButtonsPanel: React.FC<FilterButtonsPanelProps> = ({
   getProbabilityColor,
   incrementProbability,
   handleClick,
+  setCategoryTo100Percent, // New prop
   onMouseLeave
 }) => {
   // Define the category pairs
@@ -37,6 +39,7 @@ const FilterButtonsPanel: React.FC<FilterButtonsPanelProps> = ({
           getProbabilityColor={getProbabilityColor}
           incrementProbability={incrementProbability}
           handleClick={handleClick}
+          setCategoryTo100Percent={setCategoryTo100Percent} // Pass down the new function
         />
       ))}
     </div>

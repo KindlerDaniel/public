@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import BubbleView from './components/BubbleView/BubbleView.tsx';
-import CommentView from './components/CommentView/CommentView.tsx';
-import ContentView from './components/ContentView/ContentView.tsx';
+import BubbleView from './views/BubbleView/BubbleView.tsx';
+import CommentView from './views/CommentView/CommentView.tsx';
+import ContentView from './views/ContentView/ContentView.tsx';
 import { AppProvider } from './context/AppContext.js';
 import { ViewProvider, ViewTypes, useViewContext } from './context/ViewContext.js';
-import Sidebar from './components/Sidebar.tsx';
+import Sidebar from './Sidebar.tsx';
 
 function App() {
   // Anstatt lokalen Zustand zu verwalten, verwenden wir den ViewContext

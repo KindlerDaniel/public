@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { TimeRange } from './TimeSelector.tsx';
+import { TimeRange } from '../shared/TimeSelector.tsx';
 import FilterControls from '../shared/FilterControls/index.tsx';
-import TimeSelector from './TimeSelector.tsx';
+import TimeSelector from '../shared/TimeSelector.tsx';
 import BubbleCanvas from './BubbleCanvas.tsx';
 import { useBubbleState } from './useBubbleState.tsx';
 import { setupBubbleEventHandlers } from './BubbleEventHandlers.ts';

@@ -11,6 +11,7 @@ interface CategoryButtonGroupProps {
   getProbabilityColor: (probability: number) => string;
   incrementProbability: (button: CategoryKey) => void;
   handleClick: (button: CategoryKey) => void;
+  setCategoryTo100Percent: (button: CategoryKey) => void; // New prop
 }
 
 const CategoryButtonGroup: React.FC<CategoryButtonGroupProps> = ({
@@ -19,12 +20,17 @@ const CategoryButtonGroup: React.FC<CategoryButtonGroupProps> = ({
   probabilities,
   getProbabilityColor,
   incrementProbability,
-  handleClick
+  handleClick,
+  setCategoryTo100Percent // New prop
 }) => {
   const [activeButton, setActiveButton] = useState<CategoryKey | null>(null);
   const incrementInterval = useRef<NodeJS.Timeout | null>(null);
   const holdStartTime = useRef<number | null>(null);
   const wasLongPressed = useRef(false);
+  
+  // Double-click handling
+  const lastClickTime = useRef<{ [key in CategoryKey]?: number }>({});
+  const doubleClickTimeout = 300; // ms window for double-click
 
   // Effect for handling the increment interval
   useEffect(() => {
@@ -57,17 +63,31 @@ const CategoryButtonGroup: React.FC<CategoryButtonGroupProps> = ({
     setActiveButton(button);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (button: CategoryKey) => {
+    const now = Date.now();
     const wasHeldLongEnough = 
       holdStartTime.current && 
-      (Date.now() - holdStartTime.current > 250); // Longer than 250ms = hold
+      (now - holdStartTime.current > 250); // Longer than 250ms = hold
     
-    if (wasHeldLongEnough) {
+    // Check for double-click
+    const lastClick = lastClickTime.current[button] || 0;
+    const isDoubleClick = now - lastClick < doubleClickTimeout;
+    
+    if (isDoubleClick) {
+      // Double-click detected - set this button to 100%
+      setCategoryTo100Percent(button);
+      // Reset last click time to avoid triple-click detection
+      lastClickTime.current[button] = 0;
+    } else if (wasHeldLongEnough) {
       // It was a long press, don't process click
       wasLongPressed.current = true;
+      // Update last click time
+      lastClickTime.current[button] = now;
     } else if (activeButton && !wasLongPressed.current) {
       // It was a short click, execute handleClick
       handleClick(activeButton);
+      // Update last click time
+      lastClickTime.current[button] = now;
     }
     
     holdStartTime.current = null;
@@ -88,7 +108,7 @@ const CategoryButtonGroup: React.FC<CategoryButtonGroupProps> = ({
         probability={probabilities[positiveCategory]}
         getColor={getProbabilityColor}
         onMouseDown={() => handleMouseDown(positiveCategory)}
-        onMouseUp={handleMouseUp}
+        onMouseUp={() => handleMouseUp(positiveCategory)}
       />
       <CategoryButton
         category={negativeCategory}
@@ -97,7 +117,7 @@ const CategoryButtonGroup: React.FC<CategoryButtonGroupProps> = ({
         probability={probabilities[negativeCategory]}
         getColor={getProbabilityColor}
         onMouseDown={() => handleMouseDown(negativeCategory)}
-        onMouseUp={handleMouseUp}
+        onMouseUp={() => handleMouseUp(negativeCategory)}
       />
     </div>
   );
