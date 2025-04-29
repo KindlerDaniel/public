@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { BubbleContent } from '../../types.ts';
+import { BubbleContent } from '../../../types.ts';
 import { transform3D } from './BubbleUtils.ts';
 
 export interface BubbleEventHandlersProps {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCommentsForContent } from '../../utils/mockData';
+import { getCommentsForContent } from '../../../utils/mockData';
 import RatingControls from '../shared/RatingControls.tsx';
 
 interface Comment {

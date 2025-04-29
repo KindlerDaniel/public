@@ -1,4 +1,4 @@
-import { BubbleContent } from '../../types.ts';
+import { BubbleContent } from '../../../types.ts';
 
 export interface Point3D {
   x: number;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ContentItem } from '../../types.ts';
+import { ContentItem } from '../../../types.ts';
 import CommentFeed from './CommentFeed.tsx';
 import ContentDisplay from '../ContentView/ContentDisplay.tsx';
 import Feed from '../ContentView/Feed.tsx';
 import ModeSelector from '../shared/ModeSelector.tsx';
-import { getContentById } from '../../utils/mockData.js';
+import { getContentById } from '../../../utils/mockData.js';
 
 interface CommentViewProps {
   contentId?: string;

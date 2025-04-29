@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { BubbleContent } from '../../types.ts';
-import { getBubbleCoordinates } from '../../utils/mockData.js';
+import { BubbleContent } from '../../../types.ts';
+import { getBubbleCoordinates } from '../../../utils/mockData.js';
 import { determineContentType } from './BubbleUtils.ts';
 import { CategoryProbabilities } from '../shared/FilterControls/types.ts';
 import { TimeRange } from '../shared/TimeSelector.tsx';

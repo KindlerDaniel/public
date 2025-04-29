@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { BubbleContent } from '../../types.ts';
+import { BubbleContent } from '../../../types.ts';
 import { sortContentsByDepth, transform3D, getContentTypeColor } from './BubbleUtils.ts';
 
 interface BubbleCanvasProps {

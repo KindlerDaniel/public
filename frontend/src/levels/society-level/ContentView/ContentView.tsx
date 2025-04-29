@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import Feed from './Feed.tsx';
 import ContentDisplay from './ContentDisplay.tsx';
 import Comments from './Comments.tsx';
-import FilterControls from '../shared/FilterControls';
 import ModeSelector from '../shared/ModeSelector.tsx';
-import { Filters } from '../../types.ts';
+import { Filters } from '../../../types.ts';
 
 interface ContentViewProps {
   contentId?: string;
