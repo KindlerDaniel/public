@@ -72,12 +72,14 @@
   align-items: center;
 }
 
-/* Neuer Style für die SVG-Icons */
+/* Neuer Style für die Icon-Container */
 .sidebar-icon-img {
   width: 40px; /* Größere Icons */
   height: 40px; /* Größere Icons */
-  display: block;
-  fill: currentColor; /* Ermöglicht das Erben der Textfarbe */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Größere Fallback-Emojis */
   transition: transform 0.2s ease, filter 0.2s ease;
   filter: brightness(1.2); /* Macht die Icons heller */
   border-radius: 20%; /* Abgerundete Icons */

@@ -1,0 +1,80 @@
+/* Layout-spezifische Styles */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .app-content {
+    flex: 1;
+    margin-left: 50px; /* Angepasst an die Sidebar-Breite */
+    overflow-x: hidden;
+    width: calc(100% - 50px); /* Angepasst an die Sidebar-Breite */
+  }
+  
+  /* Placeholder-Views für noch nicht implementierte Ansichten */
+  .placeholder-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+    color: #333;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .placeholder-view h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #3498db;
+  }
+  
+  .placeholder-view p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .placeholder-icon {
+    font-size: 6rem;
+    margin-top: 2rem;
+    color: #3498db;
+    opacity: 0.7;
+  }
+  
+  /* Fehlermeldungs-Ansicht */
+  .error-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffebe6;
+    color: #e74c3c;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .error-view h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .error-view button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .error-view button:hover {
+    background-color: #2980b9;
+  }
