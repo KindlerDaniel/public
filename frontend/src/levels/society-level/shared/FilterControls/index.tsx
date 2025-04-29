@@ -1,4 +1,4 @@
-// Main container component that orchestrates everything
+/// Main container component that orchestrates everything
 
 import React, { useState, useEffect } from 'react';
 import { CategoryProbabilities, CategoryKey } from './types.ts';
@@ -36,16 +36,20 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onProbabilityChange }) 
     onProbabilityChange(probabilities);
   }, [probabilities, onProbabilityChange]);
 
+  // Function to set a single category to 100% and all others to 0%
+  const setCategoryTo100Percent = (button: CategoryKey) => {
+    const newProbabilities = { ...initialProbabilities };
+    Object.keys(newProbabilities).forEach(key => {
+      newProbabilities[key as CategoryKey] = key === button ? 100 : 0;
+    });
+    setProbabilities(newProbabilities);
+  };
+
   // Listen for the custom double-click event
   useEffect(() => {
     const handleCategoryDoubleClick = (event: any) => {
       const { category } = event.detail;
-      // Set the selected category to 100% and all others to 0%
-      const newProbabilities = { ...initialProbabilities };
-      Object.keys(newProbabilities).forEach(key => {
-        newProbabilities[key as CategoryKey] = key === category ? 100 : 0;
-      });
-      setProbabilities(newProbabilities);
+      setCategoryTo100Percent(category);
     };
 
     // Add the event listener
@@ -76,13 +80,13 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onProbabilityChange }) 
         />
       ) : (
         <FilterButtonsPanel 
-            probabilities={probabilities}
-            getProbabilityColor={getProbabilityColor}
-            incrementProbability={incrementProbability}
-            handleClick={handleClick}
-            onMouseLeave={handleMouseLeave} setCategoryTo100Percent={function (button: CategoryKey): void {
-              throw new Error('Function not implemented.');
-            } }        />
+          probabilities={probabilities}
+          getProbabilityColor={getProbabilityColor}
+          incrementProbability={incrementProbability}
+          handleClick={handleClick}
+          setCategoryTo100Percent={setCategoryTo100Percent}
+          onMouseLeave={handleMouseLeave}
+        />
       )}
     </div>
   );
