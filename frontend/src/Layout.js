@@ -4,18 +4,18 @@ import { useViewContext, ViewTypes } from './context/ViewContext.js';
 import './layout.css';
 
 // Society Level
-import BubbleView from './levels/society-level/BubbleView/BubbleView.tsx';
-import ContentView from './levels/society-level/ContentView/ContentView.tsx';
-import CommentView from './levels/society-level/CommentView/CommentView.tsx';
+import BubbleView from './levels/1SocietyLevel/BubbleView/BubbleView.tsx';
+import ContentView from './levels/1SocietyLevel/ContentView/ContentView.tsx';
+import CommentView from './levels/1SocietyLevel/CommentView/CommentView.tsx';
 
 // Group Level
-import GroupLevelView from './levels/group-level/GroupLevelView.js';
+import GroupLevelView from './levels/2GroupLevel/GroupLevelView.js';
 
 // Friend Level (Chat)
-import FriendLevelView from './levels/friend-level/FriendLevelView.js';
+import FriendLevelView from './levels/3FriendLevel/FriendLevelView.js';
 
 // Individual Level
-import IndividualLevelView from './levels/individual-level/IndividualLevelView.js';
+import IndividualLevelView from './levels/4IndividualLevel/IndividualLevelView.js';
 
 const Layout = () => {
   const [currentLevel, setCurrentLevel] = useState('society');

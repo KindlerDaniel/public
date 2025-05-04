@@ -1,7 +1,7 @@
 /* BubbleView spezifische Styles */
-.bubble-view-container {
+.bubble-view-container, .bubble-view {
   width: 100%;
-  height: calc(100vh - 40px);
+  height: 100vh;
   position: relative;
   overflow: hidden;
 }
@@ -9,23 +9,16 @@
 .bubble-view {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  /* Seichter Farbverlauf von hellem zu dunklerem Blaugrau */
-  background: linear-gradient(to bottom, #d2dce6 0%, #1b393a 100%);
+  background: linear-gradient(to bottom, #d2dce6, #1b393a);
 }
 
 .bubble-container {
   flex: 1;
   position: relative;
-  overflow: visible; /* Erlaubt das Darstellen der gesamten Kugel, auch wenn sie über den Container hinausragt */
-  width: 100%;
-  height: 100%;
+  overflow: visible; /* Erlaubt das Darstellen der gesamten Kugel */
   display: flex;
-  justify-content: center; /* Kugel wird im Canvas zentriert, die Verschiebung erfolgt im JavaScript */
-  align-items: center; /* Zentriert vertikal */
+  justify-content: center;
+  align-items: center;
 }
 
 .bubble-canvas {
@@ -39,7 +32,7 @@
   cursor: grabbing;
 }
 
-/* Container für Steuerelemente (Filter und Zeitselektor) */
+/* Container für Steuerelemente */
 .controls-container {
   position: absolute;
   bottom: 20px;
@@ -47,12 +40,11 @@
   z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Größerer Abstand zwischen den Komponenten */
+  gap: 30px;
   max-width: 400px;
-  align-items: flex-end; /* Rechtsbündige Ausrichtung */
+  align-items: flex-end;
 }
 
-/* Kategorie- und Zeitfilter-Styles */
 .category-time-controls {
   background-color: white;
   border-radius: 8px;
@@ -63,8 +55,7 @@
   gap: 15px;
 }
 
-.category-filters h3, 
-.time-filter h3 {
+.category-time-controls h3 {
   font-size: 14px;
   margin-bottom: 8px;
   font-weight: 600;
@@ -86,7 +77,6 @@
 
 .filter-options input[type="checkbox"] {
   margin-right: 8px;
-  width: auto;
 }
 
 .time-filter select {
@@ -94,8 +84,8 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
   background-color: white;
+  font-size: 14px;
 }
 
 /* Content-Vorschau für Hover-Effekte */
@@ -119,9 +109,8 @@
 
 /* Animation für Punkte */
 @keyframes pulse {
-  0% { transform: scale(1); }
+  0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
 }
 
 .pulse {
@@ -136,11 +125,11 @@
     gap: 10px;
     max-width: 300px;
   }
-  
+
   .category-time-controls {
     padding: 10px;
   }
-  
+
   .filter-options label {
     font-size: 12px;
   }
