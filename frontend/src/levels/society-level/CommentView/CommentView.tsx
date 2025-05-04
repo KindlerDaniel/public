@@ -91,11 +91,6 @@ const CommentView: React.FC<CommentViewProps> = ({ contentId, onSwitchToContentV
     setCurrentMode(mode);
   };
 
-  const handleAddToHistory = (threadId: string) => {
-    setCommentHistory(prev => [...prev, threadId]);
-    setCurrentThreadId(threadId);
-  };
-
   const renderCommentGraph = () => {
     return (
       <div className="comment-graph">

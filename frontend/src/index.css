@@ -13,31 +13,25 @@
  * Design-Tokens und CSS-Variablen
  * Muss als erstes geladen werden, damit andere Dateien die Variablen verwenden können
  */
- @import './somecssfiles/variables.css';
+ @import './styles/variables.css';
 
  /* 
   * Gemeinsame Basis-Styles und Utility-Klassen
   * Enthält Reset-Styles, Typografie-Grundlagen und Layout-Utilities
   */
- @import './somecssfiles/common.css';
+ @import './styles/common.css';
  
  /* 
   * Komponenten-spezifische Styles
   * Enthält Styles für wiederverwendbare Komponenten wie Cards, Buttons, etc.
   */
- @import './somecssfiles/components.css';
+ @import './styles/components.css';
  
  /* 
   * Header und Footer Styles
   * Enthält alle Styles für Header und Footer der Anwendung
   */
- @import './somecssfiles/header-footer.css';
- 
- /* 
-  * Ansichtsspezifische Styles
-  * Enthält Styles für die drei Hauptansichten der Anwendung
-  */
- @import './levels/society-level/BubbleView/bubble-view.css';
+ @import './styles/header-footer.css';
  
  /* 
   * Globale Anwendungsstile 

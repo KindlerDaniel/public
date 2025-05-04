@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import './BubbleView.css';
 import { TimeRange } from '../shared/TimeSelector.tsx';
 import FilterControls from '../shared/FilterControls/index.tsx';
 import TimeSelector from '../shared/TimeSelector.tsx';
