@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './levels/Sidebar.tsx';
 import { useViewContext, ViewTypes } from './context/ViewContext.js';
-import './styles/layout.css';
+import './layout.css';
 
 // Society Level
 import BubbleView from './levels/society-level/BubbleView/BubbleView.tsx';

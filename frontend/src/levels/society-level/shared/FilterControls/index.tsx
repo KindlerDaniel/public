@@ -5,7 +5,7 @@ import { CategoryProbabilities, CategoryKey } from './types.ts';
 import FilterSummary from './FilterSummary.tsx';
 import FilterButtonsPanel from './FilterButtonsPanel.tsx';
 import { useFilterLogic } from './hooks/useFilterLogic.ts';
-import '../../../../styles/filter-controls.css';
+import './filter-controls.css';
 
 interface FilterControlsProps {
   onProbabilityChange: (probabilities: CategoryProbabilities) => void;

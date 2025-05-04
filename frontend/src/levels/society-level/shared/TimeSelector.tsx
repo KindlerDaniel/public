@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../../styles/time-selector.css';
+import './TimeSelector.css';
 
 export type TimeRange = 'all' | '5years' | 'year' | 'month' | 'week' | 'day' | 'hour';
 

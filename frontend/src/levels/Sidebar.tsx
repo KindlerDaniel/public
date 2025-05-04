@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/sidebar.css';
+import './Sidebar.css';
 
 interface SidebarProps {
   currentMode: string;
