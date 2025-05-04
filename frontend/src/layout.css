@@ -45,36 +45,3 @@
   color: #3498db;
   opacity: 0.7;
 }
-
-/* Fehlermeldungs-Ansicht */
-.error-view {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #ffebe6;
-  color: #e74c3c;
-  text-align: center;
-  padding: 2rem;
-}
-
-.error-view h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.error-view button {
-  padding: 0.75rem 1.5rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.error-view button:hover {
-  background-color: #2980b9;
-}
