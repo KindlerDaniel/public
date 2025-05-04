@@ -55,13 +55,6 @@
   gap: 15px;
 }
 
-.category-time-controls h3 {
-  font-size: 14px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
-}
-
 .filter-options {
   display: flex;
   flex-direction: column;
@@ -88,21 +81,6 @@
   font-size: 14px;
 }
 
-/* Content-Vorschau für Hover-Effekte */
-.content-hover-info {
-  position: absolute;
-  background-color: white;
-  border-radius: 4px;
-  padding: 8px 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  font-size: 14px;
-  pointer-events: none;
-  z-index: 100;
-  max-width: 200px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
 .content-hover-info.visible {
   opacity: 1;
 }
@@ -115,22 +93,4 @@
 
 .pulse {
   animation: pulse 2s infinite;
-}
-
-/* Anpassungen für mobile Geräte */
-@media (max-width: 768px) {
-  .controls-container {
-    bottom: 10px;
-    right: 10px;
-    gap: 10px;
-    max-width: 300px;
-  }
-
-  .category-time-controls {
-    padding: 10px;
-  }
-
-  .filter-options label {
-    font-size: 12px;
-  }
 }
