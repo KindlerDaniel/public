@@ -22,7 +22,7 @@ const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
   feedAreaVisible = false
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [, setCanvasSize] = useState({ width: 0, height: 0 });
   const animationFrameRef = useRef<number | null>(null);
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
