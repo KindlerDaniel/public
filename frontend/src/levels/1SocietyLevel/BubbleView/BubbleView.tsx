@@ -69,10 +69,15 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
 
   return (
     <div className="bubble-view" ref={containerRef}>
-      {/* Feed-Bereich */}
-      <FeedArea isVisible={showFeedArea} />
+      {/* Feed-Bereich mit Resize-Funktion */}
+      <FeedArea 
+        isVisible={showFeedArea} 
+        defaultWidth={400}
+        minWidth={250}
+        maxWidth={600}
+      />
       
-      <div className="bubble-container">
+      <div className={`bubble-container ${showFeedArea ? 'shifted-content' : ''}`}>
         <BubbleCanvas
           contents={contents}
           zoom={zoom}
@@ -84,13 +89,13 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       
       {/* Feed-Button */}
       <button 
-        className="search-feed-button"
+        className={`search-feed-button ${showFeedArea ? 'shifted-content' : ''}`}
         onClick={toggleFeedArea}
       >
-        Search | Feed
+        {showFeedArea ? 'Hide Feed' : 'Search | Feed'}
       </button>
       
-      <div className="controls-container">
+      <div className={`controls-container ${showFeedArea ? 'shifted-content' : ''}`}>
         {/* Neue wahrscheinlichkeitsbasierte Filter-Kontrollen */}
         <FilterControls
           onProbabilityChange={handleProbabilityChange}
