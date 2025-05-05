@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { CategoryProbabilities, CategoryKey } from './types.ts';
 import FilterSummary from './FilterSummary.tsx';
 import FilterButtonsPanel from './FilterButtonsPanel.tsx';
-import { useFilterLogic } from './hooks/useFilterLogic.ts';
+import { useFilterLogic } from './useFilterLogic.ts';
 import './FilterControls.css';
 
 interface FilterControlsProps {
