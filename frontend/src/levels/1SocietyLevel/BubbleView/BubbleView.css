@@ -32,6 +32,36 @@
   cursor: grabbing;
 }
 
+/* Search-Feed-Button */
+.search-feed-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 15px;
+  cursor: pointer;
+  z-index: 50;
+  user-select: none;
+  pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.search-feed-button:hover {
+  transform: translateY(-3px);
+  background-color: transparent;
+  outline: none;
+}
+
+.search-feed-button:active,
+.search-feed-button:focus {
+  background-color: transparent;
+  outline: none;
+}
+
 /* Container für Steuerelemente */
 .controls-container {
   position: absolute;

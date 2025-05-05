@@ -1,9 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './BubbleView.css';
 import { TimeRange } from '../shared/TimeSelector.tsx';
 import FilterControls from '../shared/FilterControls/FilterControls.tsx';
 import TimeSelector from '../shared/TimeSelector.tsx';
 import BubbleCanvas from './BubbleCanvas.tsx';
+import FeedArea from '../shared/FeedArea/FeedArea.tsx';
 import { useBubbleState } from './useBubbleState.tsx';
 import { setupBubbleEventHandlers } from './BubbleEventHandlers.ts';
 import { CategoryProbabilities } from '../shared/FilterControls/types.ts';
@@ -15,6 +16,7 @@ interface BubbleViewProps {
 const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [showFeedArea, setShowFeedArea] = useState<boolean>(false);
   
   const [
     { zoom, rotation, isDragging, lastMousePos, contents, selectedTimeRange },
@@ -60,8 +62,16 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     setSelectedTimeRange(timeRange);
   };
 
+  // Toggle für den Feed-Bereich
+  const toggleFeedArea = () => {
+    setShowFeedArea(prev => !prev);
+  };
+
   return (
     <div className="bubble-view" ref={containerRef}>
+      {/* Feed-Bereich */}
+      <FeedArea isVisible={showFeedArea} />
+      
       <div className="bubble-container">
         <BubbleCanvas
           contents={contents}
@@ -71,6 +81,14 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
           onContentSelect={onContentSelect}
         />
       </div>
+      
+      {/* Feed-Button */}
+      <button 
+        className="search-feed-button"
+        onClick={toggleFeedArea}
+      >
+        Search | Feed
+      </button>
       
       <div className="controls-container">
         {/* Neue wahrscheinlichkeitsbasierte Filter-Kontrollen */}
