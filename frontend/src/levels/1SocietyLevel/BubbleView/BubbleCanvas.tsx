@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { BubbleContent } from '../../../types.ts';
 import { sortContentsByDepth, transform3D, getContentTypeColor } from './BubbleUtils.ts';
 
@@ -23,45 +23,34 @@ const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const animationFrameRef = useRef<number | null>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Handle canvas resizing
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const handleResize = () => {
+  // Debounced resize handler to prevent too many resize events
+  const handleResize = useCallback(() => {
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+    
+    resizeTimeoutRef.current = setTimeout(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
       const container = canvas.parentElement;
       if (!container) return;
       
       const { width, height } = container.getBoundingClientRect();
       
-      // Set the logical size of the canvas
+      // Set canvas size with a small delay to prevent layout thrashing
       canvas.width = width;
       canvas.height = height;
       
       setCanvasSize({ width, height });
-    };
+    }, 50); // 50ms debounce
+  }, []);
 
-    // Initial resize
-    handleResize();
-    
-    // Set up resize observer to handle container size changes
-    const resizeObserver = new ResizeObserver(handleResize);
-    if (canvas.parentElement) {
-      resizeObserver.observe(canvas.parentElement);
-    }
-
-    // Also listen to window resize
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [feedAreaWidth, feedAreaVisible]);
-
-  // Draw the bubble and content
-  useEffect(() => {
+  // Draw function that will be called in the animation frame
+  const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -139,7 +128,53 @@ const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
         }
       }
     });
-  }, [contents, zoom, rotation, canvasSize]);
+    
+    // Schedule next frame
+    animationFrameRef.current = requestAnimationFrame(drawCanvas);
+  }, [contents, zoom, rotation]);
+
+  // Handle canvas resizing with ResizeObserver
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    // Initial resize
+    handleResize();
+    
+    // Set up a single ResizeObserver for the container
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    
+    if (canvas.parentElement) {
+      resizeObserver.observe(canvas.parentElement);
+    }
+    
+    // Start the animation loop
+    animationFrameRef.current = requestAnimationFrame(drawCanvas);
+    
+    // Also listen to window resize
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      // Clean up
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+      
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [handleResize, drawCanvas]);
+
+  // Re-render on feed area width changes
+  useEffect(() => {
+    handleResize();
+  }, [feedAreaWidth, feedAreaVisible, handleResize]);
 
   return (
     <canvas 
