@@ -7,6 +7,7 @@ interface FeedAreaProps {
   minWidth?: number;
   maxWidth?: number;
   onWidthChange?: (width: number) => void;
+  onClose?: () => void;
 }
 
 const FeedArea: React.FC<FeedAreaProps> = ({ 
@@ -14,7 +15,8 @@ const FeedArea: React.FC<FeedAreaProps> = ({
   defaultWidth = 400,
   minWidth = 250,
   maxWidth = 600,
-  onWidthChange
+  onWidthChange,
+  onClose
 }) => {
   const [width, setWidth] = useState<number>(defaultWidth);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -74,6 +76,13 @@ const FeedArea: React.FC<FeedAreaProps> = ({
     setIsDragging(true);
   };
 
+  // Handler für den Schließen-Button
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   if (!isVisible) {
     return null;
   }
@@ -84,6 +93,11 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       ref={feedAreaRef}
       style={{ width: `${width}px` }}
     >
+      {/* Header ohne Schließen-Button */}
+      <div className="feed-area-header">
+        <h3>Feed</h3>
+      </div>
+      
       <div className="feed-area-content">
         {/* Feed content will be here */}
         <p className="feed-placeholder">Feed-Inhalte werden hier angezeigt</p>
@@ -98,7 +112,17 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       </div>
       
       <div className="feed-area-footer">
-        <p>Feed-Steuerelemente</p>
+        <div className="feed-controls">
+          <p>Feed-Steuerelemente</p>
+          {/* Schließen-Button unten rechts */}
+          <button 
+            className="feed-area-close-button"
+            onClick={handleClose}
+            title="Feed schließen"
+          >
+            ×
+          </button>
+        </div>
       </div>
     </div>
   );

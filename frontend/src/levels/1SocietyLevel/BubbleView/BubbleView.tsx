@@ -90,20 +90,26 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     setSelectedTimeRange(timeRange);
   };
 
-  // Toggle for the feed area
-  const toggleFeedArea = () => {
-    setShowFeedArea(prev => !prev);
+  // Funktion zum Öffnen der FeedArea
+  const openFeedArea = () => {
+    setShowFeedArea(true);
+  };
+
+  // Funktion zum Schließen der FeedArea
+  const closeFeedArea = () => {
+    setShowFeedArea(false);
   };
 
   return (
     <div className="bubble-view" ref={containerRef}>
-      {/* Feed area with resize function */}
+      {/* Feed area mit Schließen-Funktion */}
       <FeedArea 
         isVisible={showFeedArea} 
         defaultWidth={400}
         minWidth={250}
         maxWidth={600}
         onWidthChange={handleFeedWidthChange}
+        onClose={closeFeedArea} // Neue Prop zum Schließen
       />
       
       <div 
@@ -128,13 +134,16 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         />
       </div>
       
-      {/* Feed button */}
+      {/* Button nur zum Öffnen des Feeds */}
       <button 
         className="search-feed-button"
-        onClick={toggleFeedArea}
-        style={{ marginLeft: feedWidth + 'px' }}
+        onClick={openFeedArea}
+        style={{ 
+          marginLeft: feedWidth + 'px',
+          display: showFeedArea ? 'none' : 'block' // Ausblenden, wenn Feed geöffnet ist
+        }}
       >
-        {showFeedArea ? 'Hide Feed' : 'Search | Feed'}
+        Search | Feed
       </button>
       
       <div 
