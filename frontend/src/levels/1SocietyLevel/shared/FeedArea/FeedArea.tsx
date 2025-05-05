@@ -6,31 +6,39 @@ interface FeedAreaProps {
   defaultWidth?: number;
   minWidth?: number;
   maxWidth?: number;
+  onWidthChange?: (width: number) => void;
 }
 
 const FeedArea: React.FC<FeedAreaProps> = ({ 
   isVisible, 
   defaultWidth = 400,
   minWidth = 250,
-  maxWidth = 600
+  maxWidth = 600,
+  onWidthChange
 }) => {
   const [width, setWidth] = useState<number>(defaultWidth);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const feedAreaRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
 
-  // Effekt zum Aktualisieren der CSS-Variable beim Ändern der Sichtbarkeit
+  // Update width when visibility changes
   useEffect(() => {
     if (isVisible) {
-      // Sofort beim Einblenden die Standard-Breite setzen
-      document.documentElement.style.setProperty('--feed-area-width', `${defaultWidth}px`);
+      // When showing, use saved width
+      document.documentElement.style.setProperty('--feed-area-width', `${width}px`);
+      if (onWidthChange) {
+        onWidthChange(width);
+      }
     } else {
-      // Beim Ausblenden auf 0 setzen
+      // When hiding, set width to 0
       document.documentElement.style.setProperty('--feed-area-width', '0px');
+      if (onWidthChange) {
+        onWidthChange(0);
+      }
     }
-  }, [isVisible, defaultWidth]);
+  }, [isVisible, width, onWidthChange]);
 
-  // Effekt für das Drag-Handling
+  // Effect for drag handling
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging && feedAreaRef.current) {
@@ -39,6 +47,9 @@ const FeedArea: React.FC<FeedAreaProps> = ({
         if (newWidth >= minWidth && newWidth <= maxWidth) {
           setWidth(newWidth);
           document.documentElement.style.setProperty('--feed-area-width', `${newWidth}px`);
+          if (onWidthChange) {
+            onWidthChange(newWidth);
+          }
         }
       }
     };
@@ -56,7 +67,7 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, minWidth, maxWidth]);
+  }, [isDragging, minWidth, maxWidth, onWidthChange]);
 
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -74,7 +85,7 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       style={{ width: `${width}px` }}
     >
       <div className="feed-area-content">
-        {/* Hier werden später die Feed-Inhalte angezeigt */}
+        {/* Feed content will be here */}
         <p className="feed-placeholder">Feed-Inhalte werden hier angezeigt</p>
       </div>
       
