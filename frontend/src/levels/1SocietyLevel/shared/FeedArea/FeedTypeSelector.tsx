@@ -1,7 +1,7 @@
 import React from 'react';
 import './FeedTypeSelector.css';
 
-export type FeedType = 'trending' | 'newest' | 'beauty' | 'wisdom' | 'humor';
+export type FeedType = 'search' | 'mine' | 'auto' | 'location' | 'history';
 
 interface FeedTypeSelectorProps {
   selectedType: FeedType;
@@ -10,11 +10,11 @@ interface FeedTypeSelectorProps {
 
 const FeedTypeSelector: React.FC<FeedTypeSelectorProps> = ({ selectedType, onTypeChange }) => {
   const feedTypes: { value: FeedType; label: string }[] = [
-    { value: 'trending', label: 'Trending' },
-    { value: 'newest', label: 'Neueste' },
-    { value: 'beauty', label: 'Schön' },
-    { value: 'wisdom', label: 'Weise' },
-    { value: 'humor', label: 'Lustig' }
+    { value: 'search', label: 'Search' },
+    { value: 'mine', label: 'Mine' },
+    { value: 'auto', label: 'Auto' },
+    { value: 'location', label: 'Location' },
+    { value: 'history', label: 'History' }
   ];
 
   return (
