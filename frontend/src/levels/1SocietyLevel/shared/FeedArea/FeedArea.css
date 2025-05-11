@@ -18,22 +18,7 @@
   overflow: hidden;
 }
 
-/* Header */
-.feed-area-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-  background-color: white;
-  flex-shrink: 0;
-}
-
-.feed-area-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-}
+/* Header entfernt */
 
 @keyframes slideUp {
   from {
@@ -48,6 +33,7 @@
   flex: 1;
   overflow-y: auto;
   background-color: white;
+  padding-top: 0; /* Kein Padding-Top, da der Feed direkt oben beginnt */
 }
 
 /* Scrollbar ausblenden */
@@ -74,16 +60,18 @@
   flex-shrink: 0;
 }
 
-/* Feed-Steuerelemente im Footer */
+/* Feed-Steuerelemente im Footer - horizontal angeordnet */
 .feed-controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Horizontal anstatt vertikal */
+  align-items: center; /* Zentriert auf derselben Höhe */
+  justify-content: space-between;
   gap: 10px;
 }
 
 /* Feed-Type-Controls im Footer */
 .feed-type-controls-footer {
-  width: 100%;
+  flex: 1; /* Nimmt verfügbaren Platz ein */
 }
 
 /* Schließen-Button */
@@ -96,8 +84,9 @@
   color: #666;
   padding: 8px;
   transition: color 0.2s;
-  align-self: flex-end;
-  margin-top: 5px;
+  align-self: center; /* Auf derselben Höhe wie die anderen Buttons */
+  margin: 0; /* Kein zusätzliches Margin */
+  flex-shrink: 0; /* Verhindert das Schrumpfen des Buttons */
 }
 
 .feed-area-close-button:hover {

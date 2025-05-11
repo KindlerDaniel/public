@@ -103,10 +103,7 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       ref={feedAreaRef}
       style={{ width: `${width}px` }}
     >
-      {/* Header ohne Steuerelemente */}
-      <div className="feed-area-header">
-        <h3>Feed</h3>
-      </div>
+      {/* Header entfernt - Feed beginnt direkt oben */}
       
       {/* Content ohne Feed-Typ-Auswahl */}
       <div className="feed-area-content">
@@ -125,7 +122,7 @@ const FeedArea: React.FC<FeedAreaProps> = ({
         <div className="handle-line"></div>
       </div>
       
-      {/* Footer mit Feed-Auswahl und Schließen-Button */}
+      {/* Footer mit Feed-Auswahl und Schließen-Button horizontal */}
       <div className="feed-area-footer">
         <div className="feed-controls">
           {/* Feed-Typ-Auswahl im Footer */}

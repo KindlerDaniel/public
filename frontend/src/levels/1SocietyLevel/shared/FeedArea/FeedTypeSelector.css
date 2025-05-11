@@ -4,7 +4,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 5px 0;
+    padding: 0; /* Kein Padding, da es im Footer enthalten ist */
+    align-items: center; /* Zentriert alle Buttons auf derselben Höhe */
   }
   
   .feed-type-button {
@@ -21,6 +22,10 @@
     min-width: 60px;
     text-align: center;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    height: 36px; /* Feste Höhe für konsistente Darstellung */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .feed-type-button:hover {
@@ -59,6 +64,7 @@
       padding: 6px 12px;
       font-size: 12px;
       min-width: 50px;
+      height: 32px; /* Kleinere Höhe für mobile Geräte */
     }
   }
   
