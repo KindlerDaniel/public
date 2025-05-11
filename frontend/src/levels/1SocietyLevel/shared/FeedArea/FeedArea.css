@@ -15,6 +15,7 @@
   display: flex;
   flex-direction: column;
   animation: slideUp var(--animation-duration) ease-out forwards;
+  overflow: hidden;
 }
 
 /* Header */
@@ -25,6 +26,7 @@
   padding: 15px;
   border-bottom: 1px solid var(--border-color, #e0e0e0);
   background-color: white;
+  flex-shrink: 0;
 }
 
 .feed-area-header h3 {
@@ -35,17 +37,27 @@
 
 @keyframes slideUp {
   from {
-    transform: translateY(100%);
+    transform: translateX(-100%);
   }
   to {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
 .feed-area-content {
   flex: 1;
-  padding: 15px;
   overflow-y: auto;
+  background-color: white;
+}
+
+/* Scrollbar ausblenden */
+.feed-area-content::-webkit-scrollbar {
+  display: none;
+}
+
+.feed-area-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .feed-placeholder {
@@ -56,32 +68,36 @@
 }
 
 .feed-area-footer {
-  padding: 15px;
+  padding: 10px 15px;
   border-top: 1px solid var(--border-color, #e0e0e0);
   background-color: white;
+  flex-shrink: 0;
 }
 
-/* Feed-Steuerelemente mit Schließen-Button */
+/* Feed-Steuerelemente im Footer */
 .feed-controls {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.feed-controls p {
-  margin: 0;
+/* Feed-Type-Controls im Footer */
+.feed-type-controls-footer {
+  width: 100%;
 }
 
 /* Schließen-Button */
 .feed-area-close-button {
   background: transparent;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   cursor: pointer;
   color: #666;
-  padding: 0 8px;
+  padding: 8px;
   transition: color 0.2s;
+  align-self: flex-end;
+  margin-top: 5px;
 }
 
 .feed-area-close-button:hover {
@@ -116,7 +132,6 @@
 }
 
 /* Stil für den verschobenen Hauptinhalt */
-/* Diese Klasse muss an das Haupt-Container-Element angewendet werden */
 .shifted-content {
   transition: margin-left var(--animation-duration) ease-out;
   margin-left: var(--feed-area-width);

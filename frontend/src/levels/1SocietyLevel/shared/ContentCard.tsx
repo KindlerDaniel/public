@@ -1,6 +1,7 @@
 import React from 'react';
 import RatingControls from './RatingControls.tsx';
 import { ContentItem } from '../../../types.ts';
+import './ContentCard.css'; // CSS-Import hinzufügen
 
 interface ContentCardProps {
   content: ContentItem;

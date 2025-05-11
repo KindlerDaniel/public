@@ -3,7 +3,7 @@
   width: 100%;
   height: 100vh;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Keine Scrollbars */
 }
 
 .bubble-view {
@@ -15,7 +15,7 @@
 .bubble-container {
   flex: 1;
   position: relative;
-  overflow: visible; /* Erlaubt das Darstellen der gesamten Kugel */
+  overflow: hidden; /* Keine Scrollbars */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,52 +75,20 @@
   align-items: flex-end;
 }
 
-.category-time-controls {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* Verstecke Scrollbars global in der BubbleView */
+.bubble-view ::-webkit-scrollbar {
+  display: none;
 }
 
-.filter-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.bubble-view {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-.filter-options label {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.filter-options input[type="checkbox"] {
-  margin-right: 8px;
-}
-
-.time-filter select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 14px;
-}
-
-.content-hover-info.visible {
-  opacity: 1;
-}
-
-/* Animation für Punkte */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-.pulse {
-  animation: pulse 2s infinite;
+/* Zusätzliche Überschreibungen */
+.bubble-view *, 
+.bubble-view *:before, 
+.bubble-view *:after {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

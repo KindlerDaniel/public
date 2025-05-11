@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './FeedArea.css';
+import Feed from '../../ContentView/Feed.tsx';
+import FeedTypeSelector, { FeedType } from './FeedTypeSelector.tsx';
 
 interface FeedAreaProps {
   isVisible: boolean;
@@ -8,6 +10,7 @@ interface FeedAreaProps {
   maxWidth?: number;
   onWidthChange?: (width: number) => void;
   onClose?: () => void;
+  onContentSelect?: (contentId: string) => void;
 }
 
 const FeedArea: React.FC<FeedAreaProps> = ({ 
@@ -16,10 +19,12 @@ const FeedArea: React.FC<FeedAreaProps> = ({
   minWidth = 250,
   maxWidth = 600,
   onWidthChange,
-  onClose
+  onClose,
+  onContentSelect
 }) => {
   const [width, setWidth] = useState<number>(defaultWidth);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [selectedFeedType, setSelectedFeedType] = useState<FeedType>('trending');
   const feedAreaRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +88,11 @@ const FeedArea: React.FC<FeedAreaProps> = ({
     }
   };
 
+  // Handler für Feed-Typ-Änderungen
+  const handleFeedTypeChange = (feedType: FeedType) => {
+    setSelectedFeedType(feedType);
+  };
+
   if (!isVisible) {
     return null;
   }
@@ -93,14 +103,18 @@ const FeedArea: React.FC<FeedAreaProps> = ({
       ref={feedAreaRef}
       style={{ width: `${width}px` }}
     >
-      {/* Header ohne Schließen-Button */}
+      {/* Header ohne Steuerelemente */}
       <div className="feed-area-header">
         <h3>Feed</h3>
       </div>
       
+      {/* Content ohne Feed-Typ-Auswahl */}
       <div className="feed-area-content">
-        {/* Feed content will be here */}
-        <p className="feed-placeholder">Feed-Inhalte werden hier angezeigt</p>
+        <Feed 
+          compact={true}
+          onSelectContent={onContentSelect}
+          feedType={selectedFeedType}
+        />
       </div>
       
       <div 
@@ -111,10 +125,16 @@ const FeedArea: React.FC<FeedAreaProps> = ({
         <div className="handle-line"></div>
       </div>
       
+      {/* Footer mit Feed-Auswahl und Schließen-Button */}
       <div className="feed-area-footer">
         <div className="feed-controls">
-          <p>Feed-Steuerelemente</p>
-          {/* Schließen-Button unten rechts */}
+          {/* Feed-Typ-Auswahl im Footer */}
+          <div className="feed-type-controls-footer">
+            <FeedTypeSelector 
+              selectedType={selectedFeedType}
+              onTypeChange={handleFeedTypeChange}
+            />
+          </div>
           <button 
             className="feed-area-close-button"
             onClick={handleClose}

@@ -100,16 +100,28 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     setShowFeedArea(false);
   };
 
+  // Handler for content selection from feed
+  const handleFeedContentSelect = (contentId: string) => {
+    // Close the feed when a content is selected
+    setShowFeedArea(false);
+    
+    // Call the parent's content select handler
+    if (onContentSelect) {
+      onContentSelect(contentId);
+    }
+  };
+
   return (
     <div className="bubble-view" ref={containerRef}>
-      {/* Feed area mit Schließen-Funktion */}
+      {/* Feed area mit FeedTypeSelector (intern) */}
       <FeedArea 
         isVisible={showFeedArea} 
         defaultWidth={400}
         minWidth={250}
         maxWidth={600}
         onWidthChange={handleFeedWidthChange}
-        onClose={closeFeedArea} // Neue Prop zum Schließen
+        onClose={closeFeedArea}
+        onContentSelect={handleFeedContentSelect}
       />
       
       <div 
@@ -119,8 +131,8 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
           marginLeft: feedWidth + 'px',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center', // Ensure vertical centering
-          height: '100vh' // Full viewport height
+          alignItems: 'center',
+          height: '100vh'
         }}
       >
         <BubbleCanvas
@@ -134,13 +146,12 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         />
       </div>
       
-      {/* Button nur zum Öffnen des Feeds */}
       <button 
         className="search-feed-button"
         onClick={openFeedArea}
         style={{ 
           marginLeft: feedWidth + 'px',
-          display: showFeedArea ? 'none' : 'block' // Ausblenden, wenn Feed geöffnet ist
+          display: showFeedArea ? 'none' : 'block'
         }}
       >
         Search | Feed
@@ -150,12 +161,10 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         className="controls-container" 
         style={{ right: '20px' }}
       >
-        {/* Filter controls */}
         <FilterControls
           onProbabilityChange={handleProbabilityChange}
         />
         
-        {/* Time selector */}
         <TimeSelector 
           selectedTime={selectedTimeRange}
           onTimeChange={handleTimeChange}
