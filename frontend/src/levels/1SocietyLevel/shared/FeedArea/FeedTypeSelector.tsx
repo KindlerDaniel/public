@@ -20,7 +20,7 @@ const FeedTypeSelector: React.FC<FeedTypeSelectorProps> = ({ selectedType, onTyp
 
   // Hover- und Animation-Status
   const [isHovering, setIsHovering] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating] = useState(false);
   
   // Refs für die Animation
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,16 +42,6 @@ const FeedTypeSelector: React.FC<FeedTypeSelectorProps> = ({ selectedType, onTyp
       ];
     }
   };
-  
-  // Aktualisiere die Animation beim Statuswechsel
-  useEffect(() => {
-    setIsAnimating(true);
-    const timer = setTimeout(() => {
-  setIsAnimating(false);
-}, 1200); // Angepasst an die längere CSS-Transition-Dauer
-    
-    return () => clearTimeout(timer);
-  }, [isHovering, selectedType]);
 
   // Handler für Mouse-Events mit Debouncing
   const handleMouseEnter = () => {
@@ -60,7 +50,7 @@ const FeedTypeSelector: React.FC<FeedTypeSelectorProps> = ({ selectedType, onTyp
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovering(true);
-    }, 50);
+    });
   };
   
   const handleMouseLeave = () => {
@@ -69,7 +59,7 @@ const FeedTypeSelector: React.FC<FeedTypeSelectorProps> = ({ selectedType, onTyp
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovering(false);
-    }, 50);
+    });
   };
 
   // Cleanup bei Unmount
