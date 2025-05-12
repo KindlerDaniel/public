@@ -1,85 +1,88 @@
 /* FeedTypeSelector.css */
 
 .feed-type-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 0; /* Kein Padding, da es im Footer enthalten ist */
-    align-items: center; /* Zentriert alle Buttons auf derselben Höhe */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0; /* Kein Padding, da es im Footer enthalten ist */
+  align-items: center; /* Zentriert alle Buttons auf derselben Höhe */
+  /* KEIN Hintergrund oder Padding hier - der Farbverlauf gehört in die FeedArea */
+}
+
+.feed-type-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease, opacity 0.3s ease;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Automatische Größenanpassung statt fester Größe */
+  min-height: 36px;
+  min-width: fit-content;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.feed-type-button:hover {
+  background-color: #e9ecef;
+  color: #212529;
+  border-color: #adb5bd;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feed-type-button.active {
+  background-color: #1b393a;
+  color: white;
+  border-color: #1b393a;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+  opacity: 1 !important; /* Immer sichtbar */
+}
+
+.feed-type-button.active:hover {
+  background-color: #1b393a;
+  border-color: #1b393a;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(41, 128, 185, 0.3);
+}
+
+.feed-type-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .feed-type-selector {
+    gap: 4px;
   }
   
   .feed-type-button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    color: #333;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    min-width: 60px;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    height: 36px; /* Feste Höhe für konsistente Darstellung */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px; /* Kleinere Höhe für mobile Geräte */
   }
-  
-  .feed-type-button:hover {
-    background-color: #e9ecef;
-    color: #212529;
-    border-color: #adb5bd;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .feed-type-button.active {
-    background-color: #3498db;
-    color: white;
-    border-color: #3498db;
-    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
-  }
-  
-  .feed-type-button.active:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 6px rgba(41, 128, 185, 0.3);
-  }
-  
-  .feed-type-button:active {
-    transform: translateY(0);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 480px) {
-    .feed-type-selector {
-      gap: 4px;
-    }
-    
-    .feed-type-button {
-      padding: 6px 12px;
-      font-size: 12px;
-      min-width: 50px;
-      height: 32px; /* Kleinere Höhe für mobile Geräte */
-    }
-  }
-  
-  /* Sicherstellen, dass Buttons immer sichtbar sind */
-  .feed-type-button {
-    background: #f8f9fa !important;
-    color: #333 !important;
-  }
-  
-  .feed-type-button.active {
-    background: #3498db !important;
-    color: white !important;
-  }
-  
-  .feed-type-button:hover:not(.active) {
-    background: #e9ecef !important;
-    color: #212529 !important;
-  }
+}
+
+.feed-type-button {
+  background: #e7f3fe !important;
+  color: #333 !important;
+  border: 1px solid #1b393a !important; /* Dünner Standardrand */
+  font-weight: normal !important; /* Normale Schrift als Standard */
+  transition: all 0.2s ease, opacity 0.3s ease, border-width 0.2s ease !important;
+}
+
+.feed-type-button.active {
+  background: #e7f3fe !important; /* Gleiche Hintergrundfarbe wie nicht-aktiver Button */
+  color: #333 !important; /* Gleiche Textfarbe wie nicht-aktiver Button */
+  border: 3px solid #1b393a !important; /* Dickerer Rand wenn aktiv */
+  font-weight: bold !important; /* Fette Schrift wenn aktiv */
+}

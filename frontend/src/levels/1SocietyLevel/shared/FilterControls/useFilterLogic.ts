@@ -1,7 +1,7 @@
 // Custom hook to encapsulate filter logic
 
 import { useCallback, useMemo } from 'react';
-import { CategoryProbabilities, CategoryKey } from '../types.ts';
+import { CategoryProbabilities, CategoryKey } from './types.ts';
 
 export const useFilterLogic = (
   probabilities: CategoryProbabilities,

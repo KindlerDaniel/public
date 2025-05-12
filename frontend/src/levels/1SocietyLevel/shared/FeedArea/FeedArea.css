@@ -9,7 +9,7 @@
   top: 0;
   bottom: 0;
   height: 100vh;
-  background-color: #e7f3fe; /* Light blue background */
+  background-color: #c9dcee; /* Light blue background */
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   display: flex;
@@ -56,9 +56,14 @@
 .feed-area-footer {
   padding: 10px 15px;
   border-top: 1px solid var(--border-color, #e0e0e0);
-  background-color: #0d2442; /* Dark blue background - changed from white */
+  position: relative;
+  /* Horizontaler Farbverlauf, der erst bei 70% beginnt */
+  background: linear-gradient(to right,
+                          #deeaf5 80%, /* Erste Farbe bleibt bis 70% konstant */
+                          #1b393a 100%); /* Übergang zur zweiten Farbe ab 70% */
   flex-shrink: 0;
 }
+
 
 /* Feed-Steuerelemente im Footer - horizontal angeordnet */
 .feed-controls {
@@ -67,6 +72,8 @@
   align-items: center; /* Zentriert auf derselben Höhe */
   justify-content: space-between;
   gap: 10px;
+  position: relative; /* Stellt sicher, dass die Elemente über dem Farbverlauf liegen */
+  z-index: 2; /* Über beiden Hintergründen */
 }
 
 /* Feed-Type-Controls im Footer */
@@ -81,16 +88,16 @@
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
-  color: #e3f2fd; /* Light blue text to contrast with dark blue background */
+  color: #e3f2fd; /* Helle Farbe für besseren Kontrast im dunklen Bereich */
   padding: 8px;
-  transition: color 0.2s;
+  transition: color 0.2s, opacity 0.3s;
   align-self: center; /* Auf derselben Höhe wie die anderen Buttons */
   margin: 0; /* Kein zusätzliches Margin */
   flex-shrink: 0; /* Verhindert das Schrumpfen des Buttons */
 }
 
 .feed-area-close-button:hover {
-  color: white; /* White text on hover for better visibility */
+  color: white; /* Weiß beim Hover für bessere Sichtbarkeit */
 }
 
 /* Resize-Handle */
@@ -117,11 +124,21 @@
 
 .resize-handle:hover .handle-line,
 .resize-handle:active .handle-line {
-  background-color: #3498db;
+  background-color: #1b393a;
 }
 
 /* Stil für den verschobenen Hauptinhalt */
 .shifted-content {
   transition: margin-left var(--animation-duration) ease-out;
   margin-left: var(--feed-area-width);
+}
+
+/* Neu: Buttons im Footer unsichtbar machen, wenn nicht gehovert */
+.feed-area-footer:not(:hover) .feed-type-button:not(.active) {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feed-area-footer:hover .feed-type-button {
+  opacity: 1;
 }
