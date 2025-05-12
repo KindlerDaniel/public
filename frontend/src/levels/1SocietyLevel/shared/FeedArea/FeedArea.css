@@ -58,9 +58,7 @@
   border-top: 1px solid var(--border-color, #e0e0e0);
   position: relative;
   /* Horizontaler Farbverlauf, der erst bei 70% beginnt */
-  background: linear-gradient(to right,
-                          #deeaf5 80%, /* Erste Farbe bleibt bis 70% konstant */
-                          #1b393a 100%); /* Übergang zur zweiten Farbe ab 70% */
+  background: #c9dcee;
   flex-shrink: 0;
 }
 

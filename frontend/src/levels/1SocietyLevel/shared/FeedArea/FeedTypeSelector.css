@@ -1,12 +1,21 @@
-/* FeedTypeSelector.css */
+/* Finale FeedTypeSelector CSS */
 
 .feed-type-selector {
+  position: relative;
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
+  padding: 0;
+  min-height: 40px;
+  overflow: hidden;
+}
+
+.feed-type-carousel {
+  display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
-  padding: 0; /* Kein Padding, da es im Footer enthalten ist */
-  align-items: center; /* Zentriert alle Buttons auf derselben Höhe */
-  /* KEIN Hintergrund oder Padding hier - der Farbverlauf gehört in die FeedArea */
+  align-items: center;
+  width: 100%;
+  position: relative;
 }
 
 .feed-type-button {
@@ -14,75 +23,109 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
-  font-weight: 500;
-  color: #333;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  transition: all 0.2s ease, opacity 0.3s ease;
+  background: #e7f3fe !important;
+  color: #333 !important;
+  border: 1px solid #1b393a !important;
+  font-weight: normal !important;
   white-space: nowrap;
   text-align: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Automatische Größenanpassung statt fester Größe */
   min-height: 36px;
   min-width: fit-content;
-  padding-left: 12px;
-  padding-right: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.3s ease, border-width 0.2s ease;
 }
 
 .feed-type-button:hover {
-  background-color: #e9ecef;
-  color: #212529;
-  border-color: #adb5bd;
+  background-color: #e9ecef !important;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .feed-type-button.active {
-  background-color: #1b393a;
-  color: white;
-  border-color: #1b393a;
-  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
-  opacity: 1 !important; /* Immer sichtbar */
+  border: 3px solid #1b393a !important;
+  font-weight: bold !important;
+  opacity: 1 !important;
+  z-index: 2;
 }
 
-.feed-type-button.active:hover {
-  background-color: #1b393a;
-  border-color: #1b393a;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 6px rgba(41, 128, 185, 0.3);
+/* Verstecke nicht-aktive Buttons im nicht-hover Zustand */
+.feed-type-selector.not-hovering:not(.exit-left):not(.exit-right) .feed-type-button:not(.active) {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.feed-type-button:active {
-  transform: translateY(0);
+/* Zeige alle Buttons im hover Zustand */
+.feed-type-selector.hovering .feed-type-button {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Keyframes für Animationen */
+@keyframes exitLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes exitRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Animationen */
+.feed-type-selector.exit-left .feed-type-button {
+  animation: exitLeft 0.3s ease-in-out forwards;
+  pointer-events: none; /* Verhindert Klicks während der Animation */
+}
+
+.feed-type-selector.exit-right .feed-type-button {
+  animation: exitRight 0.3s ease-in-out forwards;
+  pointer-events: none; /* Verhindert Klicks während der Animation */
+}
+
+/* Stelle sicher, dass der aktive Button immer sichtbar ist */
+.feed-type-selector.not-hovering .feed-type-button.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Spezielle Fade-Effekte für den Footer-Bereich */
+.feed-area-footer .feed-type-selector.not-hovering .feed-type-button:not(.active) {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feed-area-footer .feed-type-selector.hovering .feed-type-button {
+  opacity: 1;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-  .feed-type-selector {
+  .feed-type-carousel {
     gap: 4px;
   }
   
   .feed-type-button {
     padding: 6px 12px;
     font-size: 12px;
-    min-height: 32px; /* Kleinere Höhe für mobile Geräte */
+    min-height: 32px;
   }
-}
-
-.feed-type-button {
-  background: #e7f3fe !important;
-  color: #333 !important;
-  border: 1px solid #1b393a !important; /* Dünner Standardrand */
-  font-weight: normal !important; /* Normale Schrift als Standard */
-  transition: all 0.2s ease, opacity 0.3s ease, border-width 0.2s ease !important;
-}
-
-.feed-type-button.active {
-  background: #e7f3fe !important; /* Gleiche Hintergrundfarbe wie nicht-aktiver Button */
-  color: #333 !important; /* Gleiche Textfarbe wie nicht-aktiver Button */
-  border: 3px solid #1b393a !important; /* Dickerer Rand wenn aktiv */
-  font-weight: bold !important; /* Fette Schrift wenn aktiv */
 }
