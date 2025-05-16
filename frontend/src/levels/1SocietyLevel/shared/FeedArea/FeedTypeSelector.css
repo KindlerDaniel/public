@@ -1,92 +1,46 @@
-/* FeedTypeSelector.css - Angepasste Version */
+/* Einfache und direkte Lösung für FeedTypeSelector.css */
 
 .feed-type-selector {
-  position: relative;
-  width: 100%;
-  height: 36px; /* Erhöhte Höhe für größere Buttons */
-  flex: 1;
-  overflow: visible;
+  height: 100%;
 }
 
-/* Container für die Buttons mit Flexbox */
 .feed-type-container {
   display: flex;
-  flex-wrap: nowrap;
+  height: 100%;
   gap: 4px;
-  padding: 0 0 0 2px;
-  margin-right: 4px;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  height: 36px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   align-items: center;
-  justify-content: flex-start;
 }
 
-/* Webkit-Browser: Scrollbar ausblenden */
-.feed-type-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* Grundstil für alle Buttons */
+/* Button-Basisstil */
 .feed-type-button {
   border-radius: 6px;
-  font-size: clamp(10px, 0.8vw, 12px);
-  background: #e7f3fe !important;
-  border: 1px solid #1b393a !important;
-  font-weight: normal !important;
+  background: #e7f3fe;
+  border: 1px solid #1b393a;
+  color: #000;
+  padding: 0 8px;
+  height: 80%;
   white-space: nowrap;
-  text-align: center;
-    width: auto;
-  height: auto;
-    flex: 1 1 auto;
-  min-width: 0;
-  max-width: 70px;
-    overflow: hidden;
-  text-overflow: ellipsis;
-    display: flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 10px;
-  margin: 0;
-  aspect-ratio: 2.5 / 1;
-}
-
-/* Hover-Effekt für Buttons */
-.feed-type-button:hover {
-  transform: translateY(-1px);
-  background-color: #e9ecef !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 3;
-  transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-/* Aktiver Button mit Hover */
-.feed-type-button.active:hover {
-  transform: translateY(-1px) scale(1.05);
-}
-
-/* Aktiver Button-Stil */
-.feed-type-button.active {
-  border: 1px solid #1b393a !important;
-  background-color: #c2e0ff !important;
-  font-weight: bold !important;
-  opacity: 1 !important;
-  z-index: 2;
-  transform: scale(1.05);
-}
-
-/* Responsives Design */
-@media (max-width: 480px) {
-  .feed-type-container {
-    gap: 3px;
-  }
+  cursor: pointer;
+  transition: all 0.2s;
   
-  .feed-type-button {
-    padding: 4px 8px;
-    font-size: 11px;
-    min-height: 24px;
-  }
+  /* Dynamisch sich anpassende Größe */
+  flex: 1;
+  min-width: 0;
+  
+  /* Schriftgröße proportional zur Containergröße */
+  font-size: min(12px, 2vw);
+}
+
+/* Hover-Zustand */
+.feed-type-button:hover {
+  background: #d0e8ff;
+}
+
+/* Aktiver Zustand */
+.feed-type-button.active {
+  background-color: #c2e0ff;
+  font-weight: bold;
 }
