@@ -66,6 +66,10 @@
   z-index: 999;
 }
 
+.feed-area-close-button:hover {
+  background-color: rgba(81, 106, 114, 0.637);
+}
+
 /* Resize-Handle */
 .resize-handle {
   position: absolute;

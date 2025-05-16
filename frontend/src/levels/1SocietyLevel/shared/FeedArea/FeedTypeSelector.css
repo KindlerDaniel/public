@@ -2,7 +2,7 @@
 
 .feed-type-selector {
   height: 100%;
-  container-type: inline-size; /* Diese Zeile macht den Wrapper zu einem Container für Abfragen */
+  container-type: inline-size;
 }
 
 .feed-type-container {
@@ -15,7 +15,7 @@
 /* Button-Basisstil */
 .feed-type-button {
   border-radius: 6px;
-  background: #e7f3fe;
+  background: #ffffff;
   border: 1px solid #1b393a;
   color: #000;
   padding: 0 8px;
@@ -26,13 +26,10 @@
   cursor: pointer;
   transition: all 0.2s;
   
-  /* Dynamisch sich anpassende Größe */
-  flex: 1;
+  /* Dynamisch sich anpassende Größe basierend auf Textlänge */
+  flex: attr(data-text-length number, 1);
   min-width: 0;
-  
-  /* Basis-Schriftgröße, wird überschrieben durch Container-Abfragen */
-  font-size: 12px;
-  
+
   /* Sicherstellung, dass der Text innerhalb des Buttons bleibt */
   white-space: nowrap;
   overflow: hidden;
@@ -42,19 +39,19 @@
 /* Container-Abfragen für responsive Schriftgröße */
 @container (max-width: 250px) {
   .feed-type-button {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 
 @container (min-width: 251px) and (max-width: 350px) {
   .feed-type-button {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
 @container (min-width: 351px) {
   .feed-type-button {
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 
@@ -65,6 +62,6 @@
 
 /* Aktiver Zustand */
 .feed-type-button.active {
-  background-color: #c2e0ff;
+  background-color: #deeeff;
   font-weight: bold;
 }
