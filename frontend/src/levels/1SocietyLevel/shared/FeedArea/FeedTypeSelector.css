@@ -57,11 +57,11 @@
 
 /* Hover-Zustand */
 .feed-type-button:hover {
-  background: #d0e8ff;
+  background: #d1dce0;
 }
 
 /* Aktiver Zustand */
 .feed-type-button.active {
-  background-color: #deeeff;
+  background-color: #d7f4ff;
   font-weight: bold;
 }

@@ -6,7 +6,7 @@
   top: 0;
   bottom: 0;
   height: 100vh;
-  background-color: #7d0081;
+  background-color: #203d3f;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   display: flex;
@@ -25,9 +25,8 @@
 
 /* Footer */
 .feed-area-footer {
-  border-top: 1px solid #e0e0e0;
-  background: #c9dcee;
-  height: 38px;
+  background: #203d3f;
+  height: 45px;
   display: flex;
   align-items: center;
   position: relative;
@@ -60,14 +59,15 @@
   align-items: center;
   background: transparent;
   border: none;
-  font-size: 18px;
-  color: #000;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
   cursor: pointer;
   z-index: 999;
 }
 
 .feed-area-close-button:hover {
-  background-color: rgba(81, 106, 114, 0.637);
+  background-color: rgba(255, 255, 255, 0.514);
 }
 
 /* Resize-Handle */
