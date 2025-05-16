@@ -1,3 +1,5 @@
+/* FeedArea.css - Angepasste Version */
+
 :root {
   --feed-area-width: 0px;
   --animation-duration: 0.3s;
@@ -9,7 +11,7 @@
   top: 0;
   bottom: 0;
   height: 100vh;
-  background-color: #c9dcee; /* Light blue background */
+  background-color: #c9dcee;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   display: flex;
@@ -18,7 +20,6 @@
   overflow: hidden;
 }
 
-/* Header entfernt */
 
 @keyframes slideUp {
   from {
@@ -32,18 +33,17 @@
 .feed-area-content {
   flex: 1;
   overflow-y: auto;
-  background-color: transparent; /* Transparent to show feed-area background */
-  padding-top: 0; /* Kein Padding-Top, da der Feed direkt oben beginnt */
+  background-color: transparent;
+  padding-top: 0;
 }
 
-/* Scrollbar ausblenden */
 .feed-area-content::-webkit-scrollbar {
   display: none;
 }
 
 .feed-area-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .feed-placeholder {
@@ -54,48 +54,68 @@
 }
 
 .feed-area-footer {
-  padding: 10px 15px;
+  padding: 4px 4px 4px 6px;
   border-top: 1px solid var(--border-color, #e0e0e0);
   position: relative;
-  /* Horizontaler Farbverlauf, der erst bei 70% beginnt */
   background: #c9dcee;
   flex-shrink: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  overflow: visible;
 }
-
 
 /* Feed-Steuerelemente im Footer - horizontal angeordnet */
 .feed-controls {
   display: flex;
-  flex-direction: row; /* Horizontal anstatt vertikal */
-  align-items: center; /* Zentriert auf derselben Höhe */
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  position: relative; /* Stellt sicher, dass die Elemente über dem Farbverlauf liegen */
-  z-index: 2; /* Über beiden Hintergründen */
+  gap: 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  overflow: visible;
 }
 
 /* Feed-Type-Controls im Footer */
 .feed-type-controls-footer {
-  flex: 1; /* Nimmt verfügbaren Platz ein */
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  height: 36px;
 }
 
 /* Schließen-Button */
 .feed-area-close-button {
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  color: #e3f2fd; /* Helle Farbe für besseren Kontrast im dunklen Bereich */
-  padding: 8px;
-  transition: color 0.2s, opacity 0.3s;
-  align-self: center; /* Auf derselben Höhe wie die anderen Buttons */
-  margin: 0; /* Kein zusätzliches Margin */
-  flex-shrink: 0; /* Verhindert das Schrumpfen des Buttons */
+  color: #000;
+  padding: 0;
+  transition: color 0.2s;
+  align-self: center;
+  margin: 0;
+  flex-shrink: 0;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  position: relative;
+  z-index: 3;
+  background-color: transparent !important;
+  outline: none;
+  box-shadow: none;
 }
 
+/* Schließen-Button - Hover-Effekt */
 .feed-area-close-button:hover {
-  color: white; /* Weiß beim Hover für bessere Sichtbarkeit */
+  color: #444;
+  background-color: transparent !important;
 }
 
 /* Resize-Handle */
@@ -125,15 +145,13 @@
   background-color: #1b393a;
 }
 
-/* Stil für den verschobenen Hauptinhalt */
 .shifted-content {
   transition: margin-left var(--animation-duration) ease-out;
   margin-left: var(--feed-area-width);
 }
 
-/* Neu: Buttons im Footer unsichtbar machen, wenn nicht gehovert */
 .feed-area-footer:not(:hover) .feed-type-button:not(.active) {
-  opacity: 0;
+  opacity: 0.7;
   transition: opacity 0.3s ease;
 }
 
