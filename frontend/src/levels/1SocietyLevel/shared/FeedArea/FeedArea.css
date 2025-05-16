@@ -1,8 +1,10 @@
 /* FeedArea.css - Angepasste Version */
 
+/* Schalter für die Skalierung */
 :root {
   --feed-area-width: 0px;
   --animation-duration: 0.3s;
+  --footer-scale: 0.85; /* ← HIER DIE SKALIERUNG ANPASSEN (z.B. 0.85 für 85% der Originalgröße) */
 }
 
 .feed-area {
@@ -11,7 +13,7 @@
   top: 0;
   bottom: 0;
   height: 100vh;
-  background-color: #c9dcee;
+  background-color: #c9dcee; /* Light blue background */
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   display: flex;
@@ -20,6 +22,7 @@
   overflow: hidden;
 }
 
+/* Header entfernt */
 
 @keyframes slideUp {
   from {
@@ -33,17 +36,18 @@
 .feed-area-content {
   flex: 1;
   overflow-y: auto;
-  background-color: transparent;
-  padding-top: 0;
+  background-color: transparent; /* Transparent to show feed-area background */
+  padding-top: 0; /* Kein Padding-Top, da der Feed direkt oben beginnt */
 }
 
+/* Scrollbar ausblenden */
 .feed-area-content::-webkit-scrollbar {
   display: none;
 }
 
 .feed-area-content {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .feed-placeholder {
@@ -54,15 +58,18 @@
 }
 
 .feed-area-footer {
-  padding: 4px 4px 4px 6px;
+  padding: 3px 4px 3px 6px;
   border-top: 1px solid var(--border-color, #e0e0e0);
   position: relative;
   background: #c9dcee;
   flex-shrink: 0;
-  height: 42px;
+  height: 38px; /* Angepasste Höhe für den skalierten Container */
   display: flex;
-  align-items: center;
+  align-items: center; /* Perfekte vertikale Zentrierung */
   overflow: visible;
+  
+  /* Zusätzliche Anpassungen für die Skalierung */
+  justify-content: center; /* Horizontale Zentrierung */
 }
 
 /* Feed-Steuerelemente im Footer - horizontal angeordnet */
@@ -76,6 +83,10 @@
   z-index: 2;
   width: 100%;
   overflow: visible;
+  
+  /* Skalierung mit CSS-Variable */
+  transform: scale(var(--footer-scale)); /* Nutzt die definierte Skalierungsvariable */
+  transform-origin: center;
 }
 
 /* Feed-Type-Controls im Footer */
@@ -83,7 +94,7 @@
   flex: 1;
   min-width: 0;
   overflow: visible;
-  height: 36px;
+  height: 36px; /* Angepasste Höhe für den Feed-Type-Container */
 }
 
 /* Schließen-Button */
@@ -107,6 +118,7 @@
   height: 18px;
   position: relative;
   z-index: 3;
+  /* Komplett transparenter Hintergrund und keine Ränder */
   background-color: transparent !important;
   outline: none;
   box-shadow: none;
@@ -145,13 +157,15 @@
   background-color: #1b393a;
 }
 
+/* Stil für den verschobenen Hauptinhalt */
 .shifted-content {
   transition: margin-left var(--animation-duration) ease-out;
   margin-left: var(--feed-area-width);
 }
 
+/* Neu: Buttons im Footer immer sichtbar machen */
 .feed-area-footer:not(:hover) .feed-type-button:not(.active) {
-  opacity: 0.7;
+  opacity: 0.7; /* Leicht sichtbar, nicht komplett ausgeblendet */
   transition: opacity 0.3s ease;
 }
 
