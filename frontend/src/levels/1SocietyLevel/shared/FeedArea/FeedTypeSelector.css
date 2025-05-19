@@ -6,7 +6,7 @@
 .feed-type-container {
   display: flex;
   height: 100%;
-  gap: min(5% - 10px, 15px);
+  gap: min(5% - 7px, 15px);
   align-items: center;
   max-width: 470px;
   padding: 0 8px 0 0;
@@ -15,7 +15,6 @@
 .feed-type-button { 
   border-radius: 6px;
   background: #ffffff;
-  border: 1px solid #000000;
   color: #000;
   height: 60%;
   display: flex;
@@ -63,5 +62,6 @@
 
 .feed-type-button.active {
   background-color: #d7f4ff;
+  border: 2px solid #000000;
   font-weight: bold;
 }
