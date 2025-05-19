@@ -9,7 +9,7 @@
   gap: min(5% - 10px, 15px);
   align-items: center;
   max-width: 470px;
-  padding: 0 3%px;
+  padding: 0 8px 0 0;
 }
 
 .feed-type-button { 
@@ -23,11 +23,11 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-    flex: 1;
   min-width: 0; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 0 15px;
 }
 
 @container (min-width: 400px) {
@@ -39,18 +39,21 @@
 @container (max-width: 250px) {
   .feed-type-button {
     font-size: 12px;
+    padding: 0 10px;
   }
 }
 
 @container (min-width: 251px) and (max-width: 350px) {
   .feed-type-button {
     font-size: 14px;
+    padding: 0 12px;
   }
 }
 
 @container (min-width: 351px) {
   .feed-type-button {
     font-size: 15px;
+    padding: 0 15px;
   }
 }
 
