@@ -30,6 +30,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
     }
   ];
 
+  // Handler für den Settings-Button
+  const handleSettingsClick = () => {
+    // Hier die Aktion für die Einstellungen implementieren
+    console.log('Settings clicked');
+  };
+
   return (
     <div className="sidebar">
       <nav className="sidebar-nav">
@@ -39,17 +45,27 @@ const Sidebar: React.FC<SidebarProps> = ({ currentMode, onModeChange }) => {
               <button
                 className={`sidebar-nav-button ${currentMode === mode.id ? 'active' : ''}`}
                 onClick={() => onModeChange(mode.id)}
-                title={mode.label} // Behält den Tooltip bei
+                title={mode.label}
               >
                 <span className="sidebar-icon">
                   <img src={mode.iconPath} alt={mode.label} className="sidebar-icon-img" />
                 </span>
-                {/* Label entfernt */}
               </button>
             </li>
           ))}
         </ul>
       </nav>
+      
+      {/* Zahnrad-Icon für Einstellungen - mit tabIndex=-1 um Fokus zu verhindern */}
+      <button
+        className="settings-button"
+        onClick={handleSettingsClick}
+        title="Einstellungen"
+      >
+        <span className="sidebar-icon">
+          <div className="sidebar-icon-img settings-icon">⚙️</div>
+        </span>
+      </button>
     </div>
   );
 };

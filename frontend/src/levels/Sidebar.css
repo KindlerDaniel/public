@@ -1,7 +1,6 @@
 .sidebar {
-  width: 50px; /* Schmaler gemacht */
+  width: 50px;
   height: 100vh;
-  /* Seichter Farbverlauf von hellem zu dunklerem Blaugrau - gleich wie in der BubbleView */
   background: linear-gradient(to bottom, #deeaf5 0%, #0e1c1d 100%);
   color: var(--dark-background);
   display: flex;
@@ -14,23 +13,9 @@
   transition: none;
 }
 
-.sidebar-logo {
-  padding: 20px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary-color);
-  white-space: nowrap;
-}
-
 .sidebar-nav {
   flex: 1;
-  padding: 20px 0;
+  padding: 20px 0 0 0;
 }
 
 .sidebar-nav ul {
@@ -39,19 +24,68 @@
   margin: 0;
 }
 
+/* Settings Button - direkt am Boden der Sidebar */
+.settings-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 0 0;
+  background: transparent;
+  border: none;
+  color: var(--dark-background);
+  opacity: 0.85;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 7px;
+  outline: none !important;
+}
+
+.settings-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  opacity: 1;
+}
+
+.settings-button.active,
+.settings-button:active,
+.settings-button:focus,
+.settings-button:focus-visible {
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.settings-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 20%;
+}
+
+/* Hover-Effekt für das Icon wie bei anderen Icons */
+.settings-button:hover .settings-icon {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
 .sidebar-nav-button {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center; /* Zentriert die Icons */
-  padding: 18px 0; /* Horizontales Padding entfernt */
+  justify-content: center;
+  padding: 18px 0;
   background: transparent;
   border: none;
   color: var(--dark-background);
-  opacity: 0.85; /* Etwas hellere Darstellung */
+  opacity: 0.85;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 8px; /* Zusätzlicher Abstand zwischen Buttons */
 }
 
 .sidebar-nav-button:hover, 
@@ -61,8 +95,8 @@
 }
 
 .sidebar-icon {
-  width: 40px; /* Größeres Icon-Container */
-  height: 40px; /* Größeres Icon-Container */
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,23 +104,22 @@
 
 /* Neuer Style für die Icon-Container */
 .sidebar-icon-img {
-  width: 40px; /* Größere Icons */
-  height: 40px; /* Größere Icons */
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px; /* Größere Fallback-Emojis */
+  font-size: 24px;
   transition: transform 0.2s ease, filter 0.2s ease;
-  filter: brightness(1.2); /* Macht die Icons heller */
-  border-radius: 20%; /* Abgerundete Icons */
-  background-color: rgba(255, 255, 255, 0.2); /* Leichter Hintergrund für bessere Sichtbarkeit */
-  padding: 4px; /* Innenabstand für besseres Aussehen */
-}
+  filter: brightness(1.2);
+  border-radius: 20%;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px;
 
 /* Leichte Animation beim Hover über Icons */
 .sidebar-nav-button:hover .sidebar-icon-img {
   transform: scale(1.1);
-  filter: brightness(1.4); /* Noch heller beim Hover */
+  filter: brightness(1.4);
 }
 
 /* Aktive Icons hervorheben */
@@ -99,6 +132,24 @@
   display: none;
 }
 
+/* Spezielle Stile für das Settings-Icon */
+.settings-item {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
+
+.settings-icon {
+  background-color: rgba(255, 255, 255, 0.15); /* Etwas dunklerer Hintergrund für das Zahnrad */
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
 /* App Layout für Seitenleiste */
 .app-layout {
   display: flex;
@@ -107,7 +158,8 @@
 
 .app-content {
   flex: 1;
-  margin-left: 50px; /* Angepasst an die neue Sidebar-Breite */
+  margin-left: 50px;
   overflow-x: hidden;
-  width: calc(100% - 50px); /* Angepasst an die neue Sidebar-Breite */
+  width: calc(100% - 50px);
+}
 }

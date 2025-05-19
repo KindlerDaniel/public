@@ -18,7 +18,7 @@
   overflow-y: auto;
   background-color: transparent;
   padding-top: 0;
-  padding-bottom: 42px;
+  padding-bottom: 60px;
   position: relative;
   z-index: 1;
 }
@@ -46,7 +46,7 @@
   align-items: center;
   padding-left: 6px;
   height: 45px;
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 
 /* Feed-Type-Controls-Footer */
@@ -71,6 +71,7 @@
   color: #ffffff;
   cursor: pointer;
   z-index: 999;
+  margin-bottom: 4px;
 }
 
 .feed-area-close-button:hover {
