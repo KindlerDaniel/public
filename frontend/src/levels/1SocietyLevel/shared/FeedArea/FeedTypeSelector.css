@@ -1,5 +1,3 @@
-/* Container Query Lösung für FeedTypeSelector.css */
-
 .feed-type-selector {
   height: 100%;
   container-type: inline-size;
@@ -8,38 +6,39 @@
 .feed-type-container {
   display: flex;
   height: 100%;
-  gap: 4px;
+  gap: min(5% - 10px, 15px);
   align-items: center;
+  max-width: 470px;
+  padding: 0 10px;
 }
 
-/* Button-Basisstil */
-.feed-type-button {
+.feed-type-button { 
   border-radius: 6px;
   background: #ffffff;
   border: 1px solid #1b393a;
   color: #000;
-  padding: 0 8px;
   height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  
-  /* Dynamisch sich anpassende Größe basierend auf Textlänge */
-  flex: attr(data-text-length number, 1);
-  min-width: 0;
-
-  /* Sicherstellung, dass der Text innerhalb des Buttons bleibt */
+    flex: 1;
+  min-width: 0; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Container-Abfragen für responsive Schriftgröße */
+@container (min-width: 400px) {
+  .feed-type-container {
+    gap: 12px;
+  }
+}
+
 @container (max-width: 250px) {
   .feed-type-button {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
@@ -55,12 +54,10 @@
   }
 }
 
-/* Hover-Zustand */
 .feed-type-button:hover {
   background: #d1dce0;
 }
 
-/* Aktiver Zustand */
 .feed-type-button.active {
   background-color: #d7f4ff;
   font-weight: bold;
