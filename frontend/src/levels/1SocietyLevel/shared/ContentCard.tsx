@@ -143,23 +143,15 @@ const ContentCard: React.FC<ContentCardProps> = ({
     </div>
   );
 
-  // Rendert Diskussion
+  // Rendert Diskussion - Frage ist direkt der Titel
   const renderDiscussion = () => (
     <div className="content-layout discussion">
       <div className="content-text">
-        <h3 className="content-title">{content.title}</h3>
-        {content.question && (
-          <div className="discussion-question">
-            <strong>Frage:</strong> {content.question}
-          </div>
-        )}
+        <h3 className="content-title">{content.question || content.title}</h3>
         {content.discussion && (
           <div className="discussion-exchanges">
             {content.discussion.exchanges.slice(0, 2).map((exchange, index) => (
               <div key={index} className={`discussion-exchange ${exchange.speaker.toLowerCase()}`}>
-                <span className="speaker-label">
-                  {exchange.speaker === 'A' ? content.discussion!.participantA : content.discussion!.participantB}:
-                </span>
                 <span className="exchange-text">{exchange.text}</span>
               </div>
             ))}

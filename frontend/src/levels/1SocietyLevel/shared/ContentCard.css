@@ -60,7 +60,7 @@
 
 .content-layout.video-portrait .media-container {
   position: relative;
-  width: 120px;
+  width: 140px;
   aspect-ratio: 9/16;
   background-color: #000;
   border-radius: 8px;
@@ -98,7 +98,7 @@
 
 .content-layout.image-portrait .media-container {
   position: relative;
-  width: 120px;
+  width: 140px;
   aspect-ratio: 9/16;
   background-color: #f5f5f5;
   border-radius: 8px;
@@ -156,12 +156,11 @@
 }
 
 .discussion-question {
-  margin: 8px 0 12px 0;
-  padding: 8px;
-  background-color: #f0f7ff;
-  border-left: 3px solid #3498db;
-  border-radius: 4px;
-  font-style: italic;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.3;
 }
 
 .discussion-exchanges {
@@ -171,39 +170,28 @@
 }
 
 .discussion-exchange {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  border-radius: 6px;
-  background-color: #f8f9fa;
+  display: block;
+  padding: 0;
+  margin-bottom: 8px;
 }
 
-.discussion-exchange.a {
-  background-color: #fff3e0;
-  border-left: 3px solid #ff9800;
-}
-
+.discussion-exchange.a,
 .discussion-exchange.b {
-  background-color: #e8f5e8;
-  border-left: 3px solid #4caf50;
-}
-
-.speaker-label {
-  font-weight: 600;
-  font-size: 14px;
-  color: #333;
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }
 
 .exchange-text {
   font-size: 14px;
   line-height: 1.4;
   color: #555;
+  display: block;
 }
 
 .discussion-more {
   text-align: center;
-  padding: 8px;
+  padding: 8px 0;
   color: #666;
   font-style: italic;
   font-size: 13px;
@@ -312,11 +300,12 @@
 
 .content-card.compact .content-layout.video-portrait .media-container,
 .content-card.compact .content-layout.image-portrait .media-container {
-  width: 80px;
+  width: 100px;
 }
 
 .content-card.compact .discussion-exchange {
-  padding: 6px;
+  padding: 0;
+  margin-bottom: 6px;
 }
 
 .content-card.compact .audio-container {

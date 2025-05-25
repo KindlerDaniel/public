@@ -72,7 +72,7 @@ export const mockContents = [
     content: 'Ein atemberaubender Moment am Ende eines warmen Sommertages in Berlin.',
     author: USERS[7],
     date: '2025-04-12T18:45:00',
-    mediaUrl: 'https://example.com/images/berlin-sunset.jpg',
+    mediaUrl: '/images/berlin-sunset.jpg', // ← Das hier ändern
     ratings: { beauty: 210, wisdom: 30, humor: 5 },
     coordinates: { x: 0.1, y: -0.6, z: -0.2 },
     tags: ['Natur', 'Berlin', 'Fotografie'],
@@ -151,7 +151,7 @@ export const mockContents = [
   {
     id: 'audio-1',
     type: 'audio',
-    title: 'Podcast: Entspannung durch Naturgeräusche',
+    title: 'Entspannung durch Naturgeräusche',
     content: 'Eine beruhigende Reise durch verschiedene Naturlandschaften.',
     author: { id: 'user6', name: 'Maria Entspannung', trustScore: 85 },
     date: '2025-05-19T20:00:00',
