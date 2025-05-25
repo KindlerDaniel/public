@@ -24,7 +24,7 @@ const FeedArea: React.FC<FeedAreaProps> = ({
 }) => {
   const [width, setWidth] = useState<number>(defaultWidth);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [selectedFeedType, setSelectedFeedType] = useState<FeedType>('trending');
+  const [selectedFeedType, setSelectedFeedType] = useState<FeedType>('auto'); // Geändert von 'trending' zu 'auto'
   const feedAreaRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
 
