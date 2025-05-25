@@ -1,6 +1,4 @@
-/// Main container component that orchestrates everything
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CategoryProbabilities, CategoryKey } from './types.ts';
 import FilterSummary from './FilterSummary.tsx';
 import FilterButtonsPanel from './FilterButtonsPanel.tsx';
@@ -24,6 +22,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onProbabilityChange }) 
 
   const [probabilities, setProbabilities] = useState<CategoryProbabilities>(initialProbabilities);
   const [isHovered, setIsHovered] = useState(false);
+  
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const { 
     incrementProbability, 
@@ -52,21 +52,29 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onProbabilityChange }) 
       setCategoryTo100Percent(category);
     };
 
-    // Add the event listener
     document.addEventListener('categoryDoubleClick', handleCategoryDoubleClick);
+    return () => document.removeEventListener('categoryDoubleClick', handleCategoryDoubleClick);
+  });
 
-    // Clean up the event listener when the component is unmounted
+  // Cleanup bei Unmount
+  useEffect(() => {
     return () => {
-      document.removeEventListener('categoryDoubleClick', handleCategoryDoubleClick);
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 100);
   };
 
   const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
     setIsHovered(false);
   };
 

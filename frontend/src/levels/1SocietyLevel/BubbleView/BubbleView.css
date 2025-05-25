@@ -32,10 +32,10 @@
   cursor: grabbing;
 }
 
-/* Search-Feed-Button */
+/* Search-Feed-Button - nach unten verschoben */
 .search-feed-button {
   position: absolute;
-  bottom: 20px;
+  bottom: 8px;
   left: 20px;
   background-color: transparent;
   color: white;
@@ -62,10 +62,10 @@
   outline: none;
 }
 
-/* Container für Steuerelemente */
+/* Container für Steuerelemente - nach unten verschoben */
 .controls-container {
   position: absolute;
-  bottom: 20px;
+  bottom: 8px;
   right: 20px;
   z-index: 10;
   display: flex;
