@@ -34,14 +34,6 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
     
     resizeTimeoutRef.current = setTimeout(() => {
       setFeedWidth(width);
-      
-      // Force canvas redraw after width change
-      if (canvasRef.current) {
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-      }
     }, 10);
   }, []);
 
@@ -113,7 +105,7 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
 
   return (
     <div className="bubble-view" ref={containerRef}>
-      {/* Feed area mit FeedTypeSelector (intern) */}
+      {/* Feed area */}
       <FeedArea 
         isVisible={showFeedArea} 
         defaultWidth={400}
@@ -124,32 +116,31 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
         onContentSelect={handleFeedContentSelect}
       />
       
+      {/* Main bubble container - always centered */}
       <div 
-        className="bubble-container" 
+        className="bubble-main-container" 
         ref={bubbleContainerRef}
+        style={{
+          position: 'fixed',
+          left: `${50 + feedWidth}px`, // Sidebar width + feed width
+          top: '0',
+          right: '0',
+          bottom: '0',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden'
+        }}
       >
-        {/* Unsichtbarer dynamischer Container für die Bubble selbst */}
-        <div 
-          className="bubble-dynamic-container"
-          style={{
-            marginLeft: feedWidth + 'px',
-            width: `calc(100vw - 50px - ${feedWidth}px)`, // Volle Breite minus Sidebar und FeedArea
-            height: '100vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <BubbleCanvas
-            contents={contents}
-            zoom={zoom}
-            rotation={rotation}
-            isDragging={isDragging}
-            onContentSelect={onContentSelect}
-            feedAreaWidth={feedWidth}
-            feedAreaVisible={showFeedArea}
-          />
-        </div>
+        <BubbleCanvas
+          contents={contents}
+          zoom={zoom}
+          rotation={rotation}
+          isDragging={isDragging}
+          onContentSelect={onContentSelect}
+          feedAreaWidth={feedWidth}
+          feedAreaVisible={showFeedArea}
+        />
       </div>
       
       <button 
