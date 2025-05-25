@@ -1,225 +1,346 @@
-/* ContentCard.css - Styles für die ContentCard Komponente */
+/* ContentCard.css - Styles für verschiedene Content-Layouts */
 
 .content-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-  }
-  
-  .content-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .content-card.selected {
-    border: 2px solid #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-  }
-  
-  .content-card.compact {
-    margin-bottom: 12px;
-  }
-  
-  /* Medien-Container */
-  .content-card-media {
-    position: relative;
-    width: 100%;
-    height: 180px;
-    background-color: #f5f5f5;
-    overflow: hidden;
-  }
-  
-  .content-card-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .content-card-media.video .play-button {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-  }
-  
-  .content-card-media.audio {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.content-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.content-card.selected {
+  border: 2px solid #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.content-card.compact {
+  margin-bottom: 12px;
+}
+
+/* Content Body */
+.content-card-body {
+  padding: 16px;
+}
+
+.content-card.compact .content-card-body {
+  padding: 12px;
+}
+
+/* Layout-spezifische Styles */
+
+/* Video Querformat Layout */
+.content-layout.video-landscape {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content-layout.video-landscape .media-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Video Hochformat Layout */
+.content-layout.video-portrait {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.content-layout.video-portrait .media-container {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 9/16;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.content-layout.video-portrait .content-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Bild Querformat Layout */
+.content-layout.image-landscape {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content-layout.image-landscape .media-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Bild Hochformat Layout */
+.content-layout.image-portrait {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.content-layout.image-portrait .media-container {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 9/16;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.content-layout.image-portrait .content-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Text-Only Layout */
+.content-layout.text-only {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Audio Layout */
+.content-layout.audio {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-layout.audio .content-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.audio-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.audio-player {
+  flex: 1;
+  height: 32px;
+}
+
+.audio-duration {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* Diskussion Layout */
+.content-layout.discussion {
+  display: flex;
+  flex-direction: column;
+}
+
+.discussion-question {
+  margin: 8px 0 12px 0;
+  padding: 8px;
+  background-color: #f0f7ff;
+  border-left: 3px solid #3498db;
+  border-radius: 4px;
+  font-style: italic;
+}
+
+.discussion-exchanges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.discussion-exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+}
+
+.discussion-exchange.a {
+  background-color: #fff3e0;
+  border-left: 3px solid #ff9800;
+}
+
+.discussion-exchange.b {
+  background-color: #e8f5e8;
+  border-left: 3px solid #4caf50;
+}
+
+.speaker-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.exchange-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #555;
+}
+
+.discussion-more {
+  text-align: center;
+  padding: 8px;
+  color: #666;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Media Elements */
+.media-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Video-spezifische Overlays */
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.duration-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Content Text */
+.content-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #333;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.content-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Meta Information */
+.content-card-meta {
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+  background-color: #fafafa;
+}
+
+.content-card.compact .content-card-meta {
+  padding: 8px 12px;
+}
+
+.meta-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.meta-info .author {
+  font-weight: 500;
+  color: #333;
+}
+
+.meta-info .date {
+  color: #999;
+}
+
+/* Compact Variations */
+.content-card.compact .content-title {
+  font-size: 15px;
+  -webkit-line-clamp: 1;
+}
+
+.content-card.compact .content-description {
+  font-size: 13px;
+  -webkit-line-clamp: 2;
+}
+
+.content-card.compact .content-layout.video-portrait .media-container,
+.content-card.compact .content-layout.image-portrait .media-container {
+  width: 80px;
+}
+
+.content-card.compact .discussion-exchange {
+  padding: 6px;
+}
+
+.content-card.compact .audio-container {
+  padding: 6px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .content-layout.video-portrait,
+  .content-layout.image-portrait {
     flex-direction: column;
-    gap: 12px;
   }
   
-  .content-card-media.audio .audio-icon {
-    font-size: 40px;
+  .content-layout.video-portrait .media-container,
+  .content-layout.image-portrait .media-container {
+    width: 100%;
+    aspect-ratio: 16/9;
   }
   
-  .content-card-media.audio .audio-waveform {
-    display: flex;
-    gap: 2px;
-    height: 40px;
-    align-items: center;
+  .content-title {
+    font-size: 15px;
   }
   
-  .waveform-bar {
-    width: 6px;
-    background-color: #3498db;
-    border-radius: 3px;
+  .content-description {
+    font-size: 13px;
   }
-  
-  /* Content Details */
-  .content-card-details {
-    padding: 16px;
-  }
-  
-  .content-card.compact .content-card-details {
-    padding: 12px;
-  }
-  
-  .content-card-header {
-    margin-bottom: 8px;
-  }
-  
-  .content-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-    color: #333;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .content-card.compact .content-card-title {
-    font-size: 16px;
-  }
-  
-  .content-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .content-card-author {
-    font-weight: 500;
-  }
-  
-  .content-card-date {
-    color: #999;
-  }
-  
-  .content-card-content {
-    color: #555;
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 12px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-  }
-  
-  .content-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #eee;
-  }
-  
-  .content-card-ratings {
-    flex: 1;
-  }
-  
-  .content-card-actions {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .content-card-action-button {
-    padding: 6px 12px;
-    font-size: 12px;
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .content-card-action-button:hover {
-    background-color: #e9ecef;
-    border-color: #cccccc;
-  }
-  
-  /* Rating Controls in ContentCard */
-  .content-card .rating-controls {
-    display: flex;
-    gap: 12px;
-  }
-  
-  .content-card .rating-controls.mini {
-    gap: 8px;
-  }
-  
-  .content-card .rating-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .content-card .rating-number {
-    font-size: 12px;
-    color: #666;
-    min-width: 20px;
-    text-align: right;
-  }
-  
-  .content-card .rating-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 2px;
-    opacity: 0.6;
-    transition: all 0.2s ease;
-  }
-  
-  .content-card .rating-item.active .rating-button {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-  
-  .content-card .rating-button:hover {
-    opacity: 1;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .content-card-media {
-      height: 140px;
-    }
-    
-    .content-card-title {
-      font-size: 16px;
-    }
-    
-    .content-card-content {
-      font-size: 13px;
-    }
-  }
+}

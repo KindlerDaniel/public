@@ -1,7 +1,6 @@
 import React from 'react';
-import RatingControls from './RatingControls.tsx';
 import { ContentItem } from '../../../types.ts';
-import './ContentCard.css'; // CSS-Import hinzufügen
+import './ContentCard.css';
 
 interface ContentCardProps {
   content: ContentItem;
@@ -26,94 +25,197 @@ const ContentCard: React.FC<ContentCardProps> = ({
     }).format(date);
   };
 
-  // Rendert den Medieninhalt basierend auf dem Content-Typ
-  const renderMedia = () => {
-    switch (content.type) {
-      case 'video':
-        return (
-          <div className="content-card-media video">
-            <img 
-              src={content.thumbnailUrl || "/api/placeholder/320/180"} 
-              alt={content.title}
-            />
-            <div className="play-button">▶</div>
-          </div>
-        );
-      case 'image':
-        return (
-          <div className="content-card-media image">
-            <img 
-              src={typeof content.content === 'string' ? content.content : "/api/placeholder/320/180"} 
-              alt={content.title}
-            />
-          </div>
-        );
-      case 'audio':
-        return (
-          <div className="content-card-media audio">
-            <div className="audio-icon">🔊</div>
-            <div className="audio-waveform">
-              {Array(10).fill(0).map((_, i) => (
-                <div 
-                  key={i} 
-                  className="waveform-bar" 
-                  style={{ height: `${Math.random() * 20 + 5}px` }}
-                ></div>
-              ))}
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
+  // Formatiere Dauer (für Video/Audio)
+  const formatDuration = (duration?: string) => {
+    if (!duration) return '';
+    return duration;
   };
 
-  // Handler für Rating
-  const handleRate = (type: 'beauty' | 'wisdom' | 'humor', value: boolean) => {
-    // In einer echten Implementierung würde hier ein API-Aufruf stehen
-    console.log(`Rating für ${content.id}, Kategorie ${type}: ${value}`);
+  // Rendert Video Querformat
+  const renderVideoLandscape = () => (
+    <div className="content-layout video-landscape">
+      <div className="media-container landscape">
+        <video 
+          className="media-element"
+          poster={content.thumbnailUrl || "/api/placeholder/400/225"}
+          controls
+        >
+          <source src={content.mediaUrl} type="video/mp4" />
+        </video>
+        <div className="play-overlay">▶</div>
+        {content.duration && (
+          <div className="duration-badge">{formatDuration(content.duration)}</div>
+        )}
+      </div>
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Video Hochformat
+  const renderVideoPortrait = () => (
+    <div className="content-layout video-portrait">
+      <div className="media-container portrait">
+        <video 
+          className="media-element"
+          poster={content.thumbnailUrl || "/api/placeholder/225/400"}
+          controls
+        >
+          <source src={content.mediaUrl} type="video/mp4" />
+        </video>
+        <div className="play-overlay">▶</div>
+        {content.duration && (
+          <div className="duration-badge">{formatDuration(content.duration)}</div>
+        )}
+      </div>
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Bild Querformat
+  const renderImageLandscape = () => (
+    <div className="content-layout image-landscape">
+      <div className="media-container landscape">
+        <img 
+          className="media-element"
+          src={content.mediaUrl || content.content || "/api/placeholder/400/225"}
+          alt={content.title}
+        />
+      </div>
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Bild Hochformat
+  const renderImagePortrait = () => (
+    <div className="content-layout image-portrait">
+      <div className="media-container portrait">
+        <img 
+          className="media-element"
+          src={content.mediaUrl || content.content || "/api/placeholder/225/400"}
+          alt={content.title}
+        />
+      </div>
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Text
+  const renderText = () => (
+    <div className="content-layout text-only">
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Audio
+  const renderAudio = () => (
+    <div className="content-layout audio">
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        <div className="audio-container">
+          <audio 
+            className="audio-player"
+            controls
+            src={content.audioUrl || content.mediaUrl}
+          >
+            Ihr Browser unterstützt das Audio-Element nicht.
+          </audio>
+          {content.duration && (
+            <span className="audio-duration">{formatDuration(content.duration)}</span>
+          )}
+        </div>
+        <p className="content-description">{content.content}</p>
+      </div>
+    </div>
+  );
+
+  // Rendert Diskussion
+  const renderDiscussion = () => (
+    <div className="content-layout discussion">
+      <div className="content-text">
+        <h3 className="content-title">{content.title}</h3>
+        {content.question && (
+          <div className="discussion-question">
+            <strong>Frage:</strong> {content.question}
+          </div>
+        )}
+        {content.discussion && (
+          <div className="discussion-exchanges">
+            {content.discussion.exchanges.slice(0, 2).map((exchange, index) => (
+              <div key={index} className={`discussion-exchange ${exchange.speaker.toLowerCase()}`}>
+                <span className="speaker-label">
+                  {exchange.speaker === 'A' ? content.discussion!.participantA : content.discussion!.participantB}:
+                </span>
+                <span className="exchange-text">{exchange.text}</span>
+              </div>
+            ))}
+            {content.discussion.exchanges.length > 2 && (
+              <div className="discussion-more">
+                +{content.discussion.exchanges.length - 2} weitere Beiträge...
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Hauptrender-Funktion basierend auf Content-Typ
+  const renderContent = () => {
+    switch (content.type) {
+      case 'video-landscape':
+        return renderVideoLandscape();
+      case 'video-portrait':
+        return renderVideoPortrait();
+      case 'image-landscape':
+        return renderImageLandscape();
+      case 'image-portrait':
+        return renderImagePortrait();
+      case 'text':
+        return renderText();
+      case 'audio':
+        return renderAudio();
+      case 'discussion':
+        return renderDiscussion();
+      // Fallback für alte Typen
+      case 'article':
+        return renderText();
+      case 'video':
+        return renderVideoLandscape(); // Default zu landscape
+      case 'image':
+        return renderImageLandscape(); // Default zu landscape
+      default:
+        return renderText();
+    }
   };
 
   return (
     <div 
-      className={`content-card ${selected ? 'selected' : ''} ${compact ? 'compact' : ''}`}
+      className={`content-card ${content.type} ${selected ? 'selected' : ''} ${compact ? 'compact' : ''}`}
       onClick={onClick}
     >
-      {content.type !== 'text' && renderMedia()}
+      <div className="content-card-body">
+        {renderContent()}
+      </div>
       
-      <div className="content-card-details">
-        <div className="content-card-header">
-          <h3 className="content-card-title">{content.title}</h3>
-        </div>
-        
-        <div className="content-card-meta">
-          <span className="content-card-author">{content.author.name}</span>
-          <span className="content-card-date">{formatDate(content.date)}</span>
-        </div>
-        
-        {content.type === 'text' && (
-          <div className="content-card-content">
-            {typeof content.content === 'string' ? 
-              content.content.substring(0, 150) + (content.content.length > 150 ? '...' : '') : 
-              'Kein Inhalt verfügbar'}
-          </div>
-        )}
-        
-        <div className="content-card-footer">
-          <div className="content-card-ratings">
-            <RatingControls 
-              ratings={content.ratings}
-              userRating={content.userRating || {}}
-              onRate={handleRate}
-              mini
-            />
-          </div>
-          
-          <div className="content-card-actions">
-            <button className="content-card-action-button">
-              💬 Kommentare
-            </button>
-          </div>
+      <div className="content-card-meta">
+        <div className="meta-info">
+          <span className="author">{content.author.name}</span>
+          <span className="date">{formatDate(content.date)}</span>
         </div>
       </div>
     </div>
