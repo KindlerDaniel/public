@@ -127,30 +127,35 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       <div 
         className="bubble-container" 
         ref={bubbleContainerRef}
-        style={{ 
-          marginLeft: feedWidth + 'px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}
       >
-        <BubbleCanvas
-          contents={contents}
-          zoom={zoom}
-          rotation={rotation}
-          isDragging={isDragging}
-          onContentSelect={onContentSelect}
-          feedAreaWidth={feedWidth}
-          feedAreaVisible={showFeedArea}
-        />
+        {/* Unsichtbarer dynamischer Container für die Bubble selbst */}
+        <div 
+          className="bubble-dynamic-container"
+          style={{
+            marginLeft: feedWidth + 'px',
+            width: `calc(100vw - 50px - ${feedWidth}px)`, // Volle Breite minus Sidebar und FeedArea
+            height: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <BubbleCanvas
+            contents={contents}
+            zoom={zoom}
+            rotation={rotation}
+            isDragging={isDragging}
+            onContentSelect={onContentSelect}
+            feedAreaWidth={feedWidth}
+            feedAreaVisible={showFeedArea}
+          />
+        </div>
       </div>
       
       <button 
         className="search-feed-button"
         onClick={openFeedArea}
         style={{ 
-          marginLeft: feedWidth + 'px',
           display: showFeedArea ? 'none' : 'block'
         }}
       >

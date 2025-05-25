@@ -1,24 +1,26 @@
 /* BubbleView spezifische Styles */
 .bubble-view-container, .bubble-view {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  position: relative;
-  overflow: hidden; /* Keine Scrollbars */
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 }
 
 .bubble-view {
-  display: flex;
-  flex-direction: column;
   background: linear-gradient(to bottom, #d2dce6, #1b393a);
 }
 
 .bubble-container {
-  flex: 1;
-  position: relative;
-  overflow: hidden; /* Keine Scrollbars */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: fixed; /* Fixed statt absolute */
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 1; /* Hinter der Sidebar */
+  pointer-events: auto; /* Ermöglicht Interaktion */
 }
 
 .bubble-canvas {
@@ -26,17 +28,20 @@
   height: 100%;
   display: block;
   cursor: grab;
+  /* Stelle sicher, dass der Canvas immer den gesamten Container ausfüllt */
+  min-width: 100%;
+  min-height: 100%;
 }
 
 .bubble-canvas:active {
   cursor: grabbing;
 }
 
-/* Search-Feed-Button - nach unten verschoben */
+/* Search-Feed-Button - nach unten verschoben, rechts von der Sidebar */
 .search-feed-button {
-  position: absolute;
+  position: fixed; /* Fixed statt absolute für bessere Kontrolle */
   bottom: 8px;
-  left: 20px;
+  left: 70px; /* 50px Sidebar + 20px Abstand */
   background-color: transparent;
   color: white;
   border: none;
@@ -44,10 +49,11 @@
   font-weight: 500;
   padding: 10px 15px;
   cursor: pointer;
-  z-index: 50;
+  z-index: 150; /* Über der Sidebar (z-index: 100) */
   user-select: none;
   pointer-events: auto;
   transition: transform 0.2s ease;
+  margin-left: 0; /* Überschreibe dynamisches margin-left */
 }
 
 .search-feed-button:hover {
