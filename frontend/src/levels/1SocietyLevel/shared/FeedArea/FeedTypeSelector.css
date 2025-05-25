@@ -71,7 +71,7 @@
 
 .feed-type-button.active {
   background-color: #d7f4ff;
-  border: 2px solid #000000;
+  border: 2px solid #003366;
   font-weight: bold;
   /* Entfernt explizit alle anderen Rahmen oder Outlines */
   outline: none;

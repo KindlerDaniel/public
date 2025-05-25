@@ -41,23 +41,21 @@
   outline: none !important;
 }
 
-.settings-button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  opacity: 1;
-}
-
-.settings-button.active,
 .settings-button:active,
 .settings-button:focus,
 .settings-button:focus-visible {
-  background-color: transparent !important;
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
 }
 
+.settings-button:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  opacity: 1;
+}
+
 .settings-icon {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: transparent !important; /* Entfernt den hellgrauen Hintergrund vollständig */
   color: white;
   font-size: 20px;
   display: flex;
@@ -65,13 +63,15 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 20%;
+  border-radius: 0; /* Entfernt die Abrundung */
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 /* Hover-Effekt für das Icon wie bei anderen Icons */
 .settings-button:hover .settings-icon {
   transform: scale(1.1);
   filter: brightness(1.2);
+  background-color: transparent !important; /* Kein separater Hintergrund für das Icon */
 }
 
 .sidebar-nav-button {
@@ -115,6 +115,7 @@
   border-radius: 20%;
   background-color: rgba(255, 255, 255, 0.2);
   padding: 4px;
+}
 
 /* Leichte Animation beim Hover über Icons */
 .sidebar-nav-button:hover .sidebar-icon-img {
@@ -139,16 +140,7 @@
   width: 100%;
 }
 
-.settings-icon {
-  background-color: rgba(255, 255, 255, 0.15); /* Etwas dunklerer Hintergrund für das Zahnrad */
-  color: white;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
+/* Entfernt die doppelte Definition des .settings-icon */
 
 /* App Layout für Seitenleiste */
 .app-layout {
@@ -161,5 +153,4 @@
   margin-left: 50px;
   overflow-x: hidden;
   width: calc(100% - 50px);
-}
 }
