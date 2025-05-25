@@ -15,16 +15,16 @@ interface FeedAreaProps {
 
 const FeedArea: React.FC<FeedAreaProps> = ({ 
   isVisible, 
-  defaultWidth = 400,
+  defaultWidth = 500, // Erhöht von 400 auf 500
   minWidth = 250,
-  maxWidth = 600,
+  maxWidth = 700, // Erhöht von 600 auf 700 für mehr Flexibilität
   onWidthChange,
   onClose,
   onContentSelect
 }) => {
   const [width, setWidth] = useState<number>(defaultWidth);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [selectedFeedType, setSelectedFeedType] = useState<FeedType>('auto'); // Geändert von 'trending' zu 'auto'
+  const [selectedFeedType, setSelectedFeedType] = useState<FeedType>('auto');
   const feedAreaRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
 

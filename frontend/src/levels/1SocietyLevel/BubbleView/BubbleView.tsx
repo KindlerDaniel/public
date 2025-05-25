@@ -108,9 +108,9 @@ const BubbleView: React.FC<BubbleViewProps> = ({ onContentSelect }) => {
       {/* Feed area */}
       <FeedArea 
         isVisible={showFeedArea} 
-        defaultWidth={400}
+        defaultWidth={500} // Erhöht von 400 auf 500
         minWidth={250}
-        maxWidth={600}
+        maxWidth={700} // Erhöht von 600 auf 700
         onWidthChange={handleFeedWidthChange}
         onClose={closeFeedArea}
         onContentSelect={handleFeedContentSelect}

@@ -13,10 +13,12 @@
 }
 
 .feed-type-button { 
-  border-radius: 6px;
+  border-radius: 8px; /* Erhöht von 6px auf 8px */
   background: #ffffff;
   color: #000;
-  height: 60%;
+  height: 68%; /* Reduziert von 75% auf 68% */
+  min-height: 32px; /* Reduziert von 36px auf 32px */
+  max-height: 40px; /* Reduziert von 45px auf 40px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +28,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 15px;
+  padding: 0 18px; /* Erhöht von 15px auf 18px */
   border: none; /* Entfernt Standard-Button-Border */
   outline: none; /* Entfernt Focus-Outline */
 }
@@ -40,28 +42,28 @@
 
 @container (min-width: 400px) {
   .feed-type-container {
-    gap: 12px;
+    gap: 15px;
   }
 }
 
 @container (max-width: 250px) {
   .feed-type-button {
-    font-size: 12px;
-    padding: 0 10px;
+    font-size: 13px;
+    padding: 0 12px;
   }
 }
 
 @container (min-width: 251px) and (max-width: 350px) {
   .feed-type-button {
-    font-size: 14px;
-    padding: 0 12px;
+    font-size: 15px;
+    padding: 0 15px;
   }
 }
 
 @container (min-width: 351px) {
   .feed-type-button {
-    font-size: 15px;
-    padding: 0 15px;
+    font-size: 16px;
+    padding: 0 18px;
   }
 }
 
@@ -71,9 +73,8 @@
 
 .feed-type-button.active {
   background-color: #d7f4ff;
-  border: 2px solid #003366;
+  border: 3px solid #003366;
   font-weight: bold;
-  /* Entfernt explizit alle anderen Rahmen oder Outlines */
   outline: none;
   box-shadow: none;
 }
