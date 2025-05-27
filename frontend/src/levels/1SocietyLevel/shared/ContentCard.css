@@ -251,7 +251,6 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .content-description {
@@ -262,7 +261,6 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 
 /* Meta Information */
@@ -296,12 +294,10 @@
 /* Compact Variations */
 .content-card.compact .content-title {
   font-size: 22px;
-  -webkit-line-clamp: 1;
 }
 
 .content-card.compact .content-description {
   font-size: 19px;
-  -webkit-line-clamp: 2;
 }
 
 .content-card.compact .content-layout.video-portrait,

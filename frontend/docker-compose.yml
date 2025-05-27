@@ -1,0 +1,20 @@
+services:
+  frontend:
+    image: myproject/frontend:latest
+    build:
+      context: .              # Aktueller Ordner (frontend/)
+      dockerfile: Dockerfile   # Dockerfile im aktuellen Ordner
+    volumes:
+      - ./src:/app/src         # Entferne "frontend/" da wir schon im frontend Ordner sind
+      - ./public:/app/public   # Entferne "frontend/"
+      - ./package.json:/app/package.json  # Entferne "frontend/"
+    ports:
+      - "3000:80"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
