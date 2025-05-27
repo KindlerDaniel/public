@@ -1,16 +1,32 @@
 @echo off
 echo ========================================
-echo    Alle Services werden gestoppt...
+echo    ALLE SERVICES WERDEN GESTOPPT...
 echo ========================================
 
-echo Stoppe Frontend...
-docker-compose -f ./frontend/docker-compose.yml down
+call batfiles\stop-all.bat
 
-echo Stoppe Datenbanken...
-docker-compose -f ./databases/docker-compose.yml down
+echo.
+echo [NACHBEREITUNG] Bereinige System...
+echo.
+
+set /p cleanup="Möchten Sie eine Systembereinigung durchführen? (j/n): "
+if /i "%cleanup%"=="j" (
+    echo Bereinige ungenutzte Container...
+    docker container prune -f
+    
+    echo Bereinige ungenutzte Images...
+    docker image prune -f
+    
+    echo Bereinige ungenutzte Volumes...
+    docker volume prune -f
+    
+    echo ✓ Bereinigung abgeschlossen!
+) else (
+    echo Bereinigung übersprungen.
+)
 
 echo.
 echo ========================================
-echo     Alle Services gestoppt!
+echo     ALLE SERVICES GESTOPPT!
 echo ========================================
 pause

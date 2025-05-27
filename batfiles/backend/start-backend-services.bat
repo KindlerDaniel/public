@@ -1,12 +1,17 @@
 @echo off
 echo ========================================
-echo     MediaService wird gestartet...
+echo      MEDIASERVICE WIRD GESTARTET...
 echo ========================================
 echo MediaService: http://localhost:3001
-echo MinIO:        http://localhost:9000
-echo MinIO UI:     http://localhost:9001
 echo.
 
+echo Current directory: %CD%
+echo Script directory: %~dp0
+
+cd /d "%~dp0..\.."
+echo Changed to: %CD%
+
+echo Running docker-compose...
 docker-compose -f backend/mediaservice/docker-compose.yml up --build
 
 echo.
