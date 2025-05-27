@@ -1,0 +1,21 @@
+# backend/mediaservice/docker-compose.yml
+services:
+  mediaservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: socialmedia-mediaservice
+    ports:
+      - "3001:3001"
+    environment:
+      - MINIO_ENDPOINT=socialmedia-minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=socialmedia123
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    external: true
