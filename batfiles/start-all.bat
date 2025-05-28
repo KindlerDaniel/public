@@ -19,7 +19,7 @@ echo.
 echo Starte Backend und Frontend Services...
 
 echo Starting MediaService...
-start "MediaService" cmd /c "cd /d "%~dp0" && call backend\start-mediaservice.bat"
+start "MediaService" cmd /c "cd /d "%~dp0" && call backend\start-backend-services.bat"
 timeout /t 3 /nobreak >nul
 
 echo Starting Frontend...
@@ -27,16 +27,16 @@ start "Frontend" cmd /c "cd /d "%~dp0" && call frontend\start-frontend.bat"
 
 echo.
 echo ========================================
-echo         SERVICES WERDEN GESTARTET...
+echo    FOLGENDE SERVICES SOLLTEN LAUFEN...
 echo ========================================
 echo.
-echo Verfügbare Services:
-echo ✓ Frontend:     http://localhost:3000
-echo ✓ API Gateway:  http://localhost:8000
-echo ✓ MediaService: http://localhost:3001
+echo   Databases
 echo ✓ PostgreSQL:   localhost:5432
 echo ✓ Neo4j:        http://localhost:7474
 echo ✓ MinIO Admin:  http://localhost:9001
+echo ✓ API Gateway:  http://localhost:8000
+echo ✓ MediaService: http://localhost:3001
+echo ✓ Frontend:     http://localhost:3000
 echo.
 echo Die Services starten in separaten Fenstern.
 echo Zum Stoppen aller Services nutzen Sie stop-all.bat

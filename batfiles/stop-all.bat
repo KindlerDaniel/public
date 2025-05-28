@@ -8,7 +8,7 @@ call "%~dp0frontend\stop-frontend.bat"
 
 echo.
 echo [2/4] Stoppe MediaService...
-call "%~dp0backend\stop-mediaservice.bat"
+call "%~dp0backend\stop-backend-services.bat"
 
 echo.
 echo [3/4] Stoppe API Gateway...

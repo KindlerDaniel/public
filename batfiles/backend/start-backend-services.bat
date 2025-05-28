@@ -12,7 +12,7 @@ cd /d "%~dp0..\.."
 echo Changed to: %CD%
 
 echo Running docker-compose...
-docker-compose -f backend/mediaservice/docker-compose.yml up --build
+docker-compose -f backend/mediaservice/docker-compose.yml up --build -d
 
 echo.
 echo MediaService beendet.
