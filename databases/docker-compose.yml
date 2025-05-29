@@ -1,36 +1,36 @@
+version: "3.8"
+
 services:
-  # PostgreSQL Service
   postgres:
     build:
-      context: ./postgresql     # Entferne "databases/" - wir sind schon im databases Ordner
+      context: ./postgresql
       dockerfile: Dockerfile
     container_name: socialmedia-postgres
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=socialmedia
-      - POSTGRES_USER=appuser
-      - POSTGRES_PASSWORD=apppassword
+      POSTGRES_DB: socialmedia
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgresql/init-scripts:/docker-entrypoint-initdb.d  # Entferne "databases/"
+      - ./postgresql/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - app-network
     restart: unless-stopped
 
-  # Neo4j Service
   neo4j:
     build:
-      context: ./neo4j          # Entferne "databases/"
+      context: ./neo4j
       dockerfile: Dockerfile
     container_name: socialmedia-neo4j
     ports:
-      - "7474:7474"  # Browser Interface
-      - "7687:7687"  # Bolt Protocol
+      - "7474:7474"
+      - "7687:7687"
     environment:
-      - NEO4J_AUTH=neo4j/socialmedia123
-      - NEO4J_dbms_default__database=socialmedia
-      - NEO4J_PLUGINS=["apoc"]
+      NEO4J_AUTH: neo4j/socialmedia123
+      NEO4J_dbms_default__database: socialmedia
+      NEO4J_PLUGINS: "[\"apoc\"]"
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
@@ -40,41 +40,37 @@ services:
       - app-network
     restart: unless-stopped
 
-  # MinIO Service
-  minio:
+  socialmedia-minio:
     build:
-      context: ./minio          # Entferne "databases/"
+      context: ./minio
       dockerfile: Dockerfile
     container_name: socialmedia-minio
     ports:
-      - "9000:9000"  # API
-      - "9001:9001"  # Console
+      - "9000:9000"
+      - "9001:9001"
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=socialmedia123
-      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: socialmedia123
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
     volumes:
       - minio_data:/data
+    command: server /data --console-address ":9001"
     networks:
       - app-network
     restart: unless-stopped
-    command: server /data --console-address ":9001"
 
-  # MinIO Setup Service (läuft einmalig nach MinIO Start)
   minio-setup:
     image: minio/mc:latest
     container_name: socialmedia-minio-setup
     depends_on:
-      - minio
+      - socialmedia-minio
     environment:
-      - MC_HOST_myminio=http://minioadmin:socialmedia123@minio:9000
-    networks:
-      - app-network
+      MC_HOST_myminio: http://minioadmin:socialmedia123@socialmedia-minio:9000
     entrypoint: >
       /bin/sh -c "
       echo 'Warte auf MinIO...';
       sleep 10;
-      mc alias set myminio http://minio:9000 minioadmin socialmedia123;
+      mc alias set myminio http://socialmedia-minio:9000 minioadmin socialmedia123;
       mc mb myminio/images --ignore-existing;
       mc mb myminio/videos --ignore-existing;
       mc mb myminio/audio --ignore-existing;
@@ -88,24 +84,18 @@ services:
       mc anonymous set download myminio/thumbnails;
       echo 'MinIO Setup abgeschlossen!';
       "
+    networks:
+      - app-network
     restart: "no"
 
-# Volumes für persistente Datenspeicherung
 volumes:
   postgres_data:
-    driver: local
   neo4j_data:
-    driver: local
   neo4j_logs:
-    driver: local
   neo4j_import:
-    driver: local
   neo4j_plugins:
-    driver: local
   minio_data:
-    driver: local
 
-# Netzwerk für die Services
 networks:
   app-network:
-    driver: bridge
+    external: true

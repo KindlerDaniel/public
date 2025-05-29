@@ -1,4 +1,3 @@
-# backend/mediaservice/docker-compose.yml
 services:
   mediaservice:
     build:
