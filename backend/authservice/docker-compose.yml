@@ -3,11 +3,12 @@ version: "3.8"
 services:
   authservice:
     build:
-      context: ./backend/authservice
+      context: .
+      dockerfile: Dockerfile
     container_name: authservice
     restart: unless-stopped
     ports:
-      - "4000:3000"    # Host-Port 4000 → Container-Port 3000
+      - "4000:3000"
     environment:
       - NODE_ENV=production
       - DB_HOST=postgres
@@ -15,6 +16,8 @@ services:
       - DB_USER=authuser
       - DB_PASSWORD=geheim
       - DB_NAME=authdb
+    networks:
+      - app-network
     depends_on:
       - postgres
 
@@ -27,10 +30,16 @@ services:
       - POSTGRES_PASSWORD=geheim
       - POSTGRES_DB=authdb
     volumes:
-      - authservice_postgres_data:/var/lib/postgresql/data
-      - ./databases/postgresql/auth-init:/docker-entrypoint-initdb.d
+      - authservice_db_data:/var/lib/postgresql/data
+      - ../../databases/postgresql/auth-init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
     ports:
-      - "5433:5432"    # Host-Port 5433 → Container-Port 5432
+      - "5433:5432"
 
 volumes:
-  authservice_postgres_data:
+  authservice_db_data:
+
+networks:
+  app-network:
+    external: true
