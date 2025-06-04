@@ -1,4 +1,3 @@
-# gateway/kong.yml
 _format_version: "3.0"
 _transform: true
 
@@ -9,6 +8,14 @@ services:
       - name: media-route
         paths:
           - /api/media
+        strip_path: true
+
+  - name: authservice
+    url: http://authservice:3000
+    routes:
+      - name: auth-route
+        paths:
+          - /api/auth
         strip_path: true
 
 plugins:

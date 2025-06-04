@@ -1,6 +1,7 @@
 // frontend/src/levels/4IndividualLevel/IndividualLevelView.js
 import React, { useState } from 'react';
 import './IndividualLevel.css';
+import AuthButtons from '../../components/AuthButtons';
 
 const IndividualLevelView = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -44,9 +45,7 @@ const IndividualLevelView = () => {
       if (response.ok) {
         setMessage('Bild erfolgreich hochgeladen!');
         setSelectedFile(null);
-        // Input zurücksetzen
         document.getElementById('fileInput').value = '';
-        // Liste aktualisieren
         loadImages();
       } else {
         setMessage(result.error || 'Fehler beim Hochladen');
@@ -64,7 +63,7 @@ const IndividualLevelView = () => {
     try {
       const response = await fetch('http://localhost:8000/api/media/list');
       const images = await response.json();
-      
+
       if (response.ok) {
         setUploadedImages(images);
       }
@@ -101,13 +100,16 @@ const IndividualLevelView = () => {
 
   return (
     <div className="individual-level">
+      <div className="auth-buttons-container">
+        <AuthButtons />
+      </div>
       <div className="profile-container">
         <h2>Mein Profil</h2>
-        
+
         {/* Upload-Bereich */}
         <div className="upload-section">
           <h3>Bild hochladen</h3>
-          
+
           <div className="upload-controls">
             <input
               id="fileInput"
@@ -116,12 +118,12 @@ const IndividualLevelView = () => {
               onChange={handleFileSelect}
               className="file-input"
             />
-            
+
             {selectedFile && (
               <div className="selected-file">
                 <p>Ausgewählt: {selectedFile.name}</p>
-                <button 
-                  onClick={handleUpload} 
+                <button
+                  onClick={handleUpload}
                   disabled={uploading}
                   className="upload-button"
                 >
@@ -141,7 +143,7 @@ const IndividualLevelView = () => {
         {/* Bilder-Galerie */}
         <div className="images-section">
           <h3>Meine Bilder ({uploadedImages.length})</h3>
-          
+
           {uploadedImages.length > 0 ? (
             <div className="images-grid">
               {uploadedImages.map((image, index) => (
@@ -149,7 +151,7 @@ const IndividualLevelView = () => {
                   <img src={image.url} alt={image.name} />
                   <div className="image-info">
                     <p className="image-name">{image.name}</p>
-                    <button 
+                    <button
                       onClick={() => handleDelete(image.name)}
                       className="delete-button"
                     >

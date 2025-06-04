@@ -13,6 +13,9 @@ docker-compose -f docker-compose.yml down
 cd /d "%~dp0backend\gateway"
 docker-compose -f docker-compose.yml down
 
+cd /d "%~dp0backend\authservice"
+docker-compose -f docker-compose.yml down
+
 :: Datenbanken
 cd /d "%~dp0databases"
 docker-compose -f docker-compose.yml down
