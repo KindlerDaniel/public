@@ -1,21 +1,18 @@
 _format_version: "3.0"
-_transform: true
 
 services:
-  - name: mediaservice
-    url: http://socialmedia-mediaservice:3001
+  - name: auth-service
+    url: http://authservice:4000
     routes:
-      - name: media-route
-        paths:
-          - /api/media
+      - paths:
+          - /api/auth
         strip_path: true
 
-  - name: authservice
-    url: http://authservice:3000
+  - name: media-service
+    url: http://socialmedia-mediaservice:3001
     routes:
-      - name: auth-route
-        paths:
-          - /api/auth
+      - paths:
+          - /api/media
         strip_path: true
 
 plugins:
@@ -26,18 +23,15 @@ plugins:
       methods:
         - GET
         - POST
-        - DELETE
         - PUT
+        - DELETE
         - OPTIONS
       headers:
-        - Accept
-        - Accept-Version
-        - Content-Length
-        - Content-MD5
+        - Authorization
         - Content-Type
-        - Date
         - X-Auth-Token
       exposed_headers:
         - X-Auth-Token
       credentials: true
       max_age: 3600
+
