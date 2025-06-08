@@ -1,3 +1,4 @@
+# File: docker-compose.yml
 version: "3.8"
 
 services:
@@ -11,10 +12,10 @@ services:
     environment:
       POSTGRES_DB: socialmedia
       POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: apppassword
+      POSTGRES_PASSWORD: mediaservice123
+    # Nur das Daten-Volume, keine Init-Mounts mehr
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgresql/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - app-network
     restart: unless-stopped

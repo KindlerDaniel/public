@@ -14,7 +14,7 @@ services:
       - DB_HOST=host.docker.internal
       - DB_PORT=5432
       - DB_USER=appuser
-      - DB_PASSWORD=apppassword
+      - DB_PASSWORD=mediaservice123
       - DB_NAME=socialmedia
     networks:
       - app-network

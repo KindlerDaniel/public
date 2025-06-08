@@ -1,17 +1,20 @@
 _format_version: "3.0"
+_transform: true
 
 services:
   - name: auth-service
     url: http://authservice:4000
     routes:
-      - paths:
+      - name: auth-route
+        paths:
           - /api/auth
         strip_path: true
 
   - name: media-service
     url: http://socialmedia-mediaservice:3001
     routes:
-      - paths:
+      - name: media-route
+        paths:
           - /api/media
         strip_path: true
 
@@ -34,4 +37,3 @@ plugins:
         - X-Auth-Token
       credentials: true
       max_age: 3600
-
