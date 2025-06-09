@@ -5,6 +5,7 @@ import { AppProvider } from './context/AppContext.js';
 import { ViewProvider } from './context/ViewContext.js';
 import { AuthProvider } from './context/AuthContext.js';
 import LoginDialog from './components/LoginDialog.jsx';
+import RegisterDialog from './components/RegisterDialog.jsx'; // ← NEU HINZUGEFÜGT
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <div className="App">
             <Layout />
             <LoginDialog />
+            <RegisterDialog /> {/* ← NEU HINZUGEFÜGT */}
           </div>
         </ViewProvider>
       </AppProvider>

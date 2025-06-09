@@ -1,37 +1,51 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export default function LoginDialog() {
+export default function RegisterDialog() {
   const {
-    showLoginDialog,
-    closeLoginDialog,
-    login,
+    showRegisterDialog,
+    closeRegisterDialog,
+    register,
     isAuthenticated
   } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!showLoginDialog || isAuthenticated) return null;
+  if (!showRegisterDialog || isAuthenticated) return null;
 
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
+    // Validation
     if (!email || !password) {
       setError('Bitte füllen Sie alle Felder aus');
       setIsLoading(false);
       return;
     }
 
+    if (password !== passwordConfirm) {
+      setError('Passwörter stimmen nicht überein');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Passwort muss mindestens 6 Zeichen lang sein');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      await login(email, password);
+      await register(email, password);
       // Dialog wird automatisch geschlossen durch AuthContext
     } catch (err) {
-      setError(err.message || 'Fehler beim Login');
+      setError(err.message || 'Fehler bei der Registrierung');
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +67,7 @@ export default function LoginDialog() {
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          closeLoginDialog();
+          closeRegisterDialog();
         }
       }}
     >
@@ -68,8 +82,8 @@ export default function LoginDialog() {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ marginTop: 0, marginBottom: '20px', textAlign: 'center', color: '#007bff' }}>
-          Anmelden
+        <h2 style={{ marginTop: 0, marginBottom: '20px', textAlign: 'center', color: '#28a745' }}>
+          Neuen Account erstellen
         </h2>
         
         {error && (
@@ -88,7 +102,7 @@ export default function LoginDialog() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-              E-Mail:
+              E-Mail-Adresse:
             </label>
             <input
               type="email"
@@ -126,7 +140,29 @@ export default function LoginDialog() {
                 fontSize: '16px',
                 boxSizing: 'border-box'
               }}
-              placeholder="Ihr Passwort"
+              placeholder="Mindestens 6 Zeichen"
+            />
+          </div>
+
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+              Passwort bestätigen:
+            </label>
+            <input
+              type="password"
+              value={passwordConfirm}
+              onChange={e => setPasswordConfirm(e.target.value)}
+              required
+              disabled={isLoading}
+              style={{ 
+                width: '100%', 
+                padding: '10px', 
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Passwort wiederholen"
             />
           </div>
 
@@ -136,7 +172,7 @@ export default function LoginDialog() {
             style={{ 
               width: '100%',
               padding: '12px',
-              backgroundColor: isLoading ? '#ccc' : '#007bff',
+              backgroundColor: isLoading ? '#ccc' : '#28a745',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -146,12 +182,12 @@ export default function LoginDialog() {
               marginBottom: '15px'
             }}
           >
-            {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
+            {isLoading ? 'Account wird erstellt...' : 'Account erstellen'}
           </button>
         </form>
 
         <button
-          onClick={closeLoginDialog}
+          onClick={closeRegisterDialog}
           disabled={isLoading}
           style={{
             width: '100%',

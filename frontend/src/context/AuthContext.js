@@ -7,7 +7,10 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+  
+  // Zwei separate Dialog-States
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -48,7 +51,7 @@ export function AuthProvider({ children }) {
       setToken(newToken);
       setUser(newUser);
       setIsAuthenticated(true);
-      setShowLoginDialog(false);
+      setShowRegisterDialog(false);
     } catch (err) {
       throw err;
     }
@@ -61,13 +64,26 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
   };
 
+  // Login-Dialog Funktionen
   const openLoginDialog = () => {
     if (isAuthenticated) return;
     setShowLoginDialog(true);
+    setShowRegisterDialog(false); // Anderen Dialog schließen
   };
 
   const closeLoginDialog = () => {
     setShowLoginDialog(false);
+  };
+
+  // Register-Dialog Funktionen  
+  const openRegisterDialog = () => {
+    if (isAuthenticated) return;
+    setShowRegisterDialog(true);
+    setShowLoginDialog(false); // Anderen Dialog schließen
+  };
+
+  const closeRegisterDialog = () => {
+    setShowRegisterDialog(false);
   };
 
   return (
@@ -79,9 +95,16 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        
+        // Login Dialog
         showLoginDialog,
         openLoginDialog,
-        closeLoginDialog
+        closeLoginDialog,
+        
+        // Register Dialog
+        showRegisterDialog,
+        openRegisterDialog,
+        closeRegisterDialog
       }}
     >
       {children}
