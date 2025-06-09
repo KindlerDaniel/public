@@ -1,0 +1,99 @@
+/* frontend/src/components/AuthButtons.css */
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.user-status {
+  text-align: center;
+  font-size: 16px;
+}
+
+.logged-in-user {
+  color: #27ae60;
+  background-color: #d5f4e6;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #a8e6cf;
+  display: inline-block;
+}
+
+.not-logged-in {
+  color: #7f8c8d;
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  font-style: italic;
+  display: inline-block;
+}
+
+.auth-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.login-button,
+.logout-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.login-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.login-button:hover {
+  background-color: #2980b9;
+}
+
+.login-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.logout-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+}
+
+.logout-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-buttons {
+    gap: 10px;
+  }
+  
+  .user-status {
+    font-size: 14px;
+  }
+  
+  .logged-in-user,
+  .not-logged-in {
+    padding: 8px 12px;
+  }
+  
+  .login-button,
+  .logout-button {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
