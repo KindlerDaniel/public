@@ -14,6 +14,19 @@ async function loginRequest(email, password) {
   return res.json();
 }
 
+async function refreshTokenRequest(refreshToken) {
+  const res = await fetch(`${API_URL}/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Token refresh failed');
+  }
+  return res.json();
+}
+
 async function registerRequest(email, password) {
   const res = await fetch(`${API_URL}/register`, {
     method: 'POST',
@@ -39,6 +52,7 @@ async function fetchCurrentUser(token) {
 
 const authAPI = {
   loginRequest,
+  refreshTokenRequest,
   registerRequest,
   fetchCurrentUser
 };

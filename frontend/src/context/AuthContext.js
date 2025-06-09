@@ -1,16 +1,77 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import authAPI from '../utils/authAPI';
+import jwtDecode from 'jwt-decode'; // Import jwt-decode
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken'));
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
   
   // Zwei separate Dialog-States
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+
+  // First define logout since it's used by other functions
+  const logout = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      await fetch('http://localhost:8000/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error('Logout failed:', err);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      setToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  }, [isAuthenticated, token]);
+
+  const verifyTokensOnMount = useCallback(async () => {
+    if (!token && !refreshToken) return;
+    
+    try {
+      // First try with current access token
+      const userData = await authAPI.fetchCurrentUser(token);
+      setUser(userData.user);
+      setIsAuthenticated(true);
+    } catch (err) {
+      // If access token fails, try refresh
+      if (refreshToken) {
+        try {
+          const { accessToken, refreshToken: newRefreshToken } = await authAPI.refreshTokenRequest(refreshToken);
+          
+          // Update tokens in state and storage
+          localStorage.setItem('token', accessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
+          setToken(accessToken);
+          setRefreshToken(newRefreshToken);
+          
+          // Get user data with new token
+          const userData = await authAPI.fetchCurrentUser(accessToken);
+          setUser(userData.user);
+          setIsAuthenticated(true);
+        } catch (refreshErr) {
+          console.error('Token refresh failed:', refreshErr);
+          logout();
+        }
+      } else {
+        logout();
+      }
+    }
+  }, [token, refreshToken, logout]);
+
+  useEffect(() => {
+    verifyTokensOnMount();
+  }, [verifyTokensOnMount]);
 
   useEffect(() => {
     if (token) {
@@ -22,8 +83,6 @@ export function AuthProvider({ children }) {
           setIsAuthenticated(true);
         })
         .catch(() => {
-          setToken(null);
-          setUser(null);
           setIsAuthenticated(false);
         });
     } else {
@@ -33,19 +92,50 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  const login = async (email, password) => {
+  useEffect(() => {
+    if (!token || !refreshToken) return;
+    
+    const checkAndRefreshToken = async () => {
+      try {
+        const decoded = jwtDecode(token);
+        if (!decoded?.exp) return;
+        
+        // Refresh if token expires in less than 1 minute
+        const expiresIn = (decoded.exp * 1000) - Date.now();
+        if (expiresIn < 60000) {
+          const { accessToken, refreshToken: newRefreshToken } = await authAPI.refreshTokenRequest(refreshToken);
+          
+          localStorage.setItem('token', accessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
+          setToken(accessToken);
+          setRefreshToken(newRefreshToken);
+        }
+      } catch (err) {
+        console.error('Token refresh check failed:', err);
+      }
+    };
+    
+    // Check every 30 seconds
+    const interval = setInterval(checkAndRefreshToken, 30000);
+    return () => clearInterval(interval);
+  }, [token, refreshToken]);
+
+  const login = useCallback(async (email, password) => {
     try {
-      const { token: newToken, user: newUser } = await authAPI.loginRequest(email, password);
+      const { token: newToken, refreshToken: newRefreshToken, user: newUser } = await authAPI.loginRequest(email, password);
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('refreshToken', newRefreshToken);
       setToken(newToken);
+      setRefreshToken(newRefreshToken);
       setUser(newUser);
       setIsAuthenticated(true);
       setShowLoginDialog(false);
     } catch (err) {
       throw err;
     }
-  };
+  }, []);
 
-  const register = async (email, password) => {
+  const register = useCallback(async (email, password) => {
     try {
       const { token: newToken, user: newUser } = await authAPI.registerRequest(email, password);
       setToken(newToken);
@@ -55,36 +145,29 @@ export function AuthProvider({ children }) {
     } catch (err) {
       throw err;
     }
-  };
-
-  const logout = () => {
-    if (!isAuthenticated) return;
-    setToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
-  };
+  }, []);
 
   // Login-Dialog Funktionen
-  const openLoginDialog = () => {
+  const openLoginDialog = useCallback(() => {
     if (isAuthenticated) return;
     setShowLoginDialog(true);
     setShowRegisterDialog(false); // Anderen Dialog schließen
-  };
+  }, [isAuthenticated]);
 
-  const closeLoginDialog = () => {
+  const closeLoginDialog = useCallback(() => {
     setShowLoginDialog(false);
-  };
+  }, []);
 
   // Register-Dialog Funktionen  
-  const openRegisterDialog = () => {
+  const openRegisterDialog = useCallback(() => {
     if (isAuthenticated) return;
     setShowRegisterDialog(true);
     setShowLoginDialog(false); // Anderen Dialog schließen
-  };
+  }, [isAuthenticated]);
 
-  const closeRegisterDialog = () => {
+  const closeRegisterDialog = useCallback(() => {
     setShowRegisterDialog(false);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -92,6 +175,7 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         user,
         token,
+        refreshToken,
         login,
         register,
         logout,

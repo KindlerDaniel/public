@@ -36,9 +36,17 @@ Role.belongsToMany(User, { through: "UserRoles" });
 sequelize.sync();
 
 // Token-Generator
-function generateToken(user, roles = []) {
-  const payload = { userId: user.id, email: user.email, roles: roles.map(r => r.name) };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+function generateToken(user, roles = [], isRefreshToken = false) {
+  const payload = { 
+    userId: user.id, 
+    email: user.email, 
+    roles: roles.map(r => r.name),
+    tokenType: isRefreshToken ? 'refresh' : 'access'
+  };
+  
+  return jwt.sign(payload, JWT_SECRET, { 
+    expiresIn: isRefreshToken ? '7d' : '7m' 
+  });
 }
 
 // Router für Auth-Endpunkte (ohne Präfix)
@@ -76,7 +84,8 @@ authRouter.post("/login", async (req, res) => {
     }
     const roles = await user.getRoles();
     const token = generateToken(user, roles);
-    res.json({ token, user: { id: user.id, email: user.email } });
+    const refreshToken = generateToken(user, roles, true);
+    res.json({ token, refreshToken, user: { id: user.id, email: user.email } });
   } catch (err) {
     console.error("Login-Fehler:", err);
     res.status(500).json({ message: "Login fehlgeschlagen." });
@@ -99,6 +108,83 @@ authRouter.get("/me", async (req, res) => {
     res.status(401).json({ message: "Ungültiges Token." });
   }
 });
+
+// In-memory token blacklist
+const tokenBlacklist = new Set();
+
+// Logout
+authRouter.post('/logout', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(204);
+  
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    tokenBlacklist.add(token);
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.sendStatus(204);
+  }
+});
+
+// Refresh token endpoint
+authRouter.post('/refresh', async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
+  
+  try {
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, JWT_SECRET);
+    if (decoded.tokenType !== 'refresh') {
+      return res.status(403).json({ message: "Invalid token type" });
+    }
+    
+    // Check if user still exists
+    const user = await User.findByPk(decoded.userId, { include: Role });
+    if (!user || user.isBlocked) {
+      return res.status(401).json({ message: "User not found or blocked" });
+    }
+    
+    // Generate new tokens (token rotation)
+    const roles = await user.getRoles();
+    const newAccessToken = generateToken(user, roles);
+    const newRefreshToken = generateToken(user, roles, true);
+    
+    // Invalidate old refresh token
+    tokenBlacklist.add(refreshToken);
+    
+    res.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    });
+    
+  } catch (err) {
+    console.error('Refresh error:', err);
+    res.status(401).json({ message: "Invalid refresh token" });
+  }
+});
+
+// Verify Token Middleware
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) return res.status(401).json({ message: "Unauthorized" });
+  
+  const token = authHeader.split(' ')[1];
+  try {
+    if (tokenBlacklist.has(token)) return res.status(401).json({ message: "Token invalidated" });
+    
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error('Token verification error:', err);
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+// Use verifyToken middleware for all routes except login and register
+authRouter.use(verifyToken);
 
 // Mounting: unterstützt sowohl root- als auch /api/auth-Pfade
 app.use("/", authRouter);
