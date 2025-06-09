@@ -112,20 +112,42 @@ authRouter.get("/me", async (req, res) => {
 // In-memory token blacklist
 const tokenBlacklist = new Set();
 
-// Logout
+// Debug-Log beim Start
+console.log('Auth-Service gestartet. Logout-Endpoint unter /logout und /api/auth/logout verfuegbar');
+
+// Logout-Endpoint mit erweitertem Logging
 authRouter.post('/logout', async (req, res) => {
+  console.log('--- Neuer Logout-Request ---');
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(204);
+  if (!authHeader?.startsWith("Bearer ")) {
+    console.log('Kein Token im Header');
+    return res.sendStatus(204);
+  }
   
   const token = authHeader.split(' ')[1];
   try {
+    console.log('Verifiziere Token:', token.substring(0, 10) + '...');
     const decoded = jwt.verify(token, JWT_SECRET);
+    
+    console.log('Fuege Token zur Blacklist hinzu');
     tokenBlacklist.add(token);
-    res.status(200).json({ message: 'Logged out successfully' });
+    
+    if (req.body.refreshToken) {
+      console.log('Fuege Refresh-Token zur Blacklist hinzu');
+      tokenBlacklist.add(req.body.refreshToken);
+    }
+    
+    console.log('Blacklist Groesse:', tokenBlacklist.size);
+    res.status(200).json({ success: true });
   } catch (err) {
     console.error('Logout error:', err);
-    res.sendStatus(204);
+    res.status(200).json({ success: true });
   }
+  
+  console.log('--- Logout abgeschlossen ---');
 });
 
 // Refresh token endpoint

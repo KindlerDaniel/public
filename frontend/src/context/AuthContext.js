@@ -19,21 +19,42 @@ export function AuthProvider({ children }) {
     if (!isAuthenticated) return;
     
     try {
-      await fetch('http://localhost:8000/api/auth/logout', {
+      const response = await fetch('http://localhost:8000/api/auth/logout', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refreshToken })
       });
-    } catch (err) {
-      console.error('Logout failed:', err);
-    } finally {
+      
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error('Logout failed');
+      }
+      
+      // Only clear state after successful backend logout
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       setToken(null);
       setRefreshToken(null);
       setUser(null);
       setIsAuthenticated(false);
+      
+      return true; // Indicate successful logout
+    } catch (err) {
+      console.error('Logout failed:', err);
+      // Still clear state but indicate failure
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      setToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      
+      return false;
     }
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, refreshToken]);
 
   const verifyTokensOnMount = useCallback(async () => {
     if (!token && !refreshToken) return;
