@@ -9,7 +9,7 @@ export default function LoginDialog() {
     isAuthenticated
   } = useContext(AuthContext);
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,14 +21,14 @@ export default function LoginDialog() {
     setError('');
     setIsLoading(true);
 
-    if (!email || !password) {
+    if (!username || !password) {
       setError('Bitte füllen Sie alle Felder aus');
       setIsLoading(false);
       return;
     }
 
     try {
-      await login(email, password);
+      await login(username, password);
       // Dialog wird automatisch geschlossen durch AuthContext
     } catch (err) {
       setError(err.message || 'Fehler beim Login');
@@ -88,12 +88,12 @@ export default function LoginDialog() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-              E-Mail:
+              Benutzername:
             </label>
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
               required
               disabled={isLoading}
               style={{ 
@@ -104,7 +104,7 @@ export default function LoginDialog() {
                 fontSize: '16px',
                 boxSizing: 'border-box'
               }}
-              placeholder="ihre.email@beispiel.de"
+              placeholder="Ihr Benutzername"
             />
           </div>
 

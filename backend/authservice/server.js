@@ -23,9 +23,11 @@ const sequelize = new Sequelize(
 // Models
 const User = sequelize.define("User", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  email: { type: DataTypes.STRING, unique: true, allowNull: false },
+  username: { type: DataTypes.STRING, unique: true, allowNull: false },
   passwordHash: { type: DataTypes.STRING, allowNull: false },
   isBlocked: { type: DataTypes.BOOLEAN, defaultValue: false },
+  failedLoginAttempts: { type: DataTypes.INTEGER, defaultValue: 0 },
+  loginBlockedUntil: { type: DataTypes.DATE }
 });
 const Role = sequelize.define("Role", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -39,7 +41,7 @@ sequelize.sync();
 function generateToken(user, roles = [], isRefreshToken = false) {
   const payload = { 
     userId: user.id, 
-    email: user.email, 
+    username: user.username, 
     roles: roles.map(r => r.name),
     tokenType: isRefreshToken ? 'refresh' : 'access'
   };
@@ -49,24 +51,49 @@ function generateToken(user, roles = [], isRefreshToken = false) {
   });
 }
 
+// Temporary workaround for missing columns
+const safeFindUser = async (username) => {
+  try {
+    return await User.findOne({ 
+      where: { username },
+      attributes: [
+        'id', 
+        'username', 
+        'passwordHash', 
+        'isBlocked',
+        ...(await User.describe()).failedLoginAttempts ? ['failedLoginAttempts'] : [],
+        ...(await User.describe()).loginBlockedUntil ? ['loginBlockedUntil'] : []
+      ],
+      include: Role 
+    });
+  } catch (err) {
+    // If column check fails, fall back to basic fields
+    return await User.findOne({ 
+      where: { username },
+      attributes: ['id', 'username', 'passwordHash', 'isBlocked'],
+      include: Role 
+    });
+  }
+};
+
 // Router für Auth-Endpunkte (ohne Präfix)
 const authRouter = express.Router();
 
 // Registrierung
 authRouter.post("/register", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: "E-Mail und Passwort erforderlich." });
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ message: "Benutzername und Passwort erforderlich." });
   try {
-    if (await User.findOne({ where: { email } })) {
-      return res.status(409).json({ message: "E-Mail ist bereits vergeben." });
+    if (await User.findOne({ where: { username } })) {
+      return res.status(409).json({ message: "Benutzername ist bereits vergeben." });
     }
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, passwordHash });
+    const user = await User.create({ username, passwordHash });
     let role = await Role.findOne({ where: { name: "user" } });
     if (!role) role = await Role.create({ name: "user" });
     await user.addRole(role);
     const token = generateToken(user, [role]);
-    res.status(201).json({ token, user: { id: user.id, email: user.email } });
+    res.status(201).json({ token, user: { id: user.id, username: user.username } });
   } catch (err) {
     console.error("Register-Fehler:", err);
     res.status(500).json({ message: "Registrierung fehlgeschlagen." });
@@ -75,17 +102,56 @@ authRouter.post("/register", async (req, res) => {
 
 // Login
 authRouter.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: "E-Mail und Passwort erforderlich." });
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ message: "Benutzername und Passwort erforderlich." });
+  
   try {
-    const user = await User.findOne({ where: { email }, include: Role });
+    const user = await safeFindUser(username);
+    
+    // Skip login attempt checks if columns don't exist yet
+    const canCheckAttempts = user && (await User.describe()).failedLoginAttempts;
+    
+    if (canCheckAttempts && user.loginBlockedUntil && user.loginBlockedUntil > new Date()) {
+      const remainingMinutes = Math.ceil((user.loginBlockedUntil - new Date()) / (1000 * 60));
+      return res.status(403).json({ 
+        message: `Konto vorübergehend gesperrt. Bitte versuchen Sie es in ${remainingMinutes} Minuten erneut.` 
+      });
+    }
+    
     if (!user || user.isBlocked || !(await bcrypt.compare(password, user.passwordHash))) {
+      if (canCheckAttempts && user) {
+        await user.update({ 
+          failedLoginAttempts: (user.failedLoginAttempts || 0) + 1,
+          updatedAt: new Date()
+        });
+        
+        if (user.failedLoginAttempts + 1 >= 10) {
+          const blockUntil = new Date(Date.now() + 5 * 60 * 1000);
+          await user.update({ 
+            loginBlockedUntil: blockUntil,
+            updatedAt: new Date()
+          });
+          return res.status(403).json({ 
+            message: "Zu viele fehlgeschlagene Versuche. Ihr Konto wurde für 5 Minuten gesperrt." 
+          });
+        }
+      }
+      
       return res.status(401).json({ message: "Ungültige Anmeldedaten." });
     }
+    
+    if (canCheckAttempts) {
+      await user.update({ 
+        failedLoginAttempts: 0,
+        loginBlockedUntil: null,
+        updatedAt: new Date()
+      });
+    }
+    
     const roles = await user.getRoles();
     const token = generateToken(user, roles);
     const refreshToken = generateToken(user, roles, true);
-    res.json({ token, refreshToken, user: { id: user.id, email: user.email } });
+    res.json({ token, refreshToken, user: { id: user.id, username: user.username } });
   } catch (err) {
     console.error("Login-Fehler:", err);
     res.status(500).json({ message: "Login fehlgeschlagen." });
@@ -102,7 +168,7 @@ authRouter.get("/me", async (req, res) => {
     const user = await User.findByPk(decoded.userId, { include: Role });
     if (!user || user.isBlocked) return res.status(user ? 403 : 404).json({ message: user ? "Nutzer ist blockiert." : "Nutzer nicht gefunden." });
     const roles = await user.getRoles();
-    res.json({ user: { id: user.id, email: user.email, roles: roles.map(r => r.name) } });
+    res.json({ user: { id: user.id, username: user.username, roles: roles.map(r => r.name) } });
   } catch (err) {
     console.error("Me-Fehler:", err);
     res.status(401).json({ message: "Ungültiges Token." });

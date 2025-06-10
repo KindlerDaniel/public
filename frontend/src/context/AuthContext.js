@@ -141,9 +141,9 @@ export function AuthProvider({ children }) {
     return () => clearInterval(interval);
   }, [token, refreshToken]);
 
-  const login = useCallback(async (email, password) => {
+  const login = useCallback(async (username, password) => {
     try {
-      const { token: newToken, refreshToken: newRefreshToken, user: newUser } = await authAPI.loginRequest(email, password);
+      const { token: newToken, refreshToken: newRefreshToken, user: newUser } = await authAPI.loginRequest(username, password);
       localStorage.setItem('token', newToken);
       localStorage.setItem('refreshToken', newRefreshToken);
       setToken(newToken);
@@ -156,9 +156,10 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const register = useCallback(async (email, password) => {
+  const register = useCallback(async (username, password) => {
     try {
-      const { token: newToken, user: newUser } = await authAPI.registerRequest(email, password);
+      const { token: newToken, user: newUser } = await authAPI.registerRequest(username, password);
+      localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(newUser);
       setIsAuthenticated(true);

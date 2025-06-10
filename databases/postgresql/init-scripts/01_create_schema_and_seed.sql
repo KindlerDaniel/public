@@ -3,9 +3,11 @@
 -- 1) Tabelle „Users"
 CREATE TABLE IF NOT EXISTS "Users" (
   id            SERIAL PRIMARY KEY,
-  email         VARCHAR(255) UNIQUE NOT NULL,
+  username      VARCHAR(255) UNIQUE NOT NULL,
   "passwordHash" TEXT        NOT NULL,
   "isBlocked"   BOOLEAN      DEFAULT FALSE,
+  "failedLoginAttempts" INTEGER DEFAULT 0,
+  "loginBlockedUntil" TIMESTAMPTZ,
   "createdAt"   TIMESTAMPTZ  NOT NULL DEFAULT now(),
   "updatedAt"   TIMESTAMPTZ  NOT NULL DEFAULT now()
 );

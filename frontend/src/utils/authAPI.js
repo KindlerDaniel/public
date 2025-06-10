@@ -1,11 +1,11 @@
 // src/utils/authAPI.js
 const API_URL = 'http://localhost:8000/api/auth';
 
-async function loginRequest(email, password) {
+async function loginRequest(username, password) {
   const res = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ username, password })
   });
   if (!res.ok) {
     const err = await res.json();
@@ -27,11 +27,11 @@ async function refreshTokenRequest(refreshToken) {
   return res.json();
 }
 
-async function registerRequest(email, password) {
+async function registerRequest(username, password) {
   const res = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ username, password })
   });
   if (!res.ok) {
     const err = await res.json();
