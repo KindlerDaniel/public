@@ -22,8 +22,6 @@ if %errorlevel% neq 0 (
 ) else (
   echo ✓ Datenbanken-Container werden gestartet.
 )
-echo ⏳ Warte auf Initialisierung (25s)...
-timeout /t 25 /nobreak >nul
 
 echo [2/7] Führe MinIO-Setup durch (Container wird nach Ausführung automatisch entfernt)...
 docker-compose -f "%ROOT%databases\docker-compose.yml" run --rm minio-setup
@@ -72,4 +70,3 @@ echo   ✓ API Gateway:   http://localhost:8000
 echo   ✓ MediaService:  http://localhost:3001
 echo   ✓ Frontend:      http://localhost:3000
 endlocal
-pause
