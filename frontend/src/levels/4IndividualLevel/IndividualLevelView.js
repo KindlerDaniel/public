@@ -2,8 +2,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import './IndividualLevel.css';
-import InlineLoginForm from './InlineLoginForm';
-import InlineRegisterForm from './InlineRegisterForm';
+import InlineLoginForm from './LoginForm';
+import InlineRegisterForm from './RegisterForm';
 
 const IndividualLevelView = () => {
   const [activeTab, setActiveTab] = useState(1); // Standardmäßig "Inhalte"-Tab
