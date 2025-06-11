@@ -40,34 +40,40 @@ export default function InlineRegisterForm() {
 
   return (
     <div className="inline-auth-form">
-      <h3>Registrieren</h3>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Benutzername:</label>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label>Benutzername</label>
           <input 
             type="text" 
             value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+            onChange={(e) => setUsername(e.target.value)}
+            className="form-input"
           />
         </div>
-        <div>
-          <label>Passwort:</label>
+        <div className="form-group">
+          <label>Passwort</label>
           <input 
             type="password" 
             value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+            onChange={(e) => setPassword(e.target.value)}
+            className="form-input"
           />
         </div>
-        <div>
-          <label>Passwort bestätigen:</label>
+        <div className="form-group">
+          <label>Passwort bestätigen</label>
           <input 
             type="password" 
             value={passwordConfirm} 
-            onChange={(e) => setPasswordConfirm(e.target.value)} 
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            className="form-input"
           />
         </div>
-        <button type="submit" disabled={isLoading}>
+        {error && <div className="error-message">{error}</div>}
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="submit-button"
+        >
           {isLoading ? 'Lädt...' : 'Registrieren'}
         </button>
       </form>
