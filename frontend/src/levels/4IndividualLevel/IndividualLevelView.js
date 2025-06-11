@@ -1,5 +1,6 @@
 // frontend/src/levels/4IndividualLevel/IndividualLevelView.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import './IndividualLevel.css';
 import InlineLoginForm from '../../components/InlineLoginForm';
 import InlineRegisterForm from '../../components/InlineRegisterForm';
@@ -10,6 +11,7 @@ const IndividualLevelView = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [message, setMessage] = useState('');
   const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   // Toggle between login and register forms
   const toggleForms = () => {
@@ -108,10 +110,39 @@ const IndividualLevelView = () => {
   return (
     <div className="individual-level">
       <div className="auth-buttons-container">
-        {showRegisterForm ? (
-          <InlineRegisterForm toggleForms={toggleForms} />
+        {isAuthenticated ? (
+          <div className="auth-status">
+            <span>Eingeloggt als: <strong>{user.email}</strong></span>
+            <button 
+              onClick={() => logout()} 
+              className="logout-button"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                marginLeft: '10px'
+              }}
+            >
+              AUSLOGGEN
+            </button>
+          </div>
         ) : (
-          <InlineLoginForm toggleForms={toggleForms} />
+          <>
+            {showRegisterForm ? (
+              <InlineRegisterForm toggleForms={toggleForms} />
+            ) : (
+              <InlineLoginForm toggleForms={toggleForms} />
+            )}
+            <button 
+              className="show-register-button" 
+              onClick={toggleForms}
+            >
+              {showRegisterForm ? 'Zurück zur Anmeldung' : 'Registrieren'}
+            </button>
+          </>
         )}
       </div>
       <div className="profile-container">
