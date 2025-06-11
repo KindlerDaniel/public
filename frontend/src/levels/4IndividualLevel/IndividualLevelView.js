@@ -2,8 +2,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import './IndividualLevel.css';
-import InlineLoginForm from '../../components/InlineLoginForm';
-import InlineRegisterForm from '../../components/InlineRegisterForm';
+import InlineLoginForm from './InlineLoginForm';
+import InlineRegisterForm from './InlineRegisterForm';
 
 const IndividualLevelView = () => {
   const [activeTab, setActiveTab] = useState(1); // Standardmäßig "Inhalte"-Tab
@@ -15,10 +15,6 @@ const IndividualLevelView = () => {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const { isAuthenticated, user, logout } = useContext(AuthContext);
 
-  // Toggle between login and register forms
-  const toggleForms = () => {
-    setShowRegisterForm(!showRegisterForm);
-  };
 
   // Datei auswählen
   const handleFileSelect = (event) => {
