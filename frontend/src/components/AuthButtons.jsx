@@ -3,17 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import './AuthButtons.css';
 
 export default function AuthButtons() {
-  const { isAuthenticated, user, openLoginDialog, openRegisterDialog, logout } = useContext(AuthContext);
-
-  const handleLogin = () => {
-    if (isAuthenticated) return;
-    openLoginDialog();
-  };
-
-  const handleRegister = () => {
-    if (isAuthenticated) return;
-    openRegisterDialog();
-  };
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     if (!isAuthenticated) return;
@@ -33,23 +23,12 @@ export default function AuthButtons() {
         )}
       </div>
 
-      {/* Auth-Buttons */}
-      <div className="auth-actions">
-        {isAuthenticated ? (
-          <button onClick={handleLogout} className="logout-button">
-            Ausloggen
-          </button>
-        ) : (
-          <div className="login-register-buttons">
-            <button onClick={handleLogin} className="login-button">
-              Anmelden
-            </button>
-            <button onClick={handleRegister} className="register-button">
-              Registrieren
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Logout Button */}
+      {isAuthenticated && (
+        <button onClick={handleLogout} className="logout-button">
+          Ausloggen
+        </button>
+      )}
     </div>
   );
 }

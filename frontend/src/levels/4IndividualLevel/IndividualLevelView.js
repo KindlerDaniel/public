@@ -1,13 +1,20 @@
 // frontend/src/levels/4IndividualLevel/IndividualLevelView.js
 import React, { useState } from 'react';
 import './IndividualLevel.css';
-import AuthButtons from '../../components/AuthButtons';
+import InlineLoginForm from '../../components/InlineLoginForm';
+import InlineRegisterForm from '../../components/InlineRegisterForm';
 
 const IndividualLevelView = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [message, setMessage] = useState('');
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+
+  // Toggle between login and register forms
+  const toggleForms = () => {
+    setShowRegisterForm(!showRegisterForm);
+  };
 
   // Datei auswählen
   const handleFileSelect = (event) => {
@@ -101,7 +108,11 @@ const IndividualLevelView = () => {
   return (
     <div className="individual-level">
       <div className="auth-buttons-container">
-        <AuthButtons />
+        {showRegisterForm ? (
+          <InlineRegisterForm toggleForms={toggleForms} />
+        ) : (
+          <InlineLoginForm toggleForms={toggleForms} />
+        )}
       </div>
       <div className="profile-container">
         <h2>Mein Profil</h2>
