@@ -197,37 +197,18 @@ const IndividualLevelView = () => {
         ) : (
           <>
             <div className="auth-tabs">
-              {showRegisterForm ? (
-                <>
-                  <button
-                    className="auth-tab active"
-                    onClick={() => setShowRegisterForm(false)}
-                  >
-                    ANMELDEN
-                  </button>
-                  <button
-                    className="auth-tab"
-                    onClick={() => setShowRegisterForm(true)}
-                  >
-                    REGISTRIEREN
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    className="auth-tab active"
-                    onClick={() => setShowRegisterForm(false)}
-                  >
-                    ANMELDEN
-                  </button>
-                  <button
-                    className="auth-tab"
-                    onClick={() => setShowRegisterForm(true)}
-                  >
-                    REGISTRIEREN
-                  </button>
-                </>
-              )}
+              <button
+                className={`auth-tab ${!showRegisterForm ? 'active' : ''}`}
+                onClick={() => setShowRegisterForm(false)}
+              >
+                ANMELDEN
+              </button>
+              <button
+                className={`auth-tab ${showRegisterForm ? 'active' : ''}`}
+                onClick={() => setShowRegisterForm(true)}
+              >
+                REGISTRIEREN
+              </button>
             </div>
             {showRegisterForm ? <InlineRegisterForm /> : <InlineLoginForm />}
           </>

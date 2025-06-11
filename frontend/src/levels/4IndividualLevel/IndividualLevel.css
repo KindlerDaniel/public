@@ -177,29 +177,26 @@
 }
 
 .auth-tab {
-  padding: 12px 24px;
+  flex: 1;
+  padding: 12px 0;
   border: none;
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  text-align: center;
 }
 
 .auth-tab.active {
   background: #1976D2;
   color: white;
   font-size: 16px;
-  padding: 14px 28px;
-  order: -1; /* Always show active tab first */
 }
 
 .auth-tab:not(.active) {
   background: #e0e0e0;
   color: #616161;
-  padding: 10px 20px;
-  font-size: 14px;
 }
 
 .auth-status {
