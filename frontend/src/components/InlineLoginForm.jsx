@@ -31,10 +31,6 @@ export default function InlineLoginForm() {
     }
   };
 
-  const toggleForms = () => {
-    // implement toggleForms logic here
-  };
-
   return (
     <div className="inline-auth-form">
       <h3>Anmelden</h3>
@@ -60,12 +56,6 @@ export default function InlineLoginForm() {
           {isLoading ? 'Lädt...' : 'Anmelden'}
         </button>
       </form>
-      <button 
-        className="switch-form-button" 
-        onClick={toggleForms}
-      >
-        Noch kein Konto? Registrieren
-      </button>
     </div>
   );
 }

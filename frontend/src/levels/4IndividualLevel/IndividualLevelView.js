@@ -109,104 +109,110 @@ const IndividualLevelView = () => {
 
   return (
     <div className="individual-level">
-      <div className="auth-buttons-container">
+      <div className="auth-section">
         {isAuthenticated ? (
-          <div className="auth-status">
-            <span>Eingeloggt als: <strong>{user.email}</strong></span>
-            <button 
-              onClick={() => logout()} 
-              className="logout-button"
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginLeft: '10px'
-              }}
-            >
-              AUSLOGGEN
-            </button>
-          </div>
+          <>
+            <div className="auth-status">
+              <span>Eingeloggt als: <strong>{user.email}</strong></span>
+              <button 
+                onClick={() => logout()} 
+                className="logout-button"
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  marginLeft: '10px'
+                }}
+              >
+                AUSLOGGEN
+              </button>
+            </div>
+            <div className="profile-container">
+              <h2>Mein Profil</h2>
+
+              {/* Upload-Bereich */}
+              <div className="upload-section">
+                <h3>Bild hochladen</h3>
+
+                <div className="upload-controls">
+                  <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="file-input"
+                  />
+
+                  {selectedFile && (
+                    <div className="selected-file">
+                      <p>Ausgewählt: {selectedFile.name}</p>
+                      <button
+                        onClick={handleUpload}
+                        disabled={uploading}
+                        className="upload-button"
+                      >
+                        {uploading ? 'Wird hochgeladen...' : 'Hochladen'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {message && (
+                  <div className={`message ${message.includes('erfolgreich') ? 'success' : 'error'}`}>
+                    {message}
+                  </div>
+                )}
+              </div>
+
+              {/* Bilder-Galerie */}
+              <div className="images-section">
+                <h3>Meine Bilder ({uploadedImages.length})</h3>
+
+                {uploadedImages.length > 0 ? (
+                  <div className="images-grid">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index} className="image-card">
+                        <img src={image.url} alt={image.name} />
+                        <div className="image-info">
+                          <p className="image-name">{image.name}</p>
+                          <button
+                            onClick={() => handleDelete(image.name)}
+                            className="delete-button"
+                          >
+                            Löschen
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-images">Noch keine Bilder hochgeladen.</p>
+                )}
+              </div>
+            </div>
+          </>
         ) : (
           <>
-            {showRegisterForm ? (
-              <InlineRegisterForm toggleForms={toggleForms} />
-            ) : (
-              <InlineLoginForm toggleForms={toggleForms} />
-            )}
-            <button 
-              className="show-register-button" 
-              onClick={toggleForms}
-            >
-              {showRegisterForm ? 'Zurück zur Anmeldung' : 'Registrieren'}
-            </button>
+            <div className="auth-tabs">
+              <button
+                className={`auth-tab ${!showRegisterForm ? 'active' : ''}`}
+                onClick={() => setShowRegisterForm(false)}
+              >
+                ANMELDEN
+              </button>
+              <button
+                className={`auth-tab ${showRegisterForm ? 'active' : ''}`}
+                onClick={() => setShowRegisterForm(true)}
+              >
+                REGISTRIEREN
+              </button>
+            </div>
+            {showRegisterForm ? <InlineRegisterForm /> : <InlineLoginForm />}
           </>
         )}
-      </div>
-      <div className="profile-container">
-        <h2>Mein Profil</h2>
-
-        {/* Upload-Bereich */}
-        <div className="upload-section">
-          <h3>Bild hochladen</h3>
-
-          <div className="upload-controls">
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="file-input"
-            />
-
-            {selectedFile && (
-              <div className="selected-file">
-                <p>Ausgewählt: {selectedFile.name}</p>
-                <button
-                  onClick={handleUpload}
-                  disabled={uploading}
-                  className="upload-button"
-                >
-                  {uploading ? 'Wird hochgeladen...' : 'Hochladen'}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {message && (
-            <div className={`message ${message.includes('erfolgreich') ? 'success' : 'error'}`}>
-              {message}
-            </div>
-          )}
-        </div>
-
-        {/* Bilder-Galerie */}
-        <div className="images-section">
-          <h3>Meine Bilder ({uploadedImages.length})</h3>
-
-          {uploadedImages.length > 0 ? (
-            <div className="images-grid">
-              {uploadedImages.map((image, index) => (
-                <div key={index} className="image-card">
-                  <img src={image.url} alt={image.name} />
-                  <div className="image-info">
-                    <p className="image-name">{image.name}</p>
-                    <button
-                      onClick={() => handleDelete(image.name)}
-                      className="delete-button"
-                    >
-                      Löschen
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="no-images">Noch keine Bilder hochgeladen.</p>
-          )}
-        </div>
       </div>
     </div>
   );
