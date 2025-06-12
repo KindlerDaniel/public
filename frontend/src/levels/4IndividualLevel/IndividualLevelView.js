@@ -8,7 +8,7 @@ import InlineRegisterForm from './RegisterForm';
 import MyContents from './MyContents';
 
 const IndividualLevelView = () => {
-  const [activeTab, setActiveTab] = useState(1); // Standardmäßig "Inhalte"-Tab
+  const [activeTab, setActiveTab] = useState(0); // Standardmäßig "Auftritt"-Tab
 
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const { isAuthenticated, user, logout } = useContext(AuthContext);
