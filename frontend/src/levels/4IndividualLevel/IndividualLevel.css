@@ -1,41 +1,71 @@
 /* IndividualLevel.css – Grundlayout für IndividualLevelView */
 .individual-level {
-  padding: 0;
   min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+body, html {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   background: linear-gradient(120deg, #f5f8fa 70%, #e3e9f1 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 .tabs-header {
+  width: 100vw;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  padding: 12px 24px;
+  box-sizing: border-box;
   margin-bottom: 24px;
-  gap: 0;
   position: sticky;
   top: 0;
   background: linear-gradient(90deg, #f5f8fa 90%, #e3e9f1 100%);
   z-index: 10;
   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.04);
-  padding-top: 12px;
-  padding-bottom: 8px;
 }
 
 .tabs-nav {
   display: flex;
-  flex: 1;
-  width: 100%;
-  min-width: 0;
-  gap: 0;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
-  overflow-x: visible;
+  justify-content: flex-start;
+  width: auto;
+  margin: 0;
+  gap: 18px;
+  min-width: 0;
+}
+
+
+.tabs-nav .user-name, .tabs-nav .logout-modern {
+  margin-left: auto;
 }
 
 .tab-btn {
   background: none;
   border: none;
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: 80px;
+  padding: 10px 18px;
+  font-size: 1.08rem;
+  color: #333;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  font-weight: 500;
+  margin: 0 2px;
+  margin-bottom: -2px;
+  letter-spacing: 0.01em;
+  text-align: center;
+
   padding: 14px 0 10px 0;
   font-size: 1.12rem;
   color: #333;

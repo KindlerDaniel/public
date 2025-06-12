@@ -18,8 +18,23 @@ const IndividualLevelView = () => {
       <div className="auth-section">
         {isAuthenticated ? (
           <>
-            <div className="tabs-header">
-              <div className="tabs-nav">
+            <div style={{
+              width: '100%',
+              backgroundColor: '#f5f8fa',
+              boxShadow: '0 2px 12px rgba(25, 118, 210, 0.04)',
+              padding: '12px 0',
+              position: 'sticky',
+              top: 0,
+              zIndex: 10
+            }}>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                padding: '0 24px',
+                boxSizing: 'border-box',
+                alignItems: 'center'
+              }}>
                 {['Auftritt', 'Inhalte', 'Folgen', 'Vertrauen', 'Follower'].map((tab, idx) => (
                   <button
                     key={tab}
@@ -29,7 +44,7 @@ const IndividualLevelView = () => {
                     {tab}
                   </button>
                 ))}
-                <span className="user-name" style={{marginLeft: 24, marginRight: 8}}>{user.name || user.email}</span>
+                <span className="user-name" style={{marginLeft: 'auto', marginRight: 8}}>{user.name || user.email}</span>
                 <button className="logout-modern" onClick={logout} aria-label="Logout">
                   <svg className="icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
