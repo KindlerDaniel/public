@@ -2,6 +2,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import './IndividualLevel.css';
+import './AuthForms.css';
 import InlineLoginForm from './LoginForm';
 import InlineRegisterForm from './RegisterForm';
 import MyContents from './MyContents';
@@ -70,26 +71,52 @@ const IndividualLevelView = () => {
           </>
         ) : (
           <>
-            <div className="auth-tabs">
-              <button
-                className={`auth-tab${!showRegisterForm ? ' active' : ''}`}
-                onClick={() => setShowRegisterForm(false)}
-                aria-pressed={!showRegisterForm}
-                type="button"
-              >
-                ANMELDEN
-              </button>
-              <button
-                className={`auth-tab${showRegisterForm ? ' active' : ''}`}
-                onClick={() => setShowRegisterForm(true)}
-                aria-pressed={showRegisterForm}
-                type="button"
-              >
-                REGISTRIEREN
-              </button>
-            </div>
-            <div className="auth-forms">
-              {showRegisterForm ? <InlineRegisterForm /> : <InlineLoginForm />}
+            <div className="inline-auth-form" style={{marginTop: '48px'}}>
+              <div className="auth-tabs" style={{display:'flex',justifyContent:'center',gap:12,marginBottom:18}}>
+                <button
+                  className={`auth-tab${!showRegisterForm ? ' active' : ''}`}
+                  style={{
+                    background: !showRegisterForm ? 'linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)' : '#f8fafc',
+                    color: !showRegisterForm ? '#fff' : '#1976d2',
+                    border: 'none',
+                    borderRadius: '8px 8px 0 0',
+                    fontWeight: 600,
+                    padding: '12px 32px',
+                    fontSize: '1.08rem',
+                    cursor: 'pointer',
+                    transition: 'background 0.18s,color 0.18s',
+                    boxShadow: !showRegisterForm ? '0 2px 8px rgba(25,118,210,0.08)' : 'none'
+                  }}
+                  onClick={() => setShowRegisterForm(false)}
+                  aria-pressed={!showRegisterForm}
+                  type="button"
+                >
+                  ANMELDEN
+                </button>
+                <button
+                  className={`auth-tab${showRegisterForm ? ' active' : ''}`}
+                  style={{
+                    background: showRegisterForm ? 'linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)' : '#f8fafc',
+                    color: showRegisterForm ? '#fff' : '#1976d2',
+                    border: 'none',
+                    borderRadius: '8px 8px 0 0',
+                    fontWeight: 600,
+                    padding: '12px 32px',
+                    fontSize: '1.08rem',
+                    cursor: 'pointer',
+                    transition: 'background 0.18s,color 0.18s',
+                    boxShadow: showRegisterForm ? '0 2px 8px rgba(25,118,210,0.08)' : 'none'
+                  }}
+                  onClick={() => setShowRegisterForm(true)}
+                  aria-pressed={showRegisterForm}
+                  type="button"
+                >
+                  REGISTRIEREN
+                </button>
+              </div>
+              <div className="auth-forms" style={{maxWidth:400,margin:'0 auto'}}>
+                {showRegisterForm ? <InlineRegisterForm /> : <InlineLoginForm />}
+              </div>
             </div>
           </>
         )}

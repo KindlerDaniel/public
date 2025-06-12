@@ -1,0 +1,104 @@
+.mycontents-panel {
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.upload-section {
+  margin-bottom: 32px;
+}
+
+.upload-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.file-input {
+  padding: 4px;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.upload-button:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+.message.success {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+.message.error {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.images-section {
+  margin-top: 16px;
+}
+.images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.image-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fafafa;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.image-card img {
+  max-width: 140px;
+  max-height: 120px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.image-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.image-name {
+  font-size: 0.95em;
+  color: #444;
+  margin: 0;
+}
+.delete-button {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+.no-images {
+  color: #888;
+  font-style: italic;
+  margin-top: 12px;
+}

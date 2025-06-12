@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './IndividualLevel.css';
+import './MyContents.css';
 
 const MyContents = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -96,7 +96,7 @@ const MyContents = () => {
   }, []);
 
   return (
-    <div className="tab-panel">
+    <div className="tab-panel mycontents-panel">
       {/* Upload-Bereich */}
       <div className="upload-section">
         <h3>Bild hochladen</h3>
