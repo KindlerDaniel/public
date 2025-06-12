@@ -19,12 +19,14 @@ const IndividualLevelView = () => {
         {isAuthenticated ? (
           <>
             <div style={{
-              width: '100%',
+              width: 'calc(100% - 50px)', /* Exakt dieselbe Breite wie im layout.css für app-content */
               backgroundColor: '#f5f8fa',
               boxShadow: '0 2px 12px rgba(25, 118, 210, 0.04)',
               padding: '12px 0',
-              position: 'sticky',
+              position: 'fixed',
               top: 0,
+              left: '50px', /* Exakt dieselbe Breite wie die Sidebar im layout.css */
+              right: 0,
               zIndex: 10
             }}>
               <div style={{
@@ -54,7 +56,7 @@ const IndividualLevelView = () => {
                 </button>
               </div>
             </div>
-            <div className="tab-content">
+            <div className="tab-content" style={{ marginTop: '60px' }}>
               {activeTab === 0 && (
                 <div className="tab-panel">
                   <h3>Auftritt</h3>
