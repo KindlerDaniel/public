@@ -84,50 +84,60 @@ const IndividualLevelView = () => {
           </>
         ) : (
           <>
-            <div className="inline-auth-form" style={{marginTop: '48px'}}>
-              <div className="auth-tabs" style={{display:'flex',justifyContent:'center',gap:12,marginBottom:18}}>
+            <div className="inline-auth-form" style={{maxWidth: '280px', margin: '20px 0 0 80px'}}>
+              <div className="auth-tabs" style={{display:'flex',justifyContent:'flex-start',gap:12,marginBottom:18,paddingLeft:10}}>
                 <button
                   className={`auth-tab${!showRegisterForm ? ' active' : ''}`}
                   style={{
-                    background: !showRegisterForm ? 'linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)' : '#f8fafc',
-                    color: !showRegisterForm ? '#fff' : '#1976d2',
+                    background: '#f8fafc',
+                    color: '#000',
                     border: 'none',
                     borderRadius: '8px 8px 0 0',
-                    fontWeight: 600,
+                    fontWeight: !showRegisterForm ? 700 : 400,
                     padding: '12px 32px',
-                    fontSize: '1.08rem',
+                    fontSize: !showRegisterForm ? '1.4rem' : '0.85rem',
                     cursor: 'pointer',
-                    transition: 'background 0.18s,color 0.18s',
-                    boxShadow: !showRegisterForm ? '0 2px 8px rgba(25,118,210,0.08)' : 'none'
+                    transition: 'font-size 0.18s, font-weight 0.18s',
+                    boxShadow: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: '100px',
+                    minHeight: '50px'
                   }}
                   onClick={() => setShowRegisterForm(false)}
                   aria-pressed={!showRegisterForm}
                   type="button"
                 >
-                  ANMELDEN
+                  Anmelden
                 </button>
                 <button
                   className={`auth-tab${showRegisterForm ? ' active' : ''}`}
                   style={{
-                    background: showRegisterForm ? 'linear-gradient(90deg,#1976d2 60%,#64b5f6 100%)' : '#f8fafc',
-                    color: showRegisterForm ? '#fff' : '#1976d2',
+                    background: '#f8fafc',
+                    color: '#000',
                     border: 'none',
                     borderRadius: '8px 8px 0 0',
-                    fontWeight: 600,
+                    fontWeight: showRegisterForm ? 700 : 400,
                     padding: '12px 32px',
-                    fontSize: '1.08rem',
+                    fontSize: showRegisterForm ? '1.4rem' : '0.85rem',
                     cursor: 'pointer',
-                    transition: 'background 0.18s,color 0.18s',
-                    boxShadow: showRegisterForm ? '0 2px 8px rgba(25,118,210,0.08)' : 'none'
+                    transition: 'font-size 0.18s, font-weight 0.18s',
+                    boxShadow: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: '100px',
+                    minHeight: '50px'
                   }}
                   onClick={() => setShowRegisterForm(true)}
                   aria-pressed={showRegisterForm}
                   type="button"
                 >
-                  REGISTRIEREN
+                  Registrieren
                 </button>
               </div>
-              <div className="auth-forms" style={{maxWidth:400,margin:'0 auto'}}>
+              <div className="auth-forms" style={{margin:'0 auto'}}>
                 {showRegisterForm ? <InlineRegisterForm /> : <InlineLoginForm />}
               </div>
             </div>
