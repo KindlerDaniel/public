@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './MyContents.css';
+import ContentCard from '../1SocietyLevel/shared/ContentCard.tsx';
+import ContentCreator from './ContentCreator';
+import './ContentCreator.css';
 
 const MyContents = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [message, setMessage] = useState('');
+  const [showContentCreator, setShowContentCreator] = useState(false);
+  const [contents, setContents] = useState([]);
 
   // Datei auswählen
   const handleFileSelect = (event) => {
@@ -93,12 +98,65 @@ const MyContents = () => {
 
   useEffect(() => {
     loadImages();
+    // Hier könnte in Zukunft auch das Laden der Content-Items erfolgen
   }, []);
+
+  // Handler für das Speichern von neuen Content-Items
+  const handleSaveContent = (newContent) => {
+    // In einer echten Anwendung würde hier der Upload zum Server erfolgen
+    
+    // Füge das neue Content-Item zur lokalen Liste hinzu
+    setContents([newContent, ...contents]);
+    
+    // Schließe den Content-Creator
+    setShowContentCreator(false);
+    
+    // Zeige eine Erfolgsmeldung
+    setMessage('Inhalt erfolgreich erstellt!');
+  };
+
+  // Handler zum Abbrechen der Content-Erstellung
+  const handleCancelContentCreation = () => {
+    setShowContentCreator(false);
+  };
 
   return (
     <div className="tab-panel mycontents-panel">
-      {/* Upload-Bereich */}
-      <div className="upload-section">
+      {showContentCreator ? (
+        <ContentCreator 
+          onSave={handleSaveContent} 
+          onCancel={handleCancelContentCreation} 
+        />
+      ) : (
+        <>
+          {/* Content-Erstellung Button */}
+          <div className="content-section-header">
+            <h3>Inhalte erstellen</h3>
+            <button 
+              className="add-content-button" 
+              onClick={() => setShowContentCreator(true)}
+              title="Neuen Inhalt erstellen"
+            >
+              +
+            </button>
+          </div>
+
+      {/* Erstellte Inhalte anzeigen */}
+      {contents.length > 0 && (
+        <div className="created-contents-section">
+          <h3>Meine erstellten Inhalte ({contents.length})</h3>
+          <div className="contents-grid">
+            {contents.map((content) => (
+              <div key={content.id} className="content-preview-item">
+                <ContentCard content={content} compact={true} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+          {/* Upload-Bereich */}
+          <div className="upload-section">
         <h3>Bild hochladen</h3>
         <div className="upload-controls">
           <input
@@ -150,7 +208,9 @@ const MyContents = () => {
         ) : (
           <p className="no-images">Noch keine Bilder hochgeladen.</p>
         )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

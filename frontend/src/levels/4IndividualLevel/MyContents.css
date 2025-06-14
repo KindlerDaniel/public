@@ -56,10 +56,12 @@
 .images-section {
   margin-top: 16px;
 }
-.images-grid {
-  display: flex;
-  flex-wrap: wrap;
+.images-grid,
+.contents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
+  margin-bottom: 24px;
 }
 .image-card {
   border: 1px solid #eee;
@@ -97,8 +99,36 @@
   cursor: pointer;
   font-size: 0.95em;
 }
-.no-images {
+.no-images,
+.no-contents {
   color: #888;
   font-style: italic;
   margin-top: 12px;
+}
+
+/* Stil für erstellte Inhalte */
+.created-contents-section {
+  margin-bottom: 32px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 24px;
+}
+
+.content-preview-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.content-preview-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+/* Content-Erstellung Bereich */
+.content-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }

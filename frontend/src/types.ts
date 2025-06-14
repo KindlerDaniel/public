@@ -1,103 +1,90 @@
-// frontend/src/types.ts - Erweiterte Content-Typen
+// User-Schnittstelle
+export interface User {
+  id: number;
+  username: string;
+  isBlocked?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Content-Typen
+export type ContentType = 
+  | 'video-landscape' 
+  | 'video-portrait' 
+  | 'image-landscape' 
+  | 'image-portrait' 
+  | 'text' 
+  | 'audio' 
+  | 'discussion';
+
+// Content-Item Schnittstelle
 export interface ContentItem {
-  id: string;
-  type: 'video-landscape' | 'video-portrait' | 'image-landscape' | 'image-portrait' | 'text' | 'audio' | 'discussion' | 'article' | 'video' | 'image'; // Erweitert um alte Typen
+  id: number;
+  type: ContentType;
   title: string;
   content: string;
-  author: {
-    id: string;
-    name: string;
-    trustScore: number;
-  };
+  authorId: number;
+  author?: User;
   date: string;
-  thumbnailUrl?: string;
-  mediaUrl?: string;
-  audioUrl?: string;
-  duration?: string; // für Video/Audio
-  thumbnail?: string; // Für Rückwärtskompatibilität
-  coordinates?: { // Für Bubble-Ansicht
-    x: number;
-    y: number;
-    z: number;
-  };
+  thumbnailUrl?: string | null;
+  mediaUrl?: string | null;
+  audioUrl?: string | null;
+  duration?: string | null;
   ratings: {
     beauty: number;
     wisdom: number;
     humor: number;
   };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-  tags?: string[];
-  // Spezielle Felder für Diskussionen
-  question?: string;
+  tags?: string[] | null;
+  question?: string | null;
   discussion?: {
     participantA: string;
     participantB: string;
-    exchanges: Array<{
-      speaker: 'A' | 'B';
-      text: string;
-    }>;
-  };
-  // Zusätzliche Metadaten für Medien
-  aspectRatio?: 'landscape' | 'portrait';
+    exchanges: DiscussionExchange[];
+  } | null;
+  aspectRatio?: 'landscape' | 'portrait' | null;
   dimensions?: {
     width: number;
     height: number;
-  };
+  } | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Comment {
-  id: string;
-  author: string;
-  content: string;
-  date: string;
-  replies: Comment[];
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
-}
-
-export interface CommentItem {
-  id: string;
-  contentId: string;
-  parentId: string | null;
+// Diskussions-Austausch
+export interface DiscussionExchange {
+  speaker: 'A' | 'B';
   text: string;
-  author: string;
-  timestamp: string;
-  ratings: {
-    beauty: number;
-    wisdom: number;
-    humor: number;
-  };
-  userRating?: {
-    beauty?: boolean;
-    wisdom?: boolean;
-    humor?: boolean;
-  };
+  timestamp?: string;
 }
 
-export interface Filters {
-  beauty: boolean;
-  wisdom: boolean;
-  humor: boolean;
-  timeRange: string;
+// ContentRating für Benutzer-Bewertungen
+export interface ContentRating {
+  id: number;
+  contentId: number;
+  userId: number;
+  beauty: boolean | null;
+  wisdom: boolean | null;
+  humor: boolean | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface BubbleContent {
-  id: string;
-  x: number;
-  y: number;
-  z?: number;
+// Formular-Daten für Content-Erstellung/Bearbeitung
+export interface ContentFormData {
+  type: ContentType;
   title: string;
-  type: 'video' | 'photo' | 'audio' | 'text';
+  content: string;
+  mediaUrl?: string | null;
+  thumbnailUrl?: string | null;
+  audioUrl?: string | null;
+  duration?: string | null;
+  tags?: string[] | null;
+  question?: string | null;
+  discussion?: {
+    participantA: string;
+    participantB: string;
+    exchanges: DiscussionExchange[];
+  } | null;
+  aspectRatio?: 'landscape' | 'portrait' | null;
 }

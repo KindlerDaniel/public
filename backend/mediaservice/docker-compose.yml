@@ -7,10 +7,19 @@ services:
     ports:
       - "3001:3001"
     environment:
+      # Datenbankeinstellungen
+      - DB_HOST=socialmedia-postgres
+      - DB_NAME=socialmedia
+      - DB_USER=appuser
+      - DB_PASSWORD=mediaservice123
+      # MinIO-Einstellungen
       - MINIO_ENDPOINT=socialmedia-minio
       - MINIO_PORT=9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=socialmedia123
+    depends_on:
+      - socialmedia-postgres
+      - socialmedia-minio
     networks:
       - app-network
     restart: unless-stopped
