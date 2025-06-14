@@ -1,117 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import './MyContents.css';
-import ContentCard from '../1SocietyLevel/shared/ContentCard.tsx';
 import ContentCreator from './ContentCreator';
 import './ContentCreator.css';
 
 const MyContents = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState([]);
   const [message, setMessage] = useState('');
   const [showContentCreator, setShowContentCreator] = useState(false);
   const [contents, setContents] = useState([]);
 
-  // Datei auswählen
-  const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      setSelectedFile(file);
-      setMessage('');
-    } else {
-      setMessage('Bitte wählen Sie eine Bilddatei aus.');
-      setSelectedFile(null);
-    }
-  };
 
-  // Bild hochladen
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setMessage('Bitte wählen Sie erst eine Datei aus.');
-      return;
-    }
-
-    setUploading(true);
-    setMessage('');
-
+  // Content-Items laden
+  const loadContents = async () => {
     try {
-      const formData = new FormData();
-      formData.append('image', selectedFile);
-
-      const response = await fetch('http://localhost:8000/api/media/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage('Bild erfolgreich hochgeladen!');
-        setSelectedFile(null);
-        document.getElementById('fileInput').value = '';
-        loadImages();
+      setMessage('Inhalte werden geladen...');
+      
+      const response = await fetch('http://localhost:8000/api/media/content');
+      
+      if (!response.ok) {
+        throw new Error(`Fehler beim Laden der Inhalte: ${response.status}`);
+      }
+      
+      const contentData = await response.json();
+      console.log('Geladene Inhalte:', contentData);
+      
+      if (Array.isArray(contentData.contents)) {
+        setContents(contentData.contents);
+        setMessage(contentData.contents.length > 0 ? '' : 'Keine Inhalte gefunden');
+      } else if (Array.isArray(contentData)) {
+        setContents(contentData);
+        setMessage(contentData.length > 0 ? '' : 'Keine Inhalte gefunden');
       } else {
-        setMessage(result.error || 'Fehler beim Hochladen');
+        console.error('Unerwartetes Datenformat:', contentData);
+        setContents([]);
+        setMessage('Keine Inhalte verfügbar - unerwartetes Datenformat');
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      setMessage('Verbindungsfehler beim Hochladen');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // Bilder laden
-  const loadImages = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/media/list');
-      const images = await response.json();
-
-      if (response.ok) {
-        setUploadedImages(images);
-      }
-    } catch (error) {
-      console.error('Load images error:', error);
-    }
-  };
-
-  // Bild löschen
-  const handleDelete = async (fileName) => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/media/delete/${fileName}`, {
-        method: 'DELETE',
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage('Bild erfolgreich gelöscht!');
-        loadImages();
-      } else {
-        setMessage(result.error || 'Fehler beim Löschen');
-      }
-    } catch (error) {
-      console.error('Delete error:', error);
-      setMessage('Verbindungsfehler beim Löschen');
+      console.error('Load contents error:', error);
+      setMessage(`Fehler beim Laden der Inhalte: ${error.message}`);
+      setContents([]);
     }
   };
 
   useEffect(() => {
-    loadImages();
-    // Hier könnte in Zukunft auch das Laden der Content-Items erfolgen
+    loadContents();
   }, []);
 
   // Handler für das Speichern von neuen Content-Items
   const handleSaveContent = (newContent) => {
-    // In einer echten Anwendung würde hier der Upload zum Server erfolgen
-    
-    // Füge das neue Content-Item zur lokalen Liste hinzu
     setContents([newContent, ...contents]);
-    
-    // Schließe den Content-Creator
     setShowContentCreator(false);
-    
-    // Zeige eine Erfolgsmeldung
     setMessage('Inhalt erfolgreich erstellt!');
   };
 
@@ -128,7 +65,7 @@ const MyContents = () => {
           onCancel={handleCancelContentCreation} 
         />
       ) : (
-        <>
+        <div className="content-container">
           {/* Content-Erstellung Button */}
           <div className="content-section-header">
             <h3>Inhalte erstellen</h3>
@@ -140,76 +77,69 @@ const MyContents = () => {
               +
             </button>
           </div>
-
-      {/* Erstellte Inhalte anzeigen */}
-      {contents.length > 0 && (
-        <div className="created-contents-section">
-          <h3>Meine erstellten Inhalte ({contents.length})</h3>
-          <div className="contents-grid">
-            {contents.map((content) => (
-              <div key={content.id} className="content-preview-item">
-                <ContentCard content={content} compact={true} />
+          
+          {/* Erstellte Inhalte anzeigen - verbesserte Darstellung */}
+          <div className="created-contents-section">
+            <h3>Meine erstellten Inhalte {contents.length > 0 ? `(${contents.length})` : ""}</h3>
+            
+            {contents.length > 0 ? (
+              <div className="contents-grid">
+                {contents.map((content, index) => (
+                  <div key={content?.id || index} className="content-item" style={{margin: '15px 0', padding: '15px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+                    <h4 style={{margin: '0 0 10px 0', color: '#333'}}>{content?.title || 'Ohne Titel'}</h4>
+                    
+                    {/* Prominente Darstellung von Medien, falls vorhanden */}
+                    {content?.mediaUrl && (
+                      <div style={{marginBottom: '12px'}}>
+                        {content.type && content.type.startsWith('image/') ? (
+                          <img 
+                            src={content.mediaUrl} 
+                            alt={content.title || 'Bild'} 
+                            style={{
+                              width: '100%',
+                              maxHeight: '250px',
+                              objectFit: 'cover',
+                              borderRadius: '6px'
+                            }} 
+                          />
+                        ) : content.type && content.type.startsWith('video/') ? (
+                          <video 
+                            src={content.mediaUrl} 
+                            controls 
+                            style={{width: '100%', borderRadius: '6px'}} 
+                          />
+                        ) : (
+                          <div style={{padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px'}}>
+                            <p>Medientyp: {content.type || 'Unbekannt'}</p>
+                            <a href={content.mediaUrl} target="_blank" rel="noopener noreferrer">
+                              Medien öffnen
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    <p style={{margin: '0', color: '#555'}}>{content?.content || 'Keine Beschreibung'}</p>
+                    
+                    {/* Zusätzliche Metadaten */}
+                    <div style={{marginTop: '15px', fontSize: '0.85rem', color: '#777'}}>
+                      Erstellt: {new Date(content?.createdAt || Date.now()).toLocaleDateString('de-DE')}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <p className="info-message">{message || 'Keine Inhalte vorhanden. Erstellen Sie Ihren ersten Inhalt!'}</p>
+            )}
           </div>
-        </div>
-      )}
-
-          {/* Upload-Bereich */}
-          <div className="upload-section">
-        <h3>Bild hochladen</h3>
-        <div className="upload-controls">
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/*"
-            onChange={handleFileSelect}
-            className="file-input"
-          />
-          {selectedFile && (
-            <div className="selected-file">
-              <p>Ausgewählt: {selectedFile.name}</p>
-              <button
-                onClick={handleUpload}
-                disabled={uploading}
-                className="upload-button"
-              >
-                {uploading ? 'Wird hochgeladen...' : 'Hochladen'}
-              </button>
+          
+          {/* Statusmeldung */}
+          {message && (
+            <div className={`message ${message.includes('erfolgreich') ? 'success' : 'error'}`} style={{marginTop: '20px'}}>
+              {message}
             </div>
           )}
         </div>
-        {message && (
-          <div className={`message ${message.includes('erfolgreich') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
-      </div>
-      {/* Bilder-Galerie */}
-      <div className="images-section">
-        <h3>Meine Bilder ({uploadedImages.length})</h3>
-        {uploadedImages.length > 0 ? (
-          <div className="images-grid">
-            {uploadedImages.map((image, index) => (
-              <div key={index} className="image-card">
-                <img src={image.url} alt={image.name} />
-                <div className="image-info">
-                  <p className="image-name">{image.name}</p>
-                  <button
-                    onClick={() => handleDelete(image.name)}
-                    className="delete-button"
-                  >
-                    Löschen
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="no-images">Noch keine Bilder hochgeladen.</p>
-        )}
-          </div>
-        </>
       )}
     </div>
   );

@@ -59,6 +59,8 @@ const IndividualLevelView = () => {
             <div className="tab-content" style={{ marginTop: '60px' }}>
               {activeTab === 0 && (
                 <div className="tab-panel">
+                  <h2>Mein Auftritt</h2>
+                  <p>Bearbeiten Sie hier Ihr Profil und Ihre öffentliche Darstellung.</p>
                   {/* Leerer Tab Auftritt */}
                 </div>
               )}
@@ -67,16 +69,22 @@ const IndividualLevelView = () => {
               )}
               {activeTab === 2 && (
                 <div className="tab-panel">
+                  <h2>Meine Folgen</h2>
+                  <p>Hier sehen Sie Inhalte und Personen, denen Sie folgen.</p>
                   {/* Leerer Tab Folgen */}
                 </div>
               )}
               {activeTab === 3 && (
                 <div className="tab-panel">
+                  <h2>Vertrauen</h2>
+                  <p>Verwalten Sie hier Ihre Vertrauenseinstellungen.</p>
                   {/* Leerer Tab Vertrauen */}
                 </div>
               )}
               {activeTab === 4 && (
                 <div className="tab-panel">
+                  <h2>Meine Follower</h2>
+                  <p>Hier sehen Sie Personen, die Ihnen folgen.</p>
                   {/* Leerer Tab Follower */}
                 </div>
               )}

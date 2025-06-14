@@ -17,9 +17,10 @@ services:
       - MINIO_PORT=9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=socialmedia123
-    depends_on:
-      - socialmedia-postgres
-      - socialmedia-minio
+    # depends_on auskommentiert, da die Services bereits laufen
+    # depends_on:
+    #  - socialmedia-postgres
+    #  - socialmedia-minio
     networks:
       - app-network
     restart: unless-stopped
