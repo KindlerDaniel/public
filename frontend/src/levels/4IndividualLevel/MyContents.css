@@ -132,3 +132,17 @@
   align-items: center;
   margin-bottom: 16px;
 }
+
+/* ContentCard Darstellung */
+.content-card-wrapper {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.contents-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+}

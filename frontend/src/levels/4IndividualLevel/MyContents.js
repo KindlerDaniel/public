@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MyContents.css';
 import ContentCreator from './ContentCreator';
 import './ContentCreator.css';
+import ContentCard from '../1SocietyLevel/shared/ContentCard.tsx';
 
 const MyContents = () => {
   const [message, setMessage] = useState('');
@@ -84,49 +85,35 @@ const MyContents = () => {
             
             {contents.length > 0 ? (
               <div className="contents-grid">
-                {contents.map((content, index) => (
-                  <div key={content?.id || index} className="content-item" style={{margin: '15px 0', padding: '15px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
-                    <h4 style={{margin: '0 0 10px 0', color: '#333'}}>{content?.title || 'Ohne Titel'}</h4>
-                    
-                    {/* Prominente Darstellung von Medien, falls vorhanden */}
-                    {content?.mediaUrl && (
-                      <div style={{marginBottom: '12px'}}>
-                        {content.type && content.type.startsWith('image/') ? (
-                          <img 
-                            src={content.mediaUrl} 
-                            alt={content.title || 'Bild'} 
-                            style={{
-                              width: '100%',
-                              maxHeight: '250px',
-                              objectFit: 'cover',
-                              borderRadius: '6px'
-                            }} 
-                          />
-                        ) : content.type && content.type.startsWith('video/') ? (
-                          <video 
-                            src={content.mediaUrl} 
-                            controls 
-                            style={{width: '100%', borderRadius: '6px'}} 
-                          />
-                        ) : (
-                          <div style={{padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px'}}>
-                            <p>Medientyp: {content.type || 'Unbekannt'}</p>
-                            <a href={content.mediaUrl} target="_blank" rel="noopener noreferrer">
-                              Medien öffnen
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    <p style={{margin: '0', color: '#555'}}>{content?.content || 'Keine Beschreibung'}</p>
-                    
-                    {/* Zusätzliche Metadaten */}
-                    <div style={{marginTop: '15px', fontSize: '0.85rem', color: '#777'}}>
-                      Erstellt: {new Date(content?.createdAt || Date.now()).toLocaleDateString('de-DE')}
+                {contents.map((content, index) => {
+                  // Bereite das Content-Item für die ContentCard vor
+                  const contentItem = {
+                    ...content,
+                    id: content?.id || `content-${index}`,
+                    title: content?.title || 'Ohne Titel',
+                    content: content?.content || 'Keine Beschreibung',
+                    // Stelle sicher, dass wir den richtigen Typ verwenden
+                    type: content?.type ? 
+                      (content.type.startsWith('image/') ? 'image-landscape' : 
+                       content.type.startsWith('video/') ? 'video-landscape' : 
+                       content.type.startsWith('audio/') ? 'audio' : 'text') : 'text',
+                    mediaUrl: content?.mediaUrl || null,
+                    thumbnailUrl: content?.thumbnailUrl || null,
+                    // Setze ein Standarddatum, falls keines vorhanden ist
+                    date: content?.createdAt || new Date().toISOString(),
+                    // Stelle sicher, dass wir einen Autor haben
+                    author: content?.author || { name: 'Anonym' }
+                  };
+                  
+                  return (
+                    <div key={contentItem.id} className="content-card-wrapper">
+                      <ContentCard 
+                        content={contentItem}
+                        compact={false}
+                      />
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="info-message">{message || 'Keine Inhalte vorhanden. Erstellen Sie Ihren ersten Inhalt!'}</p>
