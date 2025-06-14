@@ -1,9 +1,12 @@
 // frontend/src/levels/4IndividualLevel/ContentCreator.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { ContentType } from '../../types.ts';
 import './ContentCreator.css';
 
 const ContentCreator = ({ onSave, onCancel }) => {
+  // Auth-Context für die Token-Verwaltung
+  const { token, isAuthenticated } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     type: 'text',
     title: '',
@@ -76,21 +79,13 @@ const ContentCreator = ({ onSave, onCancel }) => {
       const formData = new FormData();
       formData.append('media', selectedMedia);
       
-      // Choose between direct service access or via Kong gateway
-      // Mit optionalem Test-Modus, der keine Auth erfordert
-      const useTestMode = true; // Test-Modus aktivieren (ohne Auth)
+      // Authentifizierte API-URLs verwenden
+      const useTestMode = false; // Test-Modus ist komplett deaktiviert
       
-      let uploadUrl;
-      if (useTestMode) {
-        uploadUrl = 'http://localhost:8000/api/media/content/upload-test';
-      } else {
-        uploadUrl = useDirectService 
-          ? 'http://localhost:3001/content/upload-media'
-          : 'http://localhost:8000/api/media/content/upload-media';
-      }
+      // Standard-Pfad für Uploads über Gateway
+      const uploadUrl = 'http://localhost:8000/api/media/content/upload-media';
         
-      const token = localStorage.getItem('authToken');
-      
+      // Token aus AuthContext verwenden
       const response = await fetch(uploadUrl, {
         method: 'POST',
         body: formData,
@@ -134,21 +129,13 @@ const ContentCreator = ({ onSave, onCancel }) => {
     setIsUploading(true);
     
     try {
-      // Test-Modus ohne Auth verwenden
-      const useTestMode = true; // Test-Modus aktivieren (ohne Auth)
+      // Authentifizierte API-URLs verwenden
+      const useTestMode = false; // Test-Modus ist komplett deaktiviert
       
-      // Choose between direct service, Kong gateway or test endpoint
-      let contentUrl;
-      if (useTestMode) {
-        contentUrl = 'http://localhost:8000/api/media/content/test';
-      } else {
-        contentUrl = useDirectService 
-          ? 'http://localhost:3001/content'
-          : 'http://localhost:8000/api/media/content';
-      }
+      // Standard-Pfad für Content-Erstellung über Gateway
+      const contentUrl = 'http://localhost:8000/api/media/content';
         
-      const token = localStorage.getItem('authToken');
-      
+      // Token aus AuthContext verwenden
       const response = await fetch(contentUrl, {
         method: 'POST',
         headers: {

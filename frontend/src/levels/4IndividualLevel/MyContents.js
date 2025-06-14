@@ -1,56 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './MyContents.css';
 import ContentCreator from './ContentCreator';
 import './ContentCreator.css';
 import ContentCard from '../1SocietyLevel/shared/ContentCard.tsx';
+import { AuthContext } from '../../context/AuthContext';
 
 const MyContents = () => {
   const [message, setMessage] = useState('');
   const [showContentCreator, setShowContentCreator] = useState(false);
   const [contents, setContents] = useState([]);
+  
+  // Auth-Context für die Token-Verwaltung
+  const { token, isAuthenticated } = useContext(AuthContext);
 
 
   // Content-Items laden
   const loadContents = async () => {
+    // Prüfen, ob der Benutzer authentifiziert ist
+    if (!isAuthenticated || !token) {
+      setMessage('Bitte melden Sie sich an, um Ihre Inhalte zu sehen.');
+      return;
+    }
+    
+    setMessage('Inhalte werden geladen...');
     try {
-      setMessage('Inhalte werden geladen...');
-      
-      const response = await fetch('http://localhost:8000/api/media/content');
+      // Authentifizierter API-Aufruf mit Bearer-Token
+      const response = await fetch('http://localhost:8000/api/media/content', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (!response.ok) {
-        throw new Error(`Fehler beim Laden der Inhalte: ${response.status}`);
+        throw new Error(`HTTP error: ${response.status}`);
       }
       
-      const contentData = await response.json();
-      console.log('Geladene Inhalte:', contentData);
+      const data = await response.json();
       
-      if (Array.isArray(contentData.contents)) {
-        setContents(contentData.contents);
-        setMessage(contentData.contents.length > 0 ? '' : 'Keine Inhalte gefunden');
-      } else if (Array.isArray(contentData)) {
-        setContents(contentData);
-        setMessage(contentData.length > 0 ? '' : 'Keine Inhalte gefunden');
+      // Prüfen, ob wir ein Array oder ein Objekt mit contents-Property bekommen
+      if (Array.isArray(data)) {
+        setContents(data);
+        if (data.length === 0) {
+          setMessage('Keine Inhalte gefunden. Erstellen Sie Ihren ersten Inhalt!');
+        } else {
+          setMessage('');
+        }
+      } else if (data.contents && Array.isArray(data.contents)) {
+        setContents(data.contents);
+        if (data.contents.length === 0) {
+          setMessage('Keine Inhalte gefunden. Erstellen Sie Ihren ersten Inhalt!');
+        } else {
+          setMessage('');
+        }
       } else {
-        console.error('Unerwartetes Datenformat:', contentData);
+        console.error('Unerwartetes Datenformat:', data);
         setContents([]);
         setMessage('Keine Inhalte verfügbar - unerwartetes Datenformat');
       }
     } catch (error) {
       console.error('Load contents error:', error);
       setMessage(`Fehler beim Laden der Inhalte: ${error.message}`);
-      setContents([]);
     }
   };
 
   useEffect(() => {
     loadContents();
-  }, []);
+  }, [isAuthenticated, token]);
 
   // Handler für das Speichern von neuen Content-Items
   const handleSaveContent = (newContent) => {
-    setContents([newContent, ...contents]);
+    // Content Creator schließen
     setShowContentCreator(false);
-    setMessage('Inhalt erfolgreich erstellt!');
+    
+    // Kurze Erfolgsmeldung anzeigen
+    setMessage('Inhalt erfolgreich erstellt! Lade aktuelle Daten...');
+    
+    // Kurze Verzögerung für Backend-Verarbeitung
+    setTimeout(() => {
+      // Alle Inhalte neu laden, um den aktuellen Serverstand zu erhalten
+      loadContents();
+    }, 1000);
   };
 
   // Handler zum Abbrechen der Content-Erstellung
