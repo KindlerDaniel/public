@@ -146,3 +146,27 @@
   width: 100%;
   max-width: 800px;
 }
+
+/* Benutzerinfo-Anzeige */
+.user-info {
+  margin: 10px 0 20px;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #4c7bd9;
+  border-radius: 4px;
+}
+
+.user-info p {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.user-info .info-text {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Content-Header */
+.content-header {
+  margin-bottom: 25px;
+}

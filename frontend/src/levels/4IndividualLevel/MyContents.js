@@ -10,8 +10,8 @@ const MyContents = () => {
   const [showContentCreator, setShowContentCreator] = useState(false);
   const [contents, setContents] = useState([]);
   
-  // Auth-Context für die Token-Verwaltung
-  const { token, isAuthenticated } = useContext(AuthContext);
+  // Auth-Context für die Token-Verwaltung und Benutzerdaten
+  const { token, isAuthenticated, user } = useContext(AuthContext);
 
 
   // Content-Items laden
@@ -96,18 +96,21 @@ const MyContents = () => {
         />
       ) : (
         <div className="content-container">
-          {/* Content-Erstellung Button */}
-          <div className="content-section-header">
-            <h3>Inhalte erstellen</h3>
+          <div className="content-header">
+            <h2>Meine Inhalte</h2>
+            {user && (
+              <div className="user-info">
+                <p>Angemeldet als: <strong>{user.name || user.username || user.email}</strong></p>
+                <p className="info-text">Es werden nur Ihre eigenen Inhalte angezeigt.</p>
+              </div>
+            )}
             <button 
-              className="add-content-button" 
+              className="create-content-button" 
               onClick={() => setShowContentCreator(true)}
-              title="Neuen Inhalt erstellen"
             >
-              +
+              + Neuer Inhalt
             </button>
           </div>
-          
           {/* Erstellte Inhalte anzeigen - verbesserte Darstellung */}
           <div className="created-contents-section">
             <h3>Meine erstellten Inhalte {contents.length > 0 ? `(${contents.length})` : ""}</h3>

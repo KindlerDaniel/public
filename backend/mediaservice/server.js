@@ -577,17 +577,21 @@ app.get('/content', async (req, res) => {
   }
 });
 
-// Alle ContentItems abrufen - Kong Gateway Route
-app.get('/api/media/content', async (req, res) => {
+// Alle ContentItems abrufen - Kong Gateway Route - mit Authentifizierung
+app.get('/api/media/content', verifyToken, async (req, res) => {
   try {
     console.log('Content-Liste-Request an /api/media/content');
-    const { type, authorId, limit = 20, offset = 0 } = req.query;
+    console.log('Authentifizierter Benutzer:', req.user);
     
-    console.log(`Filter: Typ=${type || 'alle'}, AutorID=${authorId || 'alle'}, Limit=${limit}, Offset=${offset}`);
+    const { type, limit = 20, offset = 0 } = req.query;
+    // Benutzer-ID aus dem JWT-Token extrahieren (kann je nach Token-Struktur unter id oder userId liegen)
+    const userId = req.user.userId || req.user.id;
     
-    const whereClause = {};
+    console.log(`Filter: Typ=${type || 'alle'}, AutorID=${userId}, Limit=${limit}, Offset=${offset}`);
+    
+    // Nutzer kann nur eigene Inhalte sehen
+    const whereClause = { authorId: userId };
     if (type) whereClause.type = type;
-    if (authorId) whereClause.authorId = authorId;
     
     const contents = await ContentItem.findAll({
       where: whereClause,
