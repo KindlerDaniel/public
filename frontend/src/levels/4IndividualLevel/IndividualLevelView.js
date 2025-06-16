@@ -46,9 +46,13 @@ const IndividualLevelView = () => {
                     {tab}
                   </button>
                 ))}
-                <span className="user-name" style={{marginLeft: 'auto', marginRight: 8}}>{user.name || user.email}</span>
-                <button className="logout-modern" onClick={logout} aria-label="Logout">
-                  <svg className="icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false" aria-hidden="true">
+                <button 
+                  className="user-name-logout-button" 
+                  style={{marginLeft: 'auto'}}
+                  onClick={logout}
+                >
+                  {user.name || user.username || user.email}
+                  <svg className="logout-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <polyline points="16 17 21 12 16 7"/>
                     <line x1="21" y1="12" x2="9" y2="12"/>

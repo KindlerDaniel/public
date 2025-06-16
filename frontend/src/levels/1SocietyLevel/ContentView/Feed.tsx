@@ -3,49 +3,77 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import ContentCard from '../shared/ContentCard.tsx';
-import { ContentItem, Filters } from '../../../types.ts';
+import { ContentItem } from '../../../types.ts';
 import { getFeedContent } from '../../../utils/mockData.js';
 import './Feed.css';
+
+// Lokale Definition der Filters-Schnittstelle, die in types.ts fehlt
+interface Filters {
+  beauty: boolean;
+  wisdom: boolean;
+  humor: boolean;
+  timeRange: string;
+}
 
 interface FeedProps {
   compact?: boolean;
   onSelectContent?: (contentId: string) => void;
   filters?: Filters;
   feedType?: string;
+  customContents?: ContentItem[];
 }
 
 const Feed: React.FC<FeedProps> = ({ 
   compact = false, 
   onSelectContent,
   filters = { beauty: false, wisdom: false, humor: false, timeRange: 'all' },
-  feedType = 'trending'
+  feedType = 'trending',
+  customContents
 }) => {
   const [feedItems, setFeedItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
+  const [selectedContentId, setSelectedContentId] = useState<number | null>(null);
 
   // Lade verschiedene Content-Typen
   useEffect(() => {
+    // Wenn customContents vorhanden sind, verwende diese direkt
+    if (customContents) {
+      setFeedItems(customContents);
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     
     try {
       // Verwende die getFeedContent Funktion mit den neuen Content-Typen
       const allItems = getFeedContent(feedType, filters);
       
-      // Type-Assertion für TypeScript-Kompatibilität
-      setFeedItems(allItems as ContentItem[]);
+      // Konvertiere das Format zu ContentItem[] mit erforderlichen Eigenschaften
+      const adaptedItems = allItems.map((item: any) => ({
+        ...item,
+        // Konvertiere id zu number wenn es ein string ist
+        id: typeof item.id === 'string' ? parseInt(item.id, 10) || 0 : item.id,
+        // Füge fehlende erforderliche Eigenschaften hinzu
+        authorId: item.authorId || (item.author?.id ? parseInt(item.author.id, 10) : 0),
+        createdAt: item.createdAt || item.date,
+        updatedAt: item.updatedAt || item.date
+      })) as ContentItem[];
+      
+      // Setze adaptierte Items
+      setFeedItems(adaptedItems);
     } catch (error) {
       console.error('Fehler beim Laden des Feeds:', error);
       setFeedItems([]);
     } finally {
       setLoading(false);
     }
-  }, [feedType, filters]);
+  }, [feedType, filters, customContents]);
 
-  const handleContentSelect = useCallback((contentId: string) => {
+  const handleContentSelect = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
     if (onSelectContent) {
-      onSelectContent(contentId);
+      onSelectContent(contentId.toString());
     }
   }, [onSelectContent]);
 

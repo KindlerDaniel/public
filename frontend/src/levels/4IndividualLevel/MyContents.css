@@ -1,11 +1,72 @@
-.mycontents-panel {
+/* Direkter Feed Container */
+.direct-feed-container {
+  position: fixed;
+  top: 60px; /* Genau unter der Tabs-Header */
+  left: 50px;
+  bottom: 0;
+  width: 500px; /* Standardbreite */
+  background-color: #d9e0e6; /* Original-Feedfarbe */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Resize Handle für den Feed */
+.feed-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: transparent;
+  z-index: 20;
+  transition: background-color 0.2s;
+}
+
+.feed-resize-handle:hover,
+.feed-resize-handle:active {
+  background-color: rgba(25, 118, 210, 0.3);
+}
+
+/* Neuer Inhalt Button - fixierte Position */
+.create-content-fixed-button {
+  position: fixed;
+  top: 72px; /* 12px unterhalb der Tabs-Header */
+  left: 50px;
+  margin-left: 236px; /* 280px Breite - 44px Button Position */
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+/* Hover-Effekt für den Button */
+.create-content-fixed-button:hover {
+  background-color: #1565c0;
+  transform: scale(1.1);
+}
+
+/* Rechte Seite: Controls und Info-Bereich */
+.mycontents-controls-area {
+  flex: 1;
   padding: 24px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  height: 100%;
   overflow-y: auto;
-  max-height: 80vh; /* Begrenzt die Höhe auf 80% der Bildschirmhöhe */
-  position: relative;
 }
 
 .upload-section {
@@ -66,6 +127,42 @@
   gap: 16px;
   margin-bottom: 24px;
 }
+
+/* Feed Styling für direkten Container */
+.direct-feed-container .feed-container {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: auto !important;
+  flex: 1;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE und Edge */
+}
+
+.direct-feed-container .feed-list {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: visible !important;
+  padding-top: 15px; /* Mehr Abstand oben */
+}
+
+/* Wichtig: Ermögliche dem ContentCard-Container, zu scrollen */
+.direct-feed-container .feed-container > .feed-list {
+  padding-bottom: 30px; /* Mehr Abstand unten */
+}
+
+/* Scrollbars ausblenden für den Feed */
+.direct-feed-container .feed-container::-webkit-scrollbar,
+.direct-feed-container .feed-list::-webkit-scrollbar { 
+  display: none; 
+}
+
+/* Content container ohne Scrollleisten */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
 .image-card {
   border: 1px solid #eee;
   border-radius: 8px;
@@ -111,9 +208,10 @@
 
 /* Stil für erstellte Inhalte */
 .created-contents-section {
-  margin-bottom: 32px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
 .content-preview-item {
@@ -169,7 +267,83 @@
   color: #666;
 }
 
-/* Content-Header */
+/* Content-Header im rechten Bereich */
 .content-header {
-  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+/* Bessere Absätze im Content-Header */
+.content-header h2,
+.content-header h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* Feed-Infomeldung wenn keine Inhalte vorhanden sind */
+.feed-info-message {
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+  display: block;
+  margin-top: 40px;
+}
+
+/* Lade-Spinner */
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Overlay für Statusmeldungen */
+.message-overlay {
+  position: fixed;
+  bottom: 20px;
+  left: 190px; /* Zentriert unter dem Feed */
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: 220px;
+  text-align: center;
+}
+
+/* Styling für Erfolgs- und Fehlermeldungen */
+.message-overlay .success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  opacity: 0.95;
+}
+
+.message-overlay .error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  opacity: 0.95;
 }

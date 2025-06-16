@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import './MyContents.css';
 import ContentCreator from './ContentCreator';
 import './ContentCreator.css';
-import ContentCard from '../1SocietyLevel/shared/ContentCard.tsx';
+import Feed from '../1SocietyLevel/ContentView/Feed.tsx';
 import { AuthContext } from '../../context/AuthContext';
 
 // Debug-Hilfsfunktion: Druckt wichtige Informationen über ein Content-Objekt
@@ -72,13 +72,17 @@ const convertContentMediaUrls = (content, token) => {
 };
 
 const MyContents = () => {
-  const [message, setMessage] = useState('');
-  const [showContentCreator, setShowContentCreator] = useState(false);
-  const [contents, setContents] = useState([]);
-  
   // Auth-Context für die Token-Verwaltung und Benutzerdaten
   const { token, isAuthenticated, user } = useContext(AuthContext);
-
+  
+  const [contents, setContents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
+  const [showContentCreator, setShowContentCreator] = useState(false);
+  const [width, setWidth] = useState(500); // Standardbreite wie im Original-Feed
+  const [isDragging, setIsDragging] = useState(false);
+  const feedRef = useRef(null);
+  const resizeHandleRef = useRef(null);
 
   // Content-Items laden
   const loadContents = async () => {
@@ -108,6 +112,7 @@ const MyContents = () => {
         // Konvertieren aller MinIO-URLs zu authentifizierten URLs
         const processedData = data.map(convertToAuthenticatedMediaUrl);
         setContents(processedData);
+        setLoading(false); // Loading-Status beenden
         
         // Feedback-Message setzen
         if (processedData.length === 0) {
@@ -120,6 +125,7 @@ const MyContents = () => {
         // Konvertieren aller MinIO-URLs zu authentifizierten URLs
         const processedData = data.contents.map(convertToAuthenticatedMediaUrl);
         setContents(processedData);
+        setLoading(false); // Loading-Status beenden
         
         // Feedback-Message setzen
         if (processedData.length === 0) {
@@ -131,10 +137,12 @@ const MyContents = () => {
       } else {
         console.error('Unerwartetes Datenformat:', data);
         setContents([]);
+        setLoading(false); // Loading-Status beenden
         setMessage('Keine Inhalte verfügbar - unerwartetes Datenformat');
       }
     } catch (error) {
       console.error('Load contents error:', error);
+      setLoading(false); // Loading-Status beenden auch bei Fehler
       setMessage(`Fehler beim Laden der Inhalte: ${error.message}`);
     }
   };
@@ -163,112 +171,145 @@ const MyContents = () => {
     setShowContentCreator(false);
   };
 
+  // Resize-Funktionalität
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const newWidth = Math.max(250, Math.min(700, e.clientX - 50));
+    setWidth(newWidth);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  // Event-Listener beim Unmount entfernen
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
   return (
-    <div className="tab-panel mycontents-panel">
+    <>
+      {/* Plus-Button für neue Inhalte */}
+      <button 
+        className="create-content-fixed-button" 
+        onClick={() => setShowContentCreator(true)}
+        title="Neuen Inhalt erstellen"
+      >
+        +
+      </button>
+          
+      {/* Statusmeldung immer sichtbar */}
+      {message && (
+        <div className="message-overlay">
+          <span className={message.includes('erfolgreich') ? 'success' : 'error'}>
+            {message}
+          </span>
+        </div>
+      )}
+
+      {/* Haupt-Bereich */}
       {showContentCreator ? (
         <ContentCreator 
           onSave={handleSaveContent} 
           onCancel={handleCancelContentCreation} 
         />
       ) : (
-        <div className="content-container">
-          <div className="content-header">
-            <h2>Meine Inhalte</h2>
-            {user && (
-              <div className="user-info">
-                <p>Angemeldet als: <strong>{user.name || user.username || user.email}</strong></p>
-                <p className="info-text">Es werden nur Ihre eigenen Inhalte angezeigt.</p>
-              </div>
-            )}
-            <button 
-              className="create-content-button" 
-              onClick={() => setShowContentCreator(true)}
-            >
-              + Neuer Inhalt
-            </button>
-          </div>
-          {/* Erstellte Inhalte anzeigen - verbesserte Darstellung */}
-          <div className="created-contents-section">
-            <h3>Meine erstellten Inhalte {contents.length > 0 ? `(${contents.length})` : ""}</h3>
-            
-            {contents.length > 0 ? (
-              <div className="contents-grid">
-                {contents.map((content, index) => {
-                  // Bereite das Content-Item für die ContentCard vor
-                  // Debug des Original-Contents
-                  debugContentObject(content, index);
-                  
-                  // WICHTIG: Ermittle die korrekte URL für Medieninhalte (Bilder etc.)
-                  let mediaUrl = null;
-                  
-                  // Sicherstellen, dass wir auf Typen korrekt prüfen - defensiv programmieren
-                  const isImage = typeof content?.type === 'string' && content.type.includes('image');
-                  const isVideo = typeof content?.type === 'string' && content.type.includes('video');
-                  const isAudio = typeof content?.type === 'string' && content.type.includes('audio');
-                  
-                  // 1. Option: mediaUrl aus dem Content-Objekt
-                  if (typeof content?.mediaUrl === 'string' && content.mediaUrl.trim() !== '') {
-                    mediaUrl = content.mediaUrl;
-                    console.log(`Content #${index}: Verwende mediaUrl: ${mediaUrl}`);
-                  }
-                  // 2. Option: Für Bildtypen - content-Feld könnte eine URL sein
-                  else if (isImage && 
-                      typeof content?.content === 'string' && 
-                      (content.content.startsWith('http://') || content.content.startsWith('https://'))) {
-                    mediaUrl = content.content;
-                    console.log(`Content #${index}: Verwende content als mediaUrl: ${mediaUrl}`);
-                  }
-                  
-                  // URL konvertieren wenn es sich um eine MinIO-URL handelt
-                  if (typeof mediaUrl === 'string' && mediaUrl.includes('localhost:9000')) {
-                    const originalUrl = mediaUrl;
-                    mediaUrl = convertToAuthenticatedMediaUrl(mediaUrl, token);
-                    console.log(`Content #${index}: URL konvertiert von ${originalUrl} zu ${mediaUrl} (Mit Token: ${!!token})`);
-                  }
-                  
-                  // Erstelle ein ContentItem mit garantiertem Medien-URL
-                  const contentItem = {
-                    id: content?.id || `content-${index}`,
-                    title: content?.title || 'Ohne Titel',
-                    // Für Text-Inhalte - verwende content als Text
-                    content: (!isImage && !isVideo && !isAudio) ? 
-                             (content?.content || 'Keine Beschreibung') : '',
-                    // Für Medieninhalte - setze entweder eine URL oder einen Platzhalter
-                    mediaUrl: mediaUrl || '/api/placeholder/400/225',
-                    type: isImage ? 'image-landscape' : 
-                          isVideo ? 'video-landscape' : 
-                          isAudio ? 'audio' : 'text',
-                    date: content?.createdAt || content?.date || new Date().toISOString(),
-                    author: content?.author || { name: 'Anonym' }
-                  };
-                  
-                  // Debug-Ausgabe für Content-Item
-                  console.log(`Content #${index} - Type: ${contentItem.type}, Media-URL: ${contentItem.mediaUrl}`);
-                  
-                  return (
-                    <div key={contentItem.id} className="content-card-wrapper">
-                      <ContentCard 
-                        content={contentItem}
-                        compact={false}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="info-message">{message || 'Keine Inhalte vorhanden. Erstellen Sie Ihren ersten Inhalt!'}</p>
-            )}
-          </div>
+        <div 
+          className="direct-feed-container"
+          ref={feedRef}
+          style={{ width: `${width}px` }}
+        >
+          {/* Resize-Handle */}
+          <div 
+            className="feed-resize-handle"
+            ref={resizeHandleRef}
+            onMouseDown={handleMouseDown}
+          ></div>
           
-          {/* Statusmeldung */}
-          {message && (
-            <div className={`message ${message.includes('erfolgreich') ? 'success' : 'error'}`} style={{marginTop: '20px'}}>
-              {message}
+          {loading ? (
+            <div className="loading-spinner-container">
+              <div className="loading-spinner"></div>
+            </div>
+          ) : contents.length > 0 ? (
+            <Feed
+              feedType="mine" 
+              compact={true}
+              customContents={contents.map((content, index) => {
+                // Debug des Original-Contents
+                debugContentObject(content, index);
+                
+                // WICHTIG: Ermittle die korrekte URL für Medieninhalte (Bilder etc.)
+                let mediaUrl = null;
+                
+                // Sicherstellen, dass wir auf Typen korrekt prüfen - defensiv programmieren
+                const isImage = typeof content?.type === 'string' && content.type.includes('image');
+                const isVideo = typeof content?.type === 'string' && content.type.includes('video');
+                const isAudio = typeof content?.type === 'string' && content.type.includes('audio');
+                
+                // 1. Option: mediaUrl aus dem Content-Objekt
+                if (typeof content?.mediaUrl === 'string' && content.mediaUrl.trim() !== '') {
+                  mediaUrl = content.mediaUrl;
+                  console.log(`Content #${index}: Verwende mediaUrl: ${mediaUrl}`);
+                }
+                // 2. Option: Für Bildtypen - content-Feld könnte eine URL sein
+                else if (isImage && 
+                    typeof content?.content === 'string' && 
+                    (content.content.startsWith('http://') || content.content.startsWith('https://'))) {
+                  mediaUrl = content.content;
+                  console.log(`Content #${index}: Verwende content als mediaUrl: ${mediaUrl}`);
+                }
+                
+                // URL konvertieren wenn es sich um eine MinIO-URL handelt
+                if (typeof mediaUrl === 'string' && mediaUrl.includes('localhost:9000')) {
+                  const originalUrl = mediaUrl;
+                  mediaUrl = convertToAuthenticatedMediaUrl(mediaUrl, token);
+                  console.log(`Content #${index}: URL konvertiert von ${originalUrl} zu ${mediaUrl} (Mit Token: ${!!token})`);
+                }
+                
+                // Erstelle ein ContentItem mit garantiertem Medien-URL
+                return {
+                  // Konvertiere id zu number wenn es ein string ist, sonst generiere temporäre ID
+                  id: content?.id ? (typeof content.id === 'string' ? parseInt(content.id, 10) || index + 1 : content.id) : index + 1,
+                  title: content?.title || 'Ohne Titel',
+                  // Für Text-Inhalte - verwende content als Text
+                  content: (!isImage && !isVideo && !isAudio) ? 
+                          (content?.content || 'Keine Beschreibung') : '',
+                  // Für Medieninhalte - setze entweder eine URL oder einen Platzhalter
+                  mediaUrl: mediaUrl || '/api/placeholder/400/225',
+                  type: isImage ? 'image-landscape' : 
+                        isVideo ? 'video-landscape' : 
+                        isAudio ? 'audio' : 'text',
+                  // Fehlende erforderliche Eigenschaften für ContentItem hinzufügen
+                  authorId: content?.authorId || 0,
+                  ratings: content?.ratings || { beauty: 0, wisdom: 0, humor: 0 },
+                  date: content?.createdAt || content?.date || new Date().toISOString(),
+                  createdAt: content?.createdAt || content?.date || new Date().toISOString(),
+                  updatedAt: content?.updatedAt || content?.date || new Date().toISOString(),
+                  author: content?.author || { name: 'Anonym' }
+                };
+              })}
+              onSelectContent={() => {}} // Keine Aktion bei Auswahl
+            />
+          ) : (
+            <div className="no-content">
+              <p>Noch keine Inhalte erstellt.</p>
+              <p>Klicke auf das + Symbol, um einen neuen Inhalt zu erstellen.</p>
             </div>
           )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -82,9 +82,33 @@ body, html {
 }
 
 .user-name {
-  font-weight: 600;
   color: #1976d2;
-  font-size: 1.06rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Kombinierter Benutzernamen-Logout-Button */
+.user-name-logout-button {
+  color: #1976d2;
+  font-weight: 500;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  padding: 6px 10px 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.user-name-logout-button:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.logout-icon {
+  margin-left: 4px;
 }
 
 .logout-modern {
