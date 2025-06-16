@@ -14,22 +14,21 @@
   overflow: hidden;
 }
 
-/* Resize Handle für den Feed */
+/* Resize Handle für den Feed - schlicht wie im Original */
 .feed-resize-handle {
   position: absolute;
   top: 0;
   right: 0;
-  width: 5px;
+  width: 4px;
   height: 100%;
   cursor: ew-resize;
   background-color: transparent;
   z-index: 20;
-  transition: background-color 0.2s;
 }
 
 .feed-resize-handle:hover,
 .feed-resize-handle:active {
-  background-color: rgba(25, 118, 210, 0.3);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Neuer Inhalt Button - fixierte Position */
@@ -138,16 +137,24 @@
   -ms-overflow-style: none; /* IE und Edge */
 }
 
-.direct-feed-container .feed-list {
-  height: auto !important;
-  min-height: 100% !important;
-  overflow-y: visible !important;
-  padding-top: 15px; /* Mehr Abstand oben */
+/* Direkte Override-Styles für bessere Anwendung */
+.direct-feed-container .feed-container .feed-list {
+  padding-top: 60px !important;
+  padding-bottom: 80px !important;
 }
 
-/* Wichtig: Ermögliche dem ContentCard-Container, zu scrollen */
-.direct-feed-container .feed-container > .feed-list {
-  padding-bottom: 30px; /* Mehr Abstand unten */
+/* Alternative Content Card Margins für mehr Abstand */
+.feed-container .content-card {
+  margin-bottom: 20px !important;
+}
+
+/* Zusätzlicher Abstand am ersten und letzten Element */
+.feed-container .feed-list > div:first-child {
+  margin-top: 30px !important;
+}
+
+.feed-container .feed-list > div:last-child {
+  margin-bottom: 50px !important;
 }
 
 /* Scrollbars ausblenden für den Feed */

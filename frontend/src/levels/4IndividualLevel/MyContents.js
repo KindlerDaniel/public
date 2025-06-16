@@ -92,7 +92,7 @@ const MyContents = () => {
       return;
     }
     
-    setMessage('Inhalte werden geladen...');
+    // Kein Ladehinweis mehr anzeigen - stattdessen nur den Spinner
     try {
       // Authentifizierter API-Aufruf mit Bearer-Token
       const response = await fetch('http://localhost:8000/api/media/content', {
@@ -171,32 +171,52 @@ const MyContents = () => {
     setShowContentCreator(false);
   };
 
-  // Resize-Funktionalität
+  // Resize-Funktionalität - verbesserte Version
   const handleMouseDown = (e) => {
+    e.preventDefault(); // Verhindert Textauswahl während Drag
     setIsDragging(true);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    
+    // Initialen Mausposition speichern
+    const startX = e.clientX;
+    const startWidth = width;
+    
+    const onMouseMove = (moveEvent) => {
+      if (!isDragging) return;
+      const delta = moveEvent.clientX - startX;
+      const newWidth = Math.max(250, Math.min(700, startWidth + delta));
+      setWidth(newWidth);
+      
+      // CSS-Variable aktualisieren für sofortige visuelle Rückmeldung
+      if (feedRef.current) {
+        feedRef.current.style.width = `${newWidth}px`;
+      }
+    };
+    
+    const onMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+    
+    // Event-Listener hinzufügen
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const newWidth = Math.max(250, Math.min(700, e.clientX - 50));
-    setWidth(newWidth);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
+  
   // Event-Listener beim Unmount entfernen
   useEffect(() => {
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+    const handleGlobalMouseUp = () => {
+      if (isDragging) {
+        setIsDragging(false);
+      }
     };
-  }, []);
+    
+    // Für den Fall, dass mouseup außerhalb des Fensters ausgelöst wird
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging]);
 
   return (
     <>
