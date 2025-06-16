@@ -13,6 +13,11 @@ services:
   - name: media-service
     url: http://socialmedia-mediaservice:3001
     routes:
+      - name: media-file-route
+        paths:
+          - /api/media/file
+        strip_path: false
+        preserve_host: true
       - name: media-content-upload-route
         paths:
           - /api/media/content/upload-media

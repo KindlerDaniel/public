@@ -4,6 +4,32 @@ import { AuthContext } from '../../context/AuthContext';
 import { ContentType } from '../../types.ts';
 import './ContentCreator.css';
 
+// Hilfsfunktion: Konvertiert direkte MinIO URLs zu authentifizierten API-URLs
+const convertToAuthenticatedMediaUrl = (url) => {
+  if (!url) return url;
+  
+  // MinIO URL-Muster: http://localhost:9000/bucketName/fileName
+  if (url.includes('localhost:9000')) {
+    try {
+      const urlObj = new URL(url);
+      const pathParts = urlObj.pathname.split('/');
+      
+      // Pfadstruktur ist /bucketName/fileName
+      if (pathParts.length >= 3) {
+        const bucket = pathParts[1];
+        const fileName = pathParts.slice(2).join('/');
+        
+        // Umwandeln in authentifizierte URL
+        return `http://localhost:8000/api/media/file/${bucket}/${fileName}`;
+      }
+    } catch (error) {
+      console.error('Fehler beim Konvertieren der Media-URL:', error);
+    }
+  }
+  
+  return url;
+};
+
 const ContentCreator = ({ onSave, onCancel }) => {
   // Auth-Context für die Token-Verwaltung
   const { token, isAuthenticated } = useContext(AuthContext);
@@ -102,10 +128,16 @@ const ContentCreator = ({ onSave, onCancel }) => {
       
       setUploadStatus('Datei erfolgreich hochgeladen');
       
-      // Update form data with the media URL
+      // Konvertiere die MinIO-URL in eine authentifizierte URL mit Token
+      const authenticatedUrl = convertToAuthenticatedMediaUrl(result.url, token);
+      console.log('Original-URL:', result.url);
+      console.log('Authentifizierte URL:', authenticatedUrl);
+      console.log('Token verfügbar:', !!token);
+      
+      // Update form data with the authenticated media URL
       setFormData(prev => ({
         ...prev,
-        mediaUrl: result.url,
+        mediaUrl: authenticatedUrl,
       }));
       
     } catch (error) {

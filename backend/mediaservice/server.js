@@ -673,6 +673,70 @@ app.delete('/api/media/content/:id', verifyToken, async (req, res) => {
   handleContentDeletion(req, res);
 });
 
+// Authentifizierter Zugriff auf Mediendateien - unterstützt sowohl Header als auch URL-Token
+app.get('/api/media/file/:bucket/:filename', async (req, res) => {
+  try {
+    const { bucket, filename } = req.params;
+    const tokenFromUrl = req.query.token;
+    
+    // Authentifizierung: Entweder über Authorization Header oder URL-Parameter
+    if (!req.headers.authorization && !tokenFromUrl) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    // Benutzervalidierung (wenn nötig)
+    let userId;
+    try {
+      // Token aus Header oder URL-Parameter verwenden
+      const token = req.headers.authorization 
+                  ? req.headers.authorization.split(' ')[1]
+                  : tokenFromUrl;
+                  
+      // Token validieren - WICHTIG: Verwende die gleiche JWT_SECRET-Konstante
+      const decodedToken = jwt.verify(token, JWT_SECRET);
+      userId = decodedToken.userId;
+      console.log(`Authenticated media access by user ID ${userId} for ${bucket}/${filename}`);
+    } catch (authError) {
+      console.error(`Authentication error: ${authError.message}`);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    
+    // Prüfen, ob der Bucket existiert
+    const bucketExists = await minioClient.bucketExists(bucket);
+    if (!bucketExists) {
+      return res.status(404).json({ error: 'Bucket not found' });
+    }
+    
+    // MinIO-Stream für die Datei erstellen
+    try {
+      // Metadaten abrufen, um Content-Type zu ermitteln
+      const stat = await minioClient.statObject(bucket, filename);
+      const fileStream = await minioClient.getObject(bucket, filename);
+      
+      // Setze die richtigen Headers für das Streaming
+      res.set({
+        'Content-Type': stat.metaData['content-type'] || 'application/octet-stream',
+        'Content-Length': stat.size,
+        'Cache-Control': 'max-age=86400' // 24 Stunden caching
+      });
+      
+      // Stream an den Client senden
+      fileStream.pipe(res);
+    } catch (streamError) {
+      console.error(`Error streaming file: ${streamError.message}`);
+      return res.status(404).json({ error: 'File not found' });
+    }
+  } catch (error) {
+    console.error(`Error accessing file: ${error.message}`);
+    res.status(500).json({ error: 'Error accessing media file', details: error.message });
+  }
+});
+
+// File löschen
+app.delete('/api/media/file/:bucket/:filename', verifyToken, async (req, res) => {
+  handleContentDeletion(req, res);
+});
+
 // TEST-Endpunkt für Content-Löschung ohne Auth-Prüfung - NUR ZUR FEHLERBEHEBUNG
 app.delete('/api/media/content/test/:id', async (req, res) => {
   try {
