@@ -55,7 +55,7 @@
 /* Neuer Inhalt Button - dynamisch zentrierte Position */
 .create-content-fixed-button {
   position: fixed;
-  top: 72px; /* 12px unterhalb der Tabs-Header */
+  top: 69px; /* Zwischen ursprünglicher (72px) und vorheriger (66px) Position */
   left: 50px; /* Basisposition - gleich wie Feed */
   /* Berechnung: Feed-Breite halbiert minus halbe Button-Breite */
   margin-left: calc(var(--feed-width) / 2 - 16px);
@@ -159,9 +159,15 @@
   -ms-overflow-style: none; /* IE und Edge */
 }
 
+/* Ausblenden von Feed-eigenen Ladeindikatoren */
+.direct-feed-container .feed-loading,
+.direct-feed-container .feed-loading-more {
+  display: none !important;
+}
+
 /* Direkte Override-Styles für bessere Anwendung */
 .direct-feed-container .feed-container .feed-list {
-  padding-top: 60px !important;
+  padding-top: 30px !important; /* von 60px auf 30px reduziert */
   padding-bottom: 80px !important;
 }
 
@@ -172,7 +178,7 @@
 
 /* Zusätzlicher Abstand am ersten und letzten Element */
 .feed-container .feed-list > div:first-child {
-  margin-top: 30px !important;
+  margin-top: 15px !important; /* von 30px auf 15px reduziert */
 }
 
 .feed-container .feed-list > div:last-child {
@@ -323,26 +329,43 @@
   margin-top: 40px;
 }
 
-/* Lade-Spinner */
-.loading-spinner-container {
+/* Ladesymbol-Container - mittig im Feed-Container */
+.loading-symbol-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #1976d2;
+/* Einfaches, animiertes Ladesymbol */
+.loading-symbol {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  background-color: #1976d2;
+  opacity: 0.8;
+  animation: pulse 1s infinite alternate;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Pulsierende Animation für das Ladesymbol */
+@keyframes pulse {
+  0% { transform: scale(0.6); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Style-Überschreibungen für alle Lader im Feed */
+.direct-feed-container .feed-loading,
+.direct-feed-container .feed-container .feed-loading {
+  font-size: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
 }
 
 /* Overlay für Statusmeldungen */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import './MyContents.css';
 import ContentCreator from './ContentCreator';
 import './ContentCreator.css';
@@ -59,21 +59,6 @@ const convertToAuthenticatedMediaUrl = (url, token) => {
   */
 };
 
-// Konvertiert alle mediaUrls in einem Content-Objekt
-const convertContentMediaUrls = (content, token) => {
-  if (!content) return content;
-  
-  // Kopiere das Original-Objekt
-  const updatedContent = {...content};
-  
-  // Konvertiere mediaUrl wenn vorhanden und hänge Token an
-  if (updatedContent.mediaUrl) {
-    updatedContent.mediaUrl = convertToAuthenticatedMediaUrl(updatedContent.mediaUrl, token);
-  }
-  
-  return updatedContent;
-};
-
 const MyContents = () => {
   // Auth-Context für die Token-Verwaltung und Benutzerdaten
   const { token, isAuthenticated, user } = useContext(AuthContext);
@@ -91,8 +76,8 @@ const MyContents = () => {
   const minWidth = 250;
   const maxWidth = 700;
 
-  // Content-Items laden
-  const loadContents = async () => {
+  // Laden aller Contents für diesen Benutzer
+  const loadContents = useCallback(async () => {
     // Prüfen, ob der Benutzer authentifiziert ist
     if (!isAuthenticated || !token) {
       setMessage('Bitte melden Sie sich an, um Ihre Inhalte zu sehen.');
@@ -152,11 +137,11 @@ const MyContents = () => {
       setLoading(false); // Loading-Status beenden auch bei Fehler
       setMessage(`Fehler beim Laden der Inhalte: ${error.message}`);
     }
-  };
+  }, [isAuthenticated, token, setContents, setLoading, setMessage]);
 
   useEffect(() => {
     loadContents();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, loadContents]);
 
   // Handler für das Speichern von neuen Content-Items
   const handleSaveContent = (newContent) => {
@@ -230,6 +215,8 @@ const MyContents = () => {
       >
         +
       </button>
+      
+      {/* Ladeindikator wurde in den Feed-Container verschoben */}
           
       {/* Statusmeldung immer sichtbar */}
       {message && (
@@ -261,11 +248,15 @@ const MyContents = () => {
             <div className="handle-line"></div>
           </div>
           
-          {loading ? (
-            <div className="loading-spinner-container">
-              <div className="loading-spinner"></div>
+          {/* Ladesymbol in der Mitte des Feed-Containers */}
+          {loading && (
+            <div className="loading-symbol-container">
+              <div className="loading-symbol"></div>
             </div>
-          ) : contents.length > 0 ? (
+          )}
+          
+          {/* Feed nur rendern wenn nicht loading und Inhalte vorhanden */}
+          {!loading && contents.length > 0 && (
             <Feed
               feedType="mine" 
               compact={true}
@@ -376,7 +367,10 @@ const MyContents = () => {
               })}
               onSelectContent={() => {}} // Keine Aktion bei Auswahl
             />
-          ) : (
+          )}
+          
+          {/* Nachricht bei leeren Inhalten, nur wenn nicht loading */}
+          {!loading && contents.length === 0 && (
             <div className="no-content">
               {/* Leer - keine Hinweistexte mehr angezeigt */}
             </div>
