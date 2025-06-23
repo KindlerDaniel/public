@@ -4,30 +4,31 @@ import { AuthContext } from '../../context/AuthContext';
 import { ContentType } from '../../types.ts';
 import './ContentCreator.css';
 
-// Hilfsfunktion: Konvertiert direkte MinIO URLs zu authentifizierten API-URLs
+// WICHTIG: KEINE URL-Konvertierung mehr, wir verwenden die originalen MinIO-URLs!
 const convertToAuthenticatedMediaUrl = (url) => {
   if (!url) return url;
   
-  // MinIO URL-Muster: http://localhost:9000/bucketName/fileName
+  console.log('Verwende ursprüngliche MinIO-URL:', url);
+  // Originale MinIO-URL beibehalten, KEINE Konvertierung zum API-Gateway!
+  return url;
+  
+  /* Die alte Konvertierung (verursacht Problem mit Bildanzeige):
   if (url.includes('localhost:9000')) {
     try {
       const urlObj = new URL(url);
       const pathParts = urlObj.pathname.split('/');
       
-      // Pfadstruktur ist /bucketName/fileName
       if (pathParts.length >= 3) {
         const bucket = pathParts[1];
         const fileName = pathParts.slice(2).join('/');
         
-        // Umwandeln in authentifizierte URL
         return `http://localhost:8000/api/media/file/${bucket}/${fileName}`;
       }
     } catch (error) {
       console.error('Fehler beim Konvertieren der Media-URL:', error);
     }
   }
-  
-  return url;
+  */
 };
 
 const ContentCreator = ({ onSave, onCancel }) => {
@@ -128,16 +129,15 @@ const ContentCreator = ({ onSave, onCancel }) => {
       
       setUploadStatus('Datei erfolgreich hochgeladen');
       
-      // Konvertiere die MinIO-URL in eine authentifizierte URL mit Token
-      const authenticatedUrl = convertToAuthenticatedMediaUrl(result.url, token);
-      console.log('Original-URL:', result.url);
-      console.log('Authentifizierte URL:', authenticatedUrl);
+      // WICHTIG: Die Original-MinIO-URL DIREKT aus der Server-Antwort verwenden
+      // KEINE URL-Konvertierung mehr vornehmen!
+      console.log('Media-URL (direkt verwendet):', result.url);
       console.log('Token verfügbar:', !!token);
       
-      // Update form data with the authenticated media URL
+      // FormData mit der ORIGINALEN MinIO-URL aktualisieren
       setFormData(prev => ({
         ...prev,
-        mediaUrl: authenticatedUrl,
+        mediaUrl: result.url, // Direkt die URL vom Server verwenden!
       }));
       
     } catch (error) {
