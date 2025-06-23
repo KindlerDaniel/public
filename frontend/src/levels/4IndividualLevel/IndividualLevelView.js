@@ -22,7 +22,7 @@ const IndividualLevelView = () => {
               width: 'calc(100% - 50px)', /* Exakt dieselbe Breite wie im layout.css für app-content */
               backgroundColor: '#f5f8fa',
               boxShadow: '0 2px 12px rgba(25, 118, 210, 0.04)',
-              padding: '12px 0',
+              padding: '4px 0', /* Reduziert von 12px */
               position: 'fixed',
               top: 0,
               left: '50px', /* Exakt dieselbe Breite wie die Sidebar im layout.css */
@@ -63,8 +63,6 @@ const IndividualLevelView = () => {
             <div className="tab-content" style={{ marginTop: '60px' }}>
               {activeTab === 0 && (
                 <div className="tab-panel">
-                  <h2>Mein Auftritt</h2>
-                  <p>Bearbeiten Sie hier Ihr Profil und Ihre öffentliche Darstellung.</p>
                   {/* Leerer Tab Auftritt */}
                 </div>
               )}
@@ -73,22 +71,16 @@ const IndividualLevelView = () => {
               )}
               {activeTab === 2 && (
                 <div className="tab-panel">
-                  <h2>Meine Folgen</h2>
-                  <p>Hier sehen Sie Inhalte und Personen, denen Sie folgen.</p>
                   {/* Leerer Tab Folgen */}
                 </div>
               )}
               {activeTab === 3 && (
                 <div className="tab-panel">
-                  <h2>Vertrauen</h2>
-                  <p>Verwalten Sie hier Ihre Vertrauenseinstellungen.</p>
                   {/* Leerer Tab Vertrauen */}
                 </div>
               )}
               {activeTab === 4 && (
                 <div className="tab-panel">
-                  <h2>Meine Follower</h2>
-                  <p>Hier sehen Sie Personen, die Ihnen folgen.</p>
                   {/* Leerer Tab Follower */}
                 </div>
               )}

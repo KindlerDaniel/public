@@ -6,7 +6,7 @@
 /* Direkter Feed Container */
 .direct-feed-container {
   position: fixed;
-  top: 60px; /* Genau unter der Tabs-Header */
+  top: 40px; /* Noch weiter reduzierter Abstand von oben */
   left: 50px;
   bottom: 0;
   width: var(--feed-width); /* Nutzt die CSS-Variable */
@@ -52,34 +52,45 @@
   background-color: rgba(0, 0, 0, 0.35);
 }
 
-/* Neuer Inhalt Button - dynamisch zentrierte Position */
+/* Grundlegende Eigenschaften für den Button zum Erstellen neuer Inhalte */
 .create-content-fixed-button {
   position: fixed;
-  top: 69px; /* Zwischen ursprünglicher (72px) und vorheriger (66px) Position */
-  left: 50px; /* Basisposition - gleich wie Feed */
-  /* Berechnung: Feed-Breite halbiert minus halbe Button-Breite */
-  margin-left: calc(var(--feed-width) / 2 - 16px);
-  width: 32px;
-  height: 32px;
+  width: 30px; /* Kleinerer Button */
+  height: 30px; /* Kleinerer Button */
   border-radius: 50%;
-  background-color: #1976d2;
-  color: white;
+  background: linear-gradient(135deg, #ffffff, #999999); /* Hellerer Gradient */
+  color: #000; /* Schwarzes + Symbol */
   border: none;
-  font-size: 22px;
+  font-size: 18px; /* + Symbol behält Größe */
   line-height: 1;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 100;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease, margin-left 0.05s ease; /* Transition für Position synchron mit Feed-Breite */
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease, left 0.2s ease, top 0.2s ease; /* Transition für alle Positionsveränderungen */
+}
+
+/* Zustand: Keine Inhalte vorhanden */
+.create-content-fixed-button.no-content {
+  top: 80px; /* Vertikale Position */
+  left: 100px; /* Horizontale Position */
+}
+
+/* Zustand: Inhalte vorhanden */
+.create-content-fixed-button.has-content {
+  top: 80px; /* Vertikale Position */
+  left: calc(50px + var(--feed-width) + 10px); /* Horizontale Position neben dem Feed */
 }
 
 /* Hover-Effekt für den Button */
 .create-content-fixed-button:hover {
-  background-color: #1565c0;
-  transform: scale(1.1);
+  background: linear-gradient(135deg, #ffffff, #777777); /* Hellerer Hover-Zustand passend zum helleren Button */
+  transform: scale(1.1); /* Etwas stärkere Vergrößerung beim Hover */
+  /* Kein äußerer Schatten */
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 /* Rechte Seite: Controls und Info-Bereich */
@@ -150,6 +161,12 @@
 }
 
 /* Feed Styling für direkten Container */
+.direct-feed-container > div {
+  height: 100%;
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .direct-feed-container .feed-container {
   height: 100% !important;
   max-height: 100% !important;
@@ -329,26 +346,47 @@
   margin-top: 40px;
 }
 
-/* Ladesymbol-Container - mittig im Feed-Container */
+/* Container für Ladeanimation wenn keine Inhalte */
+.loading-only-container {
+  position: fixed;
+  /* Exakte Positionierung: Button-Top + halbe Button-Höhe - halbe Symbol-Höhe */
+  top: calc(75px + (36px / 2) - (16px / 2)); /* = 85px (Button-Zentrum bei 93px - halbe Symbol-Höhe 8px) */
+  left: 96px; /* 50px (Position des + Buttons) + 36px (Breite des Buttons) + 10px Abstand */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Generischer Ladesymbol-Container */
 .loading-symbol-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+/* Ladesymbol-Container wenn innerhalb des Feed-Containers */
+.direct-feed-container .loading-symbol-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-/* Einfaches, animiertes Ladesymbol */
+/* Einfaches, animiertes Ladesymbol - standardmäßig etwas kleiner */
 .loading-symbol {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background-color: #1976d2;
   opacity: 0.8;
   animation: pulse 1s infinite alternate;
+}
+
+/* Ladesymbol im Feed-Container etwas größer */
+.direct-feed-container .loading-symbol {
+  width: 20px;
+  height: 20px;
 }
 
 /* Pulsierende Animation für das Ladesymbol */
@@ -357,15 +395,50 @@
   100% { transform: scale(1); opacity: 0.8; }
 }
 
+/* Herzschlag-Animation für den Button im Ladezustand */
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18); } /* Zweiter Puls etwas stärker */
+  56% { transform: scale(0.97); } /* Leichtes Zusammenziehen */
+  70% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+/* Style für den Button im Ladezustand */
+.create-content-fixed-button.is-loading {
+  animation: heartbeat 1.5s infinite ease-in-out;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4); /* Subtileres Glühen für den kleineren Button */
+}
+
 /* Style-Überschreibungen für alle Lader im Feed */
 .direct-feed-container .feed-loading,
 .direct-feed-container .feed-container .feed-loading {
-  font-size: 0;
-  height: 0;
-  padding: 0;
-  margin: 0;
-  opacity: 0;
-  overflow: hidden;
+  display: none; /* Versteckt Feed's eigene Ladeanimation */
+}
+
+/* Entfernung aller Abstände oben im Feed */
+.direct-feed-container .feed-list {
+  padding: 0 16px 16px 16px; /* Kein Padding oben */
+  margin-top: 0;
+}
+
+/* Feed-Container ohne oberen Abstand */
+.direct-feed-container .feed-container {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Karten ohne oberen Abstand */
+.direct-feed-container .feed-list > *:first-child {
+  margin-top: 0;
+}
+
+/* Kompakter Modus ohne Abstände */
+.direct-feed-container .feed-container.compact .feed-list {
+  padding: 0 16px 16px 16px; /* Kein Padding oben */
+  margin-top: 0;
 }
 
 /* Overlay für Statusmeldungen */

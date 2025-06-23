@@ -9,15 +9,14 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 24px;
   gap: 0;
   position: sticky;
   top: 0;
   background: linear-gradient(90deg, #f5f8fa 90%, #e3e9f1 100%);
   z-index: 10;
   box-shadow: 0 2px 12px rgba(25, 118, 210, 0.04);
-  padding-top: 12px;
-  padding-bottom: 8px;
+  padding-top: 2px;
+  padding-bottom: 2%;
 }
 
 .tabs-nav {
@@ -37,10 +36,10 @@
   border: none;
   flex: 1 1 0;
   min-width: 0;
-  padding: 14px 0 10px 0;
-  font-size: 1.12rem;
+  padding: 6px 0 4px 0; /* Stark reduziertes Padding */
+  font-size: 1rem; /* Leicht kleinere Schrift */
   color: #333;
-  border-radius: 12px 12px 0 0;
+  border-radius: 8px 8px 0 0; /* Kleinerer Radius passend zur schmäleren Höhe */
   cursor: pointer;
   transition: background 0.18s, color 0.18s, box-shadow 0.18s;
   font-weight: 500;
