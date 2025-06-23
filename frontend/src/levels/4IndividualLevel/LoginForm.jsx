@@ -18,7 +18,7 @@ export default function InlineLoginForm() {
     setIsLoading(true);
 
     if (!username || !password) {
-      setError('Bitte füllen Sie alle Felder aus');
+      setError('Please fill in all fields');
       setIsLoading(false);
       return;
     }
@@ -26,7 +26,7 @@ export default function InlineLoginForm() {
     try {
       await login(username, password);
     } catch (err) {
-      setError(err.message || 'Fehler beim Login');
+      setError(err.message || 'Error during login');
     } finally {
       setIsLoading(false);
     }
@@ -35,7 +35,7 @@ export default function InlineLoginForm() {
   return (
     <form onSubmit={handleSubmit} className="auth-form">
       <div className="form-group">
-        <label>Benutzername</label>
+        <label>Username</label>
         <input 
           type="text" 
           value={username} 
@@ -44,7 +44,7 @@ export default function InlineLoginForm() {
         />
       </div>
       <div className="form-group">
-        <label>Passwort</label>
+        <label>Password</label>
         <input 
           type="password" 
           value={password} 
@@ -61,9 +61,8 @@ export default function InlineLoginForm() {
         {isLoading ? (
           <span className="auth-loading">
             <svg width="18" height="18" viewBox="0 0 50 50" style={{verticalAlign:'middle'}}><circle cx="25" cy="25" r="20" fill="none" stroke="#1976d2" strokeWidth="5" strokeDasharray="31.4 31.4" strokeLinecap="round"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="0.8s" from="0 25 25" to="360 25 25"/></circle></svg>
-            Lädt...
           </span>
-        ) : 'Anmelden'}
+        ) : 'Sign In'}
       </button>
     </form>
   );

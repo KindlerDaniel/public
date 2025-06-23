@@ -37,7 +37,7 @@ const IndividualLevelView = () => {
                 boxSizing: 'border-box',
                 alignItems: 'center'
               }}>
-                {['Auftritt', 'Inhalte', 'Folgen', 'Vertrauen', 'Follower'].map((tab, idx) => (
+                {['Profile', 'Content', 'Following', 'Trust', 'Followers'].map((tab, idx) => (
                   <button
                     key={tab}
                     className={`tab-btn${activeTab === idx ? ' active' : ''}`}
@@ -99,7 +99,8 @@ const IndividualLevelView = () => {
                     borderRadius: '8px 8px 0 0',
                     fontWeight: !showRegisterForm ? 700 : 400,
                     padding: '12px 32px',
-                    fontSize: !showRegisterForm ? '1.4rem' : '0.85rem',
+                    fontSize: !showRegisterForm ? '1.4rem' : '1rem',
+                    whiteSpace: 'nowrap',
                     cursor: 'pointer',
                     transition: 'font-size 0.18s, font-weight 0.18s',
                     boxShadow: 'none',
@@ -113,7 +114,7 @@ const IndividualLevelView = () => {
                   aria-pressed={!showRegisterForm}
                   type="button"
                 >
-                  Anmelden
+                  Sign In
                 </button>
                 <button
                   className={`auth-tab${showRegisterForm ? ' active' : ''}`}
@@ -124,7 +125,8 @@ const IndividualLevelView = () => {
                     borderRadius: '8px 8px 0 0',
                     fontWeight: showRegisterForm ? 700 : 400,
                     padding: '12px 32px',
-                    fontSize: showRegisterForm ? '1.4rem' : '0.85rem',
+                    fontSize: showRegisterForm ? '1.4rem' : '1rem',
+                    whiteSpace: 'nowrap',
                     cursor: 'pointer',
                     transition: 'font-size 0.18s, font-weight 0.18s',
                     boxShadow: 'none',
@@ -138,7 +140,7 @@ const IndividualLevelView = () => {
                   aria-pressed={showRegisterForm}
                   type="button"
                 >
-                  Registrieren
+                  Register
                 </button>
               </div>
               <div className="auth-forms" style={{margin:'0 auto'}}>

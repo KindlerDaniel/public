@@ -5,38 +5,38 @@ import './ContentCreator.css';
 import Feed from '../1SocietyLevel/ContentView/Feed.tsx';
 import { AuthContext } from '../../context/AuthContext';
 
-// Debug-Hilfsfunktion: Druckt wichtige Informationen über ein Content-Objekt
+// Debug helper function: Prints important information about a content object
 const debugContentObject = (content, index) => {
   try {
     console.log(`------ Content #${index} Debug ------`);
-    console.log(`ID: ${content?.id || 'Nicht definiert'}`);
-    console.log(`Titel: ${content?.title || 'Nicht definiert'}`);
-    console.log(`Typ: ${content?.type || 'Nicht definiert'}`);
-    console.log(`MediaURL: ${content?.mediaUrl || 'Nicht definiert'}`);
-    console.log(`Content: ${typeof content?.content === 'string' ? content.content.substring(0, 50) + '...' : 'Kein textlicher Inhalt'}`);
+    console.log(`ID: ${content?.id || 'Not defined'}`);
+    console.log(`Title: ${content?.title || 'Not defined'}`);
+    console.log(`Type: ${content?.type || 'Not defined'}`);
+    console.log(`MediaURL: ${content?.mediaUrl || 'Not defined'}`);
+    console.log(`Content: ${typeof content?.content === 'string' ? content.content.substring(0, 50) + '...' : 'No text content'}`);
     console.log('--------------------------------');
   } catch (error) {
-    console.error('Fehler beim Debug-Log:', error);
+    console.error('Error during debug logging:', error);
   }
 };
 
-// Hilfsfunktion: Konvertiert MinIO URLs - aber NICHT mehr in Gateway-URLs umwandeln!
+// Helper function: Converts MinIO URLs - but NO longer converts to gateway URLs!
 const convertToAuthenticatedMediaUrl = (url, token) => {
-  // Überprüfe ob url ein String ist
+  // Check if url is a string
   if (!url || typeof url !== 'string') {
-    console.log('URL ist kein String:', url);
+    console.log('URL is not a string:', url);
     return url;
   }
   
-  // Debug-Information zur URL-Verarbeitung
-  console.log(`URL wird nicht mehr konvertiert, verwende direkte MinIO-URL: ${url}`);
+  // Debug information for URL processing
+  console.log(`URL is no longer converted, using direct MinIO URL: ${url}`);
   
-  // WICHTIG: Direkten Zugriff auf MinIO verwenden ohne Gateway!
-  // Der MediaService erstellt URLs mit localhost:9000, die direkt funktionieren
-  // Wir müssen hier nichts mehr umwandeln!
+  // IMPORTANT: Use direct access to MinIO without gateway!
+  // The MediaService creates URLs with localhost:9000 that work directly
+  // We don't need to convert anything here anymore!
   return url;
   
-  /* Die alte Konvertierung (nicht mehr verwendet):
+  /* The old conversion (no longer used):
   try {
     if (url.includes('localhost:9000')) {
       const urlObj = new URL(url);
@@ -54,13 +54,13 @@ const convertToAuthenticatedMediaUrl = (url, token) => {
       }
     }
   } catch (error) {
-    console.error('Fehler beim Konvertieren der Media-URL:', error);
+    console.error('Error converting media URL:', error);
   }
   */
 };
 
 const MyContents = () => {
-  // Auth-Context für die Token-Verwaltung und Benutzerdaten
+  // Auth context for token management and user data
   const { token, isAuthenticated, user } = useContext(AuthContext);
   
   const [contents, setContents] = useState([]);
@@ -72,15 +72,15 @@ const MyContents = () => {
   const feedRef = useRef(null);
   const resizeHandleRef = useRef(null);
   
-  // Konstanten für Min- und Max-Breite definieren
+  // Define constants for min and max width
   const minWidth = 250;
   const maxWidth = 700;
 
-  // Laden aller Contents für diesen Benutzer
+  // Load all contents for this user
   const loadContents = useCallback(async () => {
-    // Prüfen, ob der Benutzer authentifiziert ist
+    // Check if the user is authenticated
     if (!isAuthenticated || !token) {
-      setMessage('Bitte melden Sie sich an, um Ihre Inhalte zu sehen.');
+      setMessage('Please log in to view your content.');
       return;
     }
     
@@ -99,7 +99,7 @@ const MyContents = () => {
       
       const data = await response.json();
       
-      // Prüfen, ob wir ein Array oder ein Objekt mit contents-Property bekommen
+      // Check if we received an array or an object with contents property
       if (Array.isArray(data)) {
         // Konvertieren aller MinIO-URLs zu authentifizierten URLs
         const processedData = data.map(convertToAuthenticatedMediaUrl);
@@ -127,15 +127,15 @@ const MyContents = () => {
           console.log('Medieninhalte mit authentifizierten URLs geladen:', processedData);
         }
       } else {
-        console.error('Unerwartetes Datenformat:', data);
+        console.error('Unexpected data format:', data);
         setContents([]);
         setLoading(false); // Loading-Status beenden
-        setMessage('Keine Inhalte verfügbar - unerwartetes Datenformat');
+        setMessage('No content available - unexpected data format');
       }
     } catch (error) {
       console.error('Load contents error:', error);
       setLoading(false); // Loading-Status beenden auch bei Fehler
-      setMessage(`Fehler beim Laden der Inhalte: ${error.message}`);
+      setMessage(`Error loading content: ${error.message}`);
     }
   }, [isAuthenticated, token, setContents, setLoading, setMessage]);
 
@@ -143,27 +143,27 @@ const MyContents = () => {
     loadContents();
   }, [isAuthenticated, token, loadContents]);
 
-  // Handler für das Speichern von neuen Content-Items
+  // Handler for saving new content items
   const handleSaveContent = (newContent) => {
-    // Content Creator schließen
+    // Close content creator
     setShowContentCreator(false);
     
-    // Keine Erfolgsmeldung mehr anzeigen
+    // Don't show success message anymore
     setMessage('');
     
-    // Kurze Verzögerung für Backend-Verarbeitung
+    // Short delay for backend processing
     setTimeout(() => {
-      // Alle Inhalte neu laden, um den aktuellen Serverstand zu erhalten
+      // Reload all contents to get current server state
       loadContents();
     }, 1000);
   };
 
-  // Handler zum Abbrechen der Content-Erstellung
+  // Handler for canceling content creation
   const handleCancelContentCreation = () => {
     setShowContentCreator(false);
   };
 
-  // Setzt die CSS-Variable für die initiale Breite und bei Änderungen
+  // Sets the CSS variable for initial width and on changes
   useEffect(() => {
     document.documentElement.style.setProperty('--feed-width', `${width}px`);
     if (feedRef.current) {
@@ -171,13 +171,13 @@ const MyContents = () => {
     }
   }, [width]);
   
-  // Resize-Handle Funktionalität - nach dem Muster von FeedArea.tsx
+  // Resize handle functionality - following the pattern from FeedArea.tsx
   const handleResizeStart = (e) => {
-    e.preventDefault(); // Verhindert Textauswahl während Drag
+    e.preventDefault(); // Prevents text selection during drag
     setIsDragging(true);
   };
   
-  // Effect für die Behandlung des Maus-Draggings
+  // Effect for handling mouse dragging
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isDragging && feedRef.current) {
@@ -207,34 +207,34 @@ const MyContents = () => {
 
   return (
     <>
-      {/* Plus-Button für neue Inhalte - pulsiert beim Laden */}
+      {/* Plus button for new content - pulses while loading */}
       <button 
         className={`create-content-fixed-button ${!loading && contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'is-loading' : ''}`}
         onClick={() => setShowContentCreator(true)}
-        title="Neuen Inhalt erstellen"
+        title="Create new content"
       >
         +
       </button>
       
-      {/* Ladeindikator wurde in den Feed-Container verschoben */}
+      {/* Loading indicator was moved to the feed container */}
           
-      {/* Statusmeldung immer sichtbar */}
+      {/* Status message always visible */}
       {message && (
         <div className="message-overlay">
-          <span className={message.includes('erfolgreich') ? 'success' : 'error'}>
+          <span className={message.includes('successful') ? 'success' : 'error'}>
             {message}
           </span>
         </div>
       )}
 
-      {/* Haupt-Bereich */}
+      {/* Main area */}
       {showContentCreator ? (
         <ContentCreator 
           onSave={handleSaveContent} 
           onCancel={handleCancelContentCreation} 
         />
       ) : loading ? (
-        // Kein separater Ladeindikator mehr nötig, da der + Button pulsiert
+        // No separate loading indicator needed anymore, as the + button pulses
         null
       ) : contents.length > 0 ? (
         <div 
@@ -242,7 +242,7 @@ const MyContents = () => {
           ref={feedRef}
           style={{ width: `${width}px` }}
         >
-          {/* Resize-Handle */}
+          {/* Resize handle */}
           <div 
             className="feed-resize-handle"
             ref={resizeHandleRef}
@@ -251,25 +251,25 @@ const MyContents = () => {
             <div className="handle-line"></div>
           </div>
           
-          {/* Feed mit Inhalten */}
+          {/* Feed with contents */}
           <Feed
             feedType="mine" 
             compact={true}
             customContents={contents.map((content, index) => {
-              // Debug des Original-Contents
+              // Debug of original content
               debugContentObject(content, index);
               
-              console.log('Verarbeite Content:', content);
+              console.log('Processing content:', content);
               
-              // WICHTIG: Ermittle die korrekte URL für Medieninhalte (Bilder etc.)
+              // IMPORTANT: Determine the correct URL for media content (images etc.)
               let mediaUrl = null;
               
-              // Verbesserte Typerkennung - mehrere Wege, einen Bildtyp zu erkennen
+              // Improved type detection - multiple ways to recognize an image type
               const contentType = (content?.type || '').toLowerCase();
               const mimeType = (content?.mimeType || '').toLowerCase();
               const fileType = (content?.fileType || '').toLowerCase();
               
-              // Erkennt Bildtypen durch mehrere Felder
+              // Detects image types through multiple fields
               const isImage = contentType.includes('image') || 
                               mimeType.includes('image') || 
                               fileType.includes('image') || 
@@ -285,27 +285,27 @@ const MyContents = () => {
                               fileType.includes('audio') || 
                               (content?.fileName || '').match(/\.(mp3|wav|ogg|aac)$/i);
               
-              console.log(`Content #${index}: Typ-Erkennung:`, { 
+              console.log(`Content #${index}: Type detection:`, { 
                 contentType, mimeType, fileType, 
                 isImage, isVideo, isAudio 
               });
               
-              // 1. Option: Explizite mediaUrl aus dem Content-Objekt
+              // Option 1: Explicit mediaUrl from content object
               if (typeof content?.mediaUrl === 'string' && content.mediaUrl.trim() !== '') {
                 mediaUrl = content.mediaUrl;
-                console.log(`Content #${index}: Verwende explizite mediaUrl: ${mediaUrl}`);
+                console.log(`Content #${index}: Using explicit mediaUrl: ${mediaUrl}`);
               }
-              // 2. Option: Für Bildtypen - url-Feld könnte vorhanden sein
+              // Option 2: For image types - url field might exist
               else if (isImage && typeof content?.url === 'string' && content.url.trim() !== '') {
                 mediaUrl = content.url;
-                console.log(`Content #${index}: Verwende url-Feld als mediaUrl: ${mediaUrl}`);
+                console.log(`Content #${index}: Using url field as mediaUrl: ${mediaUrl}`);
               }
-              // 3. Option: Spezifisches Feld 'path' könnte vorhanden sein
+              // Option 3: Specific field 'path' might exist
               else if (typeof content?.path === 'string' && content.path.trim() !== '') {
                 mediaUrl = content.path;
-                console.log(`Content #${index}: Verwende path-Feld als mediaUrl: ${mediaUrl}`);
+                console.log(`Content #${index}: Using path field as mediaUrl: ${mediaUrl}`);
               }
-              // 4. Option: Für Bildtypen - content-Feld könnte eine URL sein
+              // Option 4: For image types - content field might be a URL
               else if (isImage && 
                   typeof content?.content === 'string' && 
                   (content.content.startsWith('http://') || 
@@ -314,56 +314,56 @@ const MyContents = () => {
                    content.content.includes('minio') ||
                    content.content.includes('localhost'))) {
                 mediaUrl = content.content;
-                console.log(`Content #${index}: Verwende content als mediaUrl: ${mediaUrl}`);
+                console.log(`Content #${index}: Using content as mediaUrl: ${mediaUrl}`);
               }
               
-              // URL korrigieren falls relativ
+              // Fix URL if relative
               if (mediaUrl && mediaUrl.startsWith('/')) {
                 mediaUrl = `http://localhost:8000${mediaUrl}`;
-                console.log(`Content #${index}: Relative URL zu absoluter URL konvertiert: ${mediaUrl}`);
+                console.log(`Content #${index}: Converted relative URL to absolute URL: ${mediaUrl}`);
               }
               
-              // URL konvertieren wenn es sich um eine MinIO-URL handelt
+              // Convert URL if it's a MinIO URL
               if (typeof mediaUrl === 'string' && 
                   (mediaUrl.includes('localhost:9000') || mediaUrl.includes('minio'))) {
                 const originalUrl = mediaUrl;
                 mediaUrl = convertToAuthenticatedMediaUrl(mediaUrl, token);
-                console.log(`Content #${index}: URL konvertiert von ${originalUrl} zu ${mediaUrl} (Mit Token: ${!!token})`);
+                console.log(`Content #${index}: URL converted from ${originalUrl} to ${mediaUrl} (With Token: ${!!token})`);
               }
               
-              // Debug-Ausgabe für den erkannten mediaUrl vor ContentItem-Erstellung
+              // Debug output for detected mediaUrl before creating ContentItem
               console.log(`Content #${index} finale mediaUrl:`, mediaUrl);
               
-              // Erstelle ein ContentItem mit garantiertem Medien-URL
+              // Create a ContentItem with guaranteed media URL
               const contentItem = {
-                // Konvertiere id zu number wenn es ein string ist, sonst generiere temporäre ID
+                // Convert id to number if it's a string, otherwise generate temporary ID
                 id: content?.id ? (typeof content.id === 'string' ? parseInt(content.id, 10) || index + 1 : content.id) : index + 1,
-                title: content?.title || 'Ohne Titel',
-                // Für Text-Inhalte - verwende content als Text
+                title: content?.title || 'Untitled',
+                // For text content - use content as text
                 content: (!isImage && !isVideo && !isAudio) ? 
-                        (content?.content || 'Keine Beschreibung') : '',
-                // Wichtig: Für Medieninhalte - immer die URL explizit setzen
+                        (content?.content || 'No description') : '',
+                // Important: For media content - always set the URL explicitly
                 mediaUrl: mediaUrl || (isImage ? '/api/placeholder/400/225' : ''),
-                // Typ richtig setzen basierend auf der erweiterten Erkennung
+                // Set type correctly based on extended detection
                 type: isImage ? 'image-landscape' : 
                       isVideo ? 'video-landscape' : 
                       isAudio ? 'audio' : 'text',
-                // Fehlende erforderliche Eigenschaften für ContentItem hinzufügen
+                // Add missing required properties for ContentItem
                 authorId: content?.authorId || 0,
                 ratings: content?.ratings || { beauty: 0, wisdom: 0, humor: 0 },
                 date: content?.createdAt || content?.date || new Date().toISOString(),
                 createdAt: content?.createdAt || content?.date || new Date().toISOString(),
                 updatedAt: content?.updatedAt || content?.date || new Date().toISOString(),
-                author: content?.author || { name: user?.username || 'Anonym' }
+                author: content?.author || { name: user?.username || 'Anonymous' }
               };
               
               console.log(`Content #${index} finales ContentItem:`, contentItem);
               return contentItem;
             })}
-            onSelectContent={() => {}} // Keine Aktion bei Auswahl
+            onSelectContent={() => {}} // No action on selection
           />
         </div>
-      ) : null /* Bei leeren Inhalten kein Container angezeigt */}
+      ) : null /* No container shown when there are no contents */}
     </>
   );
 };

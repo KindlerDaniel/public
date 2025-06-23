@@ -19,13 +19,13 @@ export default function InlineRegisterForm() {
     setIsLoading(true);
 
     if (!username || !password || !passwordConfirm) {
-      setError('Bitte füllen Sie alle Felder aus');
+      setError('Please fill in all fields');
       setIsLoading(false);
       return;
     }
 
     if (password !== passwordConfirm) {
-      setError('Passwörter stimmen nicht überein');
+      setError('Passwords do not match');
       setIsLoading(false);
       return;
     }
@@ -33,7 +33,7 @@ export default function InlineRegisterForm() {
     try {
       await register(username, password);
     } catch (err) {
-      setError(err.message || 'Fehler bei der Registrierung');
+      setError(err.message || 'Error during registration');
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +42,7 @@ export default function InlineRegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="auth-form">
       <div className="form-group">
-        <label>Benutzername</label>
+        <label>Username</label>
         <input 
           type="text" 
           value={username} 
@@ -51,7 +51,7 @@ export default function InlineRegisterForm() {
         />
       </div>
       <div className="form-group">
-        <label>Passwort</label>
+        <label>Password</label>
         <input 
           type="password" 
           value={password} 
@@ -60,7 +60,7 @@ export default function InlineRegisterForm() {
         />
       </div>
       <div className="form-group">
-        <label>Passwort bestätigen</label>
+        <label>Confirm Password</label>
         <input 
           type="password" 
           value={passwordConfirm} 
@@ -77,9 +77,8 @@ export default function InlineRegisterForm() {
         {isLoading ? (
           <span className="auth-loading">
             <svg width="18" height="18" viewBox="0 0 50 50" style={{verticalAlign:'middle'}}><circle cx="25" cy="25" r="20" fill="none" stroke="#1976d2" strokeWidth="5" strokeDasharray="31.4 31.4" strokeLinecap="round"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="0.8s" from="0 25 25" to="360 25 25"/></circle></svg>
-            Lädt...
           </span>
-        ) : 'Registrieren'}
+        ) : 'Register'}
       </button>
     </form>
   );
