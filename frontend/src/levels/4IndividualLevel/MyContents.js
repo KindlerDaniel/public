@@ -86,6 +86,10 @@ const MyContents = () => {
   const [isDragging, setIsDragging] = useState(false);
   const feedRef = useRef(null);
   const resizeHandleRef = useRef(null);
+  
+  // Konstanten für Min- und Max-Breite definieren
+  const minWidth = 250;
+  const maxWidth = 700;
 
   // Content-Items laden
   const loadContents = async () => {
@@ -174,52 +178,47 @@ const MyContents = () => {
     setShowContentCreator(false);
   };
 
-  // Resize-Funktionalität - verbesserte Version
-  const handleMouseDown = (e) => {
+  // Setzt die CSS-Variable für die initiale Breite und bei Änderungen
+  useEffect(() => {
+    document.documentElement.style.setProperty('--feed-width', `${width}px`);
+    if (feedRef.current) {
+      feedRef.current.style.width = `${width}px`;
+    }
+  }, [width]);
+  
+  // Resize-Handle Funktionalität - nach dem Muster von FeedArea.tsx
+  const handleResizeStart = (e) => {
     e.preventDefault(); // Verhindert Textauswahl während Drag
     setIsDragging(true);
-    
-    // Initialen Mausposition speichern
-    const startX = e.clientX;
-    const startWidth = width;
-    
-    const onMouseMove = (moveEvent) => {
-      if (!isDragging) return;
-      const delta = moveEvent.clientX - startX;
-      const newWidth = Math.max(250, Math.min(700, startWidth + delta));
-      setWidth(newWidth);
-      
-      // CSS-Variable aktualisieren für sofortige visuelle Rückmeldung
-      if (feedRef.current) {
-        feedRef.current.style.width = `${newWidth}px`;
-      }
-    };
-    
-    const onMouseUp = () => {
-      setIsDragging(false);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-    
-    // Event-Listener hinzufügen
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
   };
   
-  // Event-Listener beim Unmount entfernen
+  // Effect für die Behandlung des Maus-Draggings
   useEffect(() => {
-    const handleGlobalMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
+    const handleMouseMove = (e) => {
+      if (isDragging && feedRef.current) {
+        const newWidth = e.clientX;
+        
+        if (newWidth >= minWidth && newWidth <= maxWidth) {
+          setWidth(newWidth);
+          document.documentElement.style.setProperty('--feed-width', `${newWidth}px`);
+        }
       }
     };
-    
-    // Für den Fall, dass mouseup außerhalb des Fensters ausgelöst wird
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => {
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
     };
-  }, [isDragging]);
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, minWidth, maxWidth]);
 
   return (
     <>
@@ -257,8 +256,10 @@ const MyContents = () => {
           <div 
             className="feed-resize-handle"
             ref={resizeHandleRef}
-            onMouseDown={handleMouseDown}
-          ></div>
+            onMouseDown={handleResizeStart}
+          >
+            <div className="handle-line"></div>
+          </div>
           
           {loading ? (
             <div className="loading-spinner-container">
