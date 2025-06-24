@@ -261,8 +261,26 @@ const MyContents = () => {
     }
   };
   
+  // Funktion zum Entfernen der ausgewählten Mediendatei
+  const handleRemoveMedia = () => {
+    // Zurücksetzen der Mediendatei im State
+    setSelectedMedia(null);
+    
+    // Mediendatei auch aus FormData entfernen
+    setFormData(prev => ({
+      ...prev,
+      mediaUrl: '',
+    }));
+    
+    // Zurücksetzen des Datei-Inputs (wichtig um aus dem RAM zu entfernen)
+    const fileInput = document.getElementById('media');
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+  
   // Submit the form
-  // Formular zurücksetzen
+  // Funktion für das Zurücksetzen des Formulars
   const resetForm = () => {
     setFormData({
       title: '',
@@ -510,7 +528,19 @@ const MyContents = () => {
                     
                     {selectedMedia && (
                       <div className="selected-media">
-                        <p>{isUploading ? 'Wird hochgeladen...' : 'Datei ausgewählt:'} {selectedMedia.name}</p>
+                        <div className="media-info">
+                          <p>{isUploading ? 'Wird hochgeladen...' : 'Datei ausgewählt:'} {selectedMedia.name}</p>
+                          {!isUploading && (
+                            <button 
+                              type="button" 
+                              className="remove-media-button" 
+                              onClick={handleRemoveMedia}
+                              aria-label="Mediendatei entfernen"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

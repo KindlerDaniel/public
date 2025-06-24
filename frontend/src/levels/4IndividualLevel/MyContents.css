@@ -768,10 +768,11 @@ select:focus {
 .feed-info-message {
   color: #666;
   font-style: italic;
-  padding: 20px;
   text-align: center;
-  display: block;
-  margin-top: 40px;
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
 /* Container für Ladeanimation wenn keine Inhalte */
@@ -847,6 +848,57 @@ select:focus {
 }
 
 /* Entfernung aller Abstände oben im Feed */
+
+/* Stile für den Media-Info-Bereich und X-Button */
+.selected-media {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  border-left: 3px solid #3498db;
+}
+
+.media-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.media-info p {
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-media-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  padding: 0;
+  line-height: 1;
+}
+
+.remove-media-button:hover {
+  background-color: #ff0000;
+  transform: scale(1.1);
+}
+
+.remove-media-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.4);
+}
 .direct-feed-container .feed-list {
   padding: 0 16px 16px 16px; /* Kein Padding oben */
   margin-top: 0;
