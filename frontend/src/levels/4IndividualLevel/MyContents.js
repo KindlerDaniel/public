@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import './MyContents.css';
-import Feed from '../1SocietyLevel/ContentView/Feed.tsx';
+import CustomFeed from './CustomFeed';
 import { AuthContext } from '../../context/AuthContext';
 
 // Debug helper function: Prints important information about a content object
@@ -88,6 +88,20 @@ const MyContents = () => {
   
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Function to reset form data
+  const clearFormData = () => {
+    setFormData({
+      type: 'text',
+      title: '',
+      content: '',
+      mediaUrl: null,
+      thumbnailUrl: null,
+      tags: [],
+      aspectRatio: null
+    });
+    setSelectedMedia(null);
+  };
 
   // Load all contents for this user
   const loadContents = useCallback(async () => {
@@ -159,63 +173,72 @@ const MyContents = () => {
   // Content Creation functions (from ContentCreator)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prevData => ({
+      ...prevData,
       [name]: value
-    });
+    }));
   };
   
-  // Handle media file selection with automatic upload
+  // Handle file selection for upload
   const handleFileSelect = async (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
+      // Datei in den State setzen
       setSelectedMedia(file);
-      setIsUploading(true);
       
-      // Automatically determine content type based on the file
+      // Temporäre URL erstellen für Vorschau während des Uploads
+      const tempUrl = URL.createObjectURL(file);
+      let fileType = 'text';
+      
+      // Automatische Erkennung des Typs basierend auf der Datei
       if (file.type.startsWith('image/')) {
-        // Check if image is landscape or portrait
+        // Für Bilder das Seitenverhältnis bestimmen
         const img = new Image();
         img.onload = () => {
           const aspectRatio = img.width > img.height ? 'landscape' : 'portrait';
-          setFormData({
-            ...formData,
-            type: `image-${aspectRatio}`,
-            aspectRatio
-          });
-          URL.revokeObjectURL(img.src);
+          fileType = `image-${aspectRatio}`;
           
-          // Automatischer Upload nach Bestimmung des Seitenverhältnisses bei Bildern
+          // Formular-Daten aktualisieren mit Typ und temporärer URL
+          setFormData(prevData => ({
+            ...prevData,
+            type: fileType,
+            aspectRatio: aspectRatio,
+            mediaUrl: tempUrl  // Temporäre URL verwenden bis Upload abgeschlossen ist
+          }));
+          
+          // Upload-Prozess starten
           handleMediaUpload(file);
         };
-        img.src = URL.createObjectURL(file);
+        img.src = tempUrl;
       } else if (file.type.startsWith('video/')) {
-        // For videos, we'll need to check once uploaded or use metadata API
-        setFormData({
-          ...formData,
-          type: 'video-landscape', // Default, will be updated after upload
-        });
-        
-        // Direkter automatischer Upload für Videos
+        fileType = 'video-landscape';
+        setFormData(prevData => ({
+          ...prevData,
+          type: fileType,
+          mediaUrl: tempUrl
+        }));
         handleMediaUpload(file);
       } else if (file.type.startsWith('audio/')) {
-        setFormData({
-          ...formData,
-          type: 'audio',
-        });
-        
-        // Direkter automatischer Upload für Audio
+        fileType = 'audio';
+        setFormData(prevData => ({
+          ...prevData,
+          type: fileType,
+          mediaUrl: tempUrl
+        }));
         handleMediaUpload(file);
       }
+      
+      console.log('Datei ausgewählt:', file.name, 'Typ:', fileType, 'Temp-URL:', tempUrl);
     }
   };
-  
+
   // Handle media upload
   const handleMediaUpload = async (fileToUpload) => {
     // Verwende entweder die übergebene Datei oder die aus dem State
     const mediaFile = fileToUpload || selectedMedia;
     
     if (!mediaFile) {
+      console.error('Keine Datei zum Hochladen angegeben');
       return;
     }
     
@@ -228,6 +251,8 @@ const MyContents = () => {
       // Standard-Pfad für Uploads über Gateway
       const uploadUrl = 'http://localhost:8000/api/media/content/upload-media';
         
+      console.log('Datei wird hochgeladen...', mediaFile.name);
+      
       // Token aus AuthContext verwenden
       const response = await fetch(uploadUrl, {
         method: 'POST',
@@ -244,18 +269,27 @@ const MyContents = () => {
       const result = await response.json();
       
       // WICHTIG: Die Original-MinIO-URL DIREKT aus der Server-Antwort verwenden
-      // KEINE URL-Konvertierung mehr vornehmen!
-      console.log('Media-URL (direkt verwendet):', result.url);
-      console.log('Token verfügbar:', !!token);
+      console.log('Upload erfolgreich. Media-URL vom Server:', result.url);
       
-      // FormData mit der ORIGINALEN MinIO-URL aktualisieren
-      setFormData(prev => ({
-        ...prev,
-        mediaUrl: result.url, // Direkt die URL vom Server verwenden!
-      }));
+      // Temporäre URL freigeben, wenn vorhanden
+      if (formData.mediaUrl && formData.mediaUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(formData.mediaUrl);
+        console.log('Temporäre Blob-URL freigegeben');
+      }
+      
+      // FormData mit der permanenten Server-URL aktualisieren
+      setFormData(prevData => {
+        const updatedData = {
+          ...prevData,
+          mediaUrl: result.url
+        };
+        console.log('FormData nach Upload-Update:', updatedData);
+        return updatedData;
+      });
       
     } catch (error) {
       console.error('Fehler beim Hochladen der Datei:', error);
+      // Bei Fehler die temporäre URL beibehalten
     } finally {
       setIsUploading(false);
     }
@@ -263,44 +297,21 @@ const MyContents = () => {
   
   // Funktion zum Entfernen der ausgewählten Mediendatei
   const handleRemoveMedia = () => {
-    // Zurücksetzen der Mediendatei im State
     setSelectedMedia(null);
-    
-    // Mediendatei auch aus FormData entfernen
-    setFormData(prev => ({
-      ...prev,
-      mediaUrl: '',
+    setFormData(prevData => ({
+      ...prevData,
+      mediaUrl: null,
+      aspectRatio: null
     }));
-    
-    // Zurücksetzen des Datei-Inputs (wichtig um aus dem RAM zu entfernen)
-    const fileInput = document.getElementById('media');
-    if (fileInput) {
-      fileInput.value = '';
-    }
-  };
-  
-  // Submit the form
-  // Funktion für das Zurücksetzen des Formulars
-  const resetForm = () => {
-    setFormData({
-      title: '',
-      content: '',
-      type: 'text',
-      mediaUrl: '',
-      thumbnailUrl: '',
-      tags: [],
-      aspectRatio: 'landscape'
-    });
-    setSelectedMedia(null);
-    setIsUploading(false);
-    setShowContentCreator(false);
   };
 
+  // Submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.content) {
-      console.warn('Titel und Inhalt müssen ausgefüllt sein');
+    // Check if there's any content at all (title, content text, or media)
+    if (!formData.title && !formData.content && !formData.mediaUrl) {
+      console.warn('Es muss mindestens ein Titel, Inhalt oder Medien vorhanden sein');
       return;
     }
     
@@ -328,9 +339,10 @@ const MyContents = () => {
       }
       
       const result = await response.json();
+      
       // Inhalt erfolgreich erstellt
       // Formular zurücksetzen
-      resetForm();
+      clearFormData();
       handleSaveContent(result.content);
       
     } catch (error) {
@@ -342,18 +354,8 @@ const MyContents = () => {
   
   // Handler for saving new content items
   const handleSaveContent = (newContent) => {
-    // Reset form data
-    setFormData({
-      type: 'text',
-      title: '',
-      content: '',
-      mediaUrl: null,
-      thumbnailUrl: null,
-      tags: [],
-      aspectRatio: 'landscape'
-    });
-    
-    setSelectedMedia(null);
+    // Reset form data after submission
+    clearFormData();
     
     // Close content creator
     setShowContentCreator(false);
@@ -370,18 +372,8 @@ const MyContents = () => {
 
   // Handler for canceling content creation
   const handleCancelContentCreation = () => {
-    // Formular ausblenden
-    setFormData({
-      type: 'text',
-      title: '',
-      content: '',
-      mediaUrl: null,
-      thumbnailUrl: null,
-      tags: [],
-      aspectRatio: 'landscape'
-    });
-    setSelectedMedia(null);
     setShowContentCreator(false);
+    clearFormData();
   };
 
   // Sets the CSS variable for initial width and on changes
@@ -426,16 +418,242 @@ const MyContents = () => {
     };
   }, [isDragging, minWidth, maxWidth]);
 
+  // Helper-Funktion, um den Content-Typ als Text darzustellen
+  const formatType = (type) => {
+    switch(type) {
+      case 'text': return 'Text';
+      case 'image-landscape': return 'Bild';
+      case 'image-portrait': return 'Bild';
+      case 'video-landscape': return 'Video';
+      case 'video-portrait': return 'Video';
+      case 'audio': return 'Audio';
+      case 'discussion': return 'Diskussion';
+      default: return 'Inhalt';
+    }
+  };
+  
+  // Komponente für die große Vorschau mit integrierten Bearbeitungsfeldern
+  const LargePreviewComponent = () => {
+    // Nur anzeigen, wenn Content Creator aktiv ist
+    if (!showContentCreator) {
+      return null;
+    }
+    
+    return (
+      <div className="large-preview-container">
+        {/* Vorschau des Contents mit integrierten Eingabefeldern */}
+        <div className="large-preview-content">
+          {formData.type.includes('image-landscape') && (
+            <div className={`large-preview-item ${formData.type}`}>
+              <div className="media-container landscape large">
+                {formData.mediaUrl && (
+                  <img src={formData.mediaUrl} alt={formData.title || ''} className="large-preview-media" />
+                )}
+              </div>
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type.includes('image-portrait') && (
+            <div className={`large-preview-item ${formData.type}`}>
+              <div className="media-container portrait large">
+                {formData.mediaUrl && (
+                  <img src={formData.mediaUrl} alt={formData.title || ''} className="large-preview-media" />
+                )}
+              </div>
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type.includes('video-landscape') && (
+            <div className={`large-preview-item ${formData.type}`}>
+              <div className="media-container landscape large">
+                {formData.mediaUrl && (
+                  <video src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Videos.</video>
+                )}
+              </div>
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type.includes('video-portrait') && (
+            <div className={`large-preview-item ${formData.type}`}>
+              <div className="media-container portrait large">
+                {formData.mediaUrl && (
+                  <video src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Videos.</video>
+                )}
+              </div>
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type.includes('audio') && (
+            <div className="large-preview-item audio">
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+              </div>
+              <div className="audio-container large">
+                {formData.mediaUrl && (
+                  <audio src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Audio-Dateien.</audio>
+                )}
+              </div>
+              <div className="content-wrap large editable">
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type === 'text' && (
+            <div className="large-preview-item text-only">
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+          
+          {formData.type === 'discussion' && (
+            <div className="large-preview-item discussion">
+              <div className="content-text large editable">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline title"
+                  placeholder="Titel eingeben..."
+                />
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="large-input-inline content"
+                  placeholder="Inhalt eingeben..."
+                ></textarea>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <>
-      {/* Plus button for new content - pulses while loading */}
+      {/* Plus-Button für die Content-Erstellung */}
       <button 
-        className={`create-content-fixed-button ${!loading && contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'is-loading' : ''}`}
-        onClick={() => setShowContentCreator(true)}
-        title="Neuen Inhalt erstellen"
+        className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'}`}
+        onClick={() => setShowContentCreator(!showContentCreator)}
+        aria-label={showContentCreator ? 'Schließen' : 'Neuen Inhalt erstellen'}
       >
-        +
+        {showContentCreator ? '×' : '+'}
       </button>
+      
+      {/* Die große Vorschau wird direkt im content-creator-layout gerendert */}
       
       {/* Loading indicator was moved to the feed container */}
           
@@ -449,10 +667,7 @@ const MyContents = () => {
       )}
 
       {/* Main area - always show content feed */}
-      {loading ? (
-        // No separate loading indicator needed anymore, as the + button pulses
-        null
-      ) : contents.length > 0 || showContentCreator ? (
+      {!loading && (contents.length > 0 || showContentCreator) && (
         <div 
           className="direct-feed-container"
           ref={feedRef}
@@ -468,109 +683,97 @@ const MyContents = () => {
           </div>
 
           {/* Integrated Content Creation */}
-          {showContentCreator ? (
-            <div className="integrated-content-creator">
-              <form onSubmit={handleSubmit}>
-                  {/* Live Preview - ContentCard Style */}
-                  <div className="content-preview">
-                    {formData.type.includes('image-landscape') && (
-                      <div className={`preview-container ${formData.type}`}>
+          {showContentCreator && (
+            <div className="content-creator-layout">
+              {/* Linke Seite: Eingabeformular für Typ und Media */}
+              <div className="integrated-content-creator">
+                <form onSubmit={handleSubmit}>
+                  {/* Live Preview - ContentCard Style - nur anzeigen wenn es Inhalte gibt */}
+                  {(formData.title || formData.content || formData.mediaUrl) && (
+                    <div className="content-preview">
+                      {formData.type.includes('image-landscape') && (
+                        <div className={`preview-container ${formData.type}`}>
                         <div className="media-container landscape">
-                          {formData.mediaUrl ? (
-                            <img src={formData.mediaUrl} alt={formData.title || 'Vorschau'} className="preview-media" />
-                          ) : (
-                            <img src="/images/placeholder_landscape.png" alt="Bildvorschau" className="preview-media" />
+                          {formData.mediaUrl && (
+                            <img src={formData.mediaUrl} alt={formData.title || ''} className="preview-media" />
                           )}
                         </div>
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
                     {formData.type.includes('image-portrait') && (
                       <div className={`preview-container ${formData.type}`}>
                         <div className="media-container portrait">
-                          {formData.mediaUrl ? (
-                            <img src={formData.mediaUrl} alt={formData.title || 'Vorschau'} className="preview-media" />
-                          ) : (
-                            <img src="/images/placeholder_portrait.png" alt="Bildvorschau" className="preview-media" />
+                          {formData.mediaUrl && (
+                            <img src={formData.mediaUrl} alt={formData.title || ''} className="preview-media" />
                           )}
                         </div>
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
                     {formData.type.includes('video-landscape') && (
                       <div className={`preview-container ${formData.type}`}>
                         <div className="media-container landscape">
-                          {formData.mediaUrl ? (
+                          {formData.mediaUrl && (
                             <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
-                          ) : (
-                            <div className="preview-placeholder video-placeholder">
-                              <span>▶</span> Video-Vorschau
-                            </div>
                           )}
                         </div>
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
                     {formData.type.includes('video-portrait') && (
                       <div className={`preview-container ${formData.type}`}>
                         <div className="media-container portrait">
-                          {formData.mediaUrl ? (
+                          {formData.mediaUrl && (
                             <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
-                          ) : (
-                            <div className="preview-placeholder video-placeholder">
-                              <span>▶</span> Video-Vorschau
-                            </div>
                           )}
                         </div>
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
                     {formData.type.includes('audio') && (
                       <div className="preview-container audio">
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          {formData.title && <h3>{formData.title}</h3>}
                         </div>
                         <div className="audio-container">
-                          {formData.mediaUrl ? (
+                          {formData.mediaUrl && (
                             <audio src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Audio-Dateien.</audio>
-                          ) : (
-                            <div className="preview-placeholder">
-                              Audio-Vorschau
-                            </div>
                           )}
                         </div>
-                        <p>{formData.content || 'Beschreibung wird hier angezeigt'}</p>
+                        {formData.content && <p>{formData.content}</p>}
                       </div>
                     )}
                     {formData.type === 'text' && (
                       <div className="preview-container text-only">
                         <div className="content-text">
-                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
                     {formData.type === 'discussion' && (
                       <div className="preview-container discussion">
                         <div className="content-text">
-                          <h3>{formData.title || 'Diskussionsthema wird hier angezeigt'}</h3>
-                          <p>{formData.content || 'Beschreibung wird hier angezeigt'}</p>
+                          {formData.title && <h3>{formData.title}</h3>}
+                          {formData.content && <p>{formData.content}</p>}
                         </div>
                       </div>
                     )}
-                  </div>
+                    </div>
+                  )}
                   
                   {/* Content type selection */}
                   <div className="form-group">
@@ -634,31 +837,8 @@ const MyContents = () => {
                     )}
                   </div>
 
-                  {/* Title field */}
-                  <div className="form-group">
-                    <label htmlFor="title">Titel*</label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  
-                  {/* Content field */}
-                  <div className="form-group">
-                    <label htmlFor="content">Inhalt*</label>
-                    <textarea
-                      id="content"
-                      name="content"
-                      value={formData.content}
-                      onChange={handleInputChange}
-                      rows={5}
-                      required
-                    ></textarea>
-                  </div>
+                  {/* Leerraum für bessere Optik */}
+                  <div className="form-group-spacer"></div>
                   
                   {/* Tags wurden entfernt */}
                   
@@ -679,17 +859,20 @@ const MyContents = () => {
                       className="submit-button"
                       disabled={isUploading}
                     >
-                      Inhalt speichern
+                      {formatType(formData.type)} erstellen
                     </button>
                   </div>
                 </form>
+              </div>
+              
+              {/* Rechte Seite: Große Vorschau mit Titel- und Inhalt-Eingabefeldern */}
+              <LargePreviewComponent />
             </div>
-          )
-          :
-          /* Content Cards Display */
-          contents.length > 0 && (
-            <Feed
-              feedType="mine" 
+          )}
+          
+          {/* Content Cards Display */}
+          {!showContentCreator && contents.length > 0 && (
+            <CustomFeed
               compact={true}
               customContents={contents.map((content, index) => {
                 // Debug of original content
@@ -770,16 +953,16 @@ const MyContents = () => {
                 // Debug output for detected mediaUrl before creating ContentItem
                 console.log(`Content #${index} finale mediaUrl:`, mediaUrl);
                 
-                // Create a ContentItem with guaranteed media URL
+                // Create a ContentItem with NO placeholders and NO default values
                 const contentItem = {
                   // Convert id to number if it's a string, otherwise generate temporary ID
                   id: content?.id ? (typeof content.id === 'string' ? parseInt(content.id, 10) || index + 1 : content.id) : index + 1,
-                  title: content?.title || 'Untitled',
-                  // For text content - use content as text
-                  content: (!isImage && !isVideo && !isAudio) ? 
-                          (content?.content || 'No description') : '',
-                  // Important: For media content - always set the URL explicitly
-                  mediaUrl: mediaUrl || (isImage ? '/api/placeholder/400/225' : ''),
+                  // Only include title if it exists
+                  ...(content?.title ? { title: content.title } : {}),
+                  // Only include content text if it exists and it's not a media type
+                  ...(!isImage && !isVideo && !isAudio && content?.content ? { content: content.content } : {}),
+                  // Only include mediaUrl if it exists - NO placeholders
+                  ...(mediaUrl ? { mediaUrl } : {}),
                   // Set type correctly based on extended detection
                   type: isImage ? 'image-landscape' : 
                         isVideo ? 'video-landscape' : 
@@ -790,17 +973,19 @@ const MyContents = () => {
                   date: content?.createdAt || content?.date || new Date().toISOString(),
                   createdAt: content?.createdAt || content?.date || new Date().toISOString(),
                   updatedAt: content?.updatedAt || content?.date || new Date().toISOString(),
-                  author: content?.author || { name: user?.username || 'Anonymous' }
+                  author: { name: content?.author?.name || user?.username || '' }
                 };
                 
                 console.log(`Content #${index} finales ContentItem:`, contentItem);
                 return contentItem;
-              })}
+              })
+              // Only show items that have actual content (title, text or media)
+              .filter(item => item.title || item.content || item.mediaUrl)}
               onSelectContent={() => {}} // No action on selection
             />
           )}
         </div>
-      ) : null /* No container shown when there are no contents */}
+      )}
     </>
   );
 };
