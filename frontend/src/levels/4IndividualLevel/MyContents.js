@@ -758,7 +758,7 @@ const MyContents = () => {
     <>
       {/* Plus-Button für die Content-Erstellung */}
       <button 
-        className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'}`}
+        className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'pulse' : ''}`}
         onClick={() => setShowContentCreator(!showContentCreator)}
         aria-label={showContentCreator ? 'Schließen' : 'Neuen Inhalt erstellen'}
       >
