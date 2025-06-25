@@ -1,6 +1,7 @@
-/* CSS-Variable für die Feed-Breite */
+/* CSS-Variablen für die Feed-Breite */
 :root {
   --feed-width: 500px;
+  --feed-min-width: 350px;
 }
 
 /* Globale Anpassung, um horizontales Scrollen zu verhindern */

@@ -67,12 +67,13 @@ const MyContents = () => {
   const [message, setMessage] = useState('');
   const [showContentCreator, setShowContentCreator] = useState(false);
   const [width, setWidth] = useState(500); // Standardbreite wie im Original-Feed
+  const [previousWidth, setPreviousWidth] = useState(500); // Speichert die vorherige Breite
   const [isDragging, setIsDragging] = useState(false);
   const feedRef = useRef(null);
   const resizeHandleRef = useRef(null);
   
   // Define constants for min and max width
-  const minWidth = 250;
+  const minWidth = 200; // Reduzierte Mindestbreite
   const maxWidth = 700;
   
   // Content creation state (aus ContentCreator übernommen)
@@ -189,54 +190,67 @@ const MyContents = () => {
   // Handle file selection for upload
   const handleFileSelect = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Datei in den State setzen
-      setSelectedMedia(file);
-      
-      // Temporäre URL erstellen für Vorschau während des Uploads
-      const tempUrl = URL.createObjectURL(file);
-      let fileType = 'text';
-      
-      // Automatische Erkennung des Typs basierend auf der Datei
-      if (file.type.startsWith('image/')) {
-        // Für Bilder das Seitenverhältnis bestimmen
-        const img = new Image();
-        img.onload = () => {
-          const aspectRatio = img.width > img.height ? 'landscape' : 'portrait';
-          fileType = `image-${aspectRatio}`;
-          
-          // Formular-Daten aktualisieren mit Typ und temporärer URL
-          setFormData(prevData => ({
-            ...prevData,
-            type: fileType,
-            aspectRatio: aspectRatio,
-            mediaUrl: tempUrl  // Temporäre URL verwenden bis Upload abgeschlossen ist
-          }));
-          
-          // Upload-Prozess starten
-          handleMediaUpload(file);
-        };
-        img.src = tempUrl;
-      } else if (file.type.startsWith('video/')) {
-        fileType = 'video-landscape';
-        setFormData(prevData => ({
-          ...prevData,
-          type: fileType,
-          mediaUrl: tempUrl
-        }));
-        handleMediaUpload(file);
-      } else if (file.type.startsWith('audio/')) {
-        fileType = 'audio';
-        setFormData(prevData => ({
-          ...prevData,
-          type: fileType,
-          mediaUrl: tempUrl
-        }));
-        handleMediaUpload(file);
-      }
-      
-      console.log('Datei ausgewählt:', file.name, 'Typ:', fileType, 'Temp-URL:', tempUrl);
+    if (!file) return;
+
+    // Datei in den State setzen
+    setSelectedMedia(file);
+    setIsUploading(true);
+    
+    // Wenn ein File ausgewählt wurde, zurück zur vorherigen Breite springen
+    if (previousWidth > minWidth) {
+      setWidth(previousWidth);
     }
+    
+    // Temporäre URL erstellen für Vorschau während des Uploads
+    const tempUrl = URL.createObjectURL(file);
+    let fileType = 'text';
+    
+    // Automatische Erkennung des Typs basierend auf der Datei
+    if (file.type.startsWith('image/')) {
+      // Für Bilder das Seitenverhältnis bestimmen
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.width > img.height ? 'landscape' : 'portrait';
+        fileType = `image-${aspectRatio}`;
+        
+        // Formular-Daten aktualisieren mit Typ und temporärer URL
+        setFormData(prevData => ({
+          ...prevData,
+          type: fileType,
+          aspectRatio: aspectRatio,
+          mediaUrl: tempUrl  // Temporäre URL verwenden bis Upload abgeschlossen ist
+        }));
+        
+        // Upload-Prozess starten
+        handleMediaUpload(file);
+      };
+      img.src = tempUrl;
+    } else if (file.type.startsWith('video/')) {
+      fileType = 'video-landscape';
+      setFormData(prevData => ({
+        ...prevData,
+        type: fileType,
+        mediaUrl: tempUrl
+      }));
+      handleMediaUpload(file);
+    } else if (file.type.startsWith('audio/')) {
+      fileType = 'audio';
+      setFormData(prevData => ({
+        ...prevData,
+        type: fileType,
+        mediaUrl: tempUrl
+      }));
+      handleMediaUpload(file);
+    } else {
+      // Falls kein erkannter Medientyp, dann als Text behandeln
+      setFormData(prevData => ({
+        ...prevData,
+        mediaUrl: tempUrl
+      }));
+      handleMediaUpload(file);
+    }
+    
+    console.log('Datei ausgewählt:', file.name, 'Typ:', fileType, 'Temp-URL:', tempUrl);
   };
 
   // Handle media upload
@@ -278,12 +292,6 @@ const MyContents = () => {
       // WICHTIG: Die Original-MinIO-URL DIREKT aus der Server-Antwort verwenden
       console.log('Upload erfolgreich. Media-URL vom Server:', result.url);
       
-      // Temporäre URL freigeben, wenn vorhanden
-      if (formData.mediaUrl && formData.mediaUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(formData.mediaUrl);
-        console.log('Temporäre Blob-URL freigegeben');
-      }
-      
       // FormData mit der permanenten Server-URL aktualisieren
       setFormData(prevData => {
         const updatedData = {
@@ -291,6 +299,13 @@ const MyContents = () => {
           mediaUrl: result.url
         };
         console.log('FormData nach Upload-Update:', updatedData);
+        
+        // Jetzt können wir die temporäre URL freigeben, da wir die permanente URL gesetzt haben
+        if (prevData.mediaUrl && prevData.mediaUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(prevData.mediaUrl);
+          console.log('Temporäre Blob-URL freigegeben');
+        }
+        
         return updatedData;
       });
       
@@ -310,6 +325,9 @@ const MyContents = () => {
       mediaUrl: null,
       aspectRatio: null
     }));
+    
+    // Fensterbreite auf das Minimum zurücksetzen, wenn Medien entfernt werden
+    setWidth(minWidth);
   };
 
   // Submit the form
@@ -760,7 +778,12 @@ const MyContents = () => {
       {!showContentCreator && (
         <button 
           className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'pulse' : ''}`}
-          onClick={() => setShowContentCreator(true)}
+          onClick={() => {
+            // Aktuelle Breite speichern und auf Minimum setzen
+            setPreviousWidth(width);
+            setWidth(minWidth);
+            setShowContentCreator(true);
+          }}
           aria-label="Create new content"
         >
           +
