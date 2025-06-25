@@ -27,8 +27,8 @@ html, body {
   bottom: 0;
   width: var(--feed-width); /* Nutzt die CSS-Variable */
   max-width: calc(100vw - 70px); /* Berücksichtigt Abstand links und verhindert Overflow */
-  background-color: #f5f8fa; /* Feste Farbe wie Header */
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  background-color: transparent;
+  box-shadow: none;
   z-index: 5;
   border-radius: 0;
   display: flex;
