@@ -457,6 +457,8 @@ const MyContents = () => {
     }
   };
   
+  // Rahmen werden durch CSS-Regeln entfernt, sobald Text eingegeben wird
+  
   // Komponente für die große Vorschau mit integrierten Bearbeitungsfeldern
   const LargePreviewComponent = () => {
     // Nur anzeigen, wenn Content Creator aktiv ist
@@ -487,9 +489,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -502,9 +504,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -531,9 +533,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -546,9 +548,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -575,9 +577,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -590,9 +592,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -619,9 +621,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -634,9 +636,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -658,9 +660,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
               </div>
@@ -680,9 +682,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -704,9 +706,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -719,9 +721,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -743,9 +745,9 @@ const MyContents = () => {
                         title: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input title-input"
-                    placeholder="Enter title..."
+                    placeholder="Title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -758,9 +760,9 @@ const MyContents = () => {
                         content: e.target.value
                       }));
                     }}
-                    required
+                    
                     className="normal-input content-input"
-                    placeholder="Enter content..."
+                    placeholder="Content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -998,7 +1000,7 @@ const MyContents = () => {
                       disabled={isUploading}
                       aria-label="Create"
                     >
-                      ✓
+                      Publish
                     </button>
                   </div>
                 </form>

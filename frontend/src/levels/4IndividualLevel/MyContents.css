@@ -27,7 +27,7 @@ html, body {
   bottom: 0;
   width: var(--feed-width); /* Nutzt die CSS-Variable */
   max-width: calc(100vw - 70px); /* Berücksichtigt Abstand links und verhindert Overflow */
-  background-color: #d9e0e6; /* Original-Feedfarbe */
+  background-color: #f5f8fa; /* Feste Farbe wie Header */
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 5;
   border-radius: 0;
@@ -379,6 +379,16 @@ html, body {
 
 .integrated-content-creator .form-group:first-of-type {
   margin-top: 30px;
+}
+
+/* Vertikaler Abstand für die Eingabefelder (Titel und Content) */
+.normal-form-group {
+  margin-top: 20px;
+}
+
+/* Specifically for title and content inputs in large preview */
+.large-preview-content .normal-form-group {
+  margin-top: 25px;
 }
 
 .integrated-content-creator .content-creator-title {
@@ -774,8 +784,8 @@ select:focus {
 .integrated-content-creator .preview-container {
   margin: 0;
   padding: 8px 0; /* Vertical padding only, no horizontal padding */
-  border-radius: 4px;
-  background-color: #f9f9f9;
+  border-radius: 0;
+  background-color: transparent;
 }
 
 /* Large Preview Container */
@@ -786,7 +796,7 @@ select:focus {
   width: calc(100vw - 50px - var(--feed-width) - 10px); /* Adjusted width calculation with less margin */
   height: calc(100vh - 40px); /* Extends to the bottom of the screen */
   background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   border-radius: 0; /* Removed border radius for a cleaner look */
   overflow: auto;
   padding: 10px; /* Reduced padding from 20px to 10px */
@@ -805,40 +815,196 @@ select:focus {
   width: 100%;
 }
 
+/* Grundlegende Stile für Eingabefelder */
 .normal-input {
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #ccc;
+  /* Border entfernt */
+  border: none;
   border-radius: 6px;
   font-family: inherit;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
   background-color: white;
 }
 
+/* Entferne Rahmen bei Input-Feldern, wenn Inhalt eingegeben wurde */
+input.normal-input:not(:placeholder-shown),
+.title-input:not(:placeholder-shown),
+.form-group input[type="text"]:not(:placeholder-shown) {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Entferne Rahmen bei Textarea-Feldern, wenn Inhalt eingegeben wurde */
+textarea.normal-input:not(:placeholder-shown),
+.content-input:not(:placeholder-shown),
+.form-group textarea:not(:placeholder-shown) {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Entferne den Fokus-Rahmen für alle Eingabefelder */
 .normal-input:focus {
-  border-color: #2684ff;
-  box-shadow: 0 0 0 2px rgba(38, 132, 255, 0.2);
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Entferne Rahmen für Felder mit Wert */
+input.normal-input[value]:not([value=""]),
+input.title-input[value]:not([value=""]) {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Allgemeine Regel für alle normalen Eingabefelder */
+.normal-input:focus {
   outline: none;
 }
 
+/* Titel-Stil anpassen - DEUTLICH größer und fett */
 .title-input {
-  font-size: 1.5rem;
-  font-weight: 500;
-  height: 50px;
+  font-size: 3rem !important;
+  font-weight: 700 !important;
+  height: 70px;
   margin-bottom: 10px;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
+/* Allgemeine Stile für alle Content-Textfelder */
 .content-input {
-  font-size: 1.1rem;
+  font-size: 1.3rem; /* Größere Schrift */
   line-height: 1.6;
-  min-height: 150px;
-  resize: vertical;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Spezifische Stile für das Content-Textfeld im rechten Fenster */
+.large-preview-content .content-input,
+.large-preview-container .content-input,
+.content-form .content-input {
+  font-size: 1.5rem !important; /* Noch größere Schrift */
+  line-height: 1.7;
+  min-height: 300px !important; /* Deutlich größere Mindesthöhe */
+  max-height: none !important; /* Keine Begrenzung nach oben */
+  height: auto !important; /* Automatische Höhenanpassung */
+  resize: none !important; /* Kein manuelles Resizing nötig */
+  overflow-y: visible !important;
+  padding-bottom: 300px !important; /* Viel Platz nach unten */
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Verstecke die Scrollbars in Firefox */
 .content-input {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Tooltips von Browser-Validierung ausblenden */
+input:invalid::-webkit-validation-bubble,
+input:invalid::-moz-validation-bubble,
+input:invalid::-o-validation-bubble,
+input:invalid::validation-bubble,
+textarea:invalid::-webkit-validation-bubble,
+textarea:invalid::-moz-validation-bubble,
+textarea:invalid::-o-validation-bubble,
+textarea:invalid::validation-bubble {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Alternativ: Browser-Validierungsstile komplett deaktivieren */
+:invalid {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Globale Validierungsstile überschreiben */
+form {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Entfernt die roten Umrandungen und andere visuelle Hinweise */
+textarea:required,
+textarea:invalid,
+input:required,
+input:invalid {
+  box-shadow: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+}
+
+/* Button-Styling für die Formular-Aktionen */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  /* Keine Abstände zwischen den Buttons */
+  font-size: 0; /* Entfernt eventuellen Whitespace zwischen inline-block Elementen */
+}
+
+/* Cancel-Button (X) - kleiner und quadratisch */
+.cancel-button {
+  width: 40px;
+  height: 40px;
+  background-color: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 8px 0 0 8px; /* Stärkere Abrundung nur links */
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  /* Entferne rechten Rand für nahtlosen Übergang */
+  margin-right: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Submit-Button (publish) - grün mit Text */
+.submit-button {
+  height: 40px;
+  padding: 0 20px;
+  background-color: #4CAF50; /* Grüne Farbe */
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0; /* Stärkere Abrundung nur rechts */
+  font-size: 15px; /* Kleinere Schrift */
+  font-weight: 400;
+  text-transform: lowercase; /* Text in Kleinbuchstaben */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  /* Entferne linken Rand für nahtlosen Übergang */
+  margin-left: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-button:hover {
+  background-color: #e6e6e6;
+}
+
+.submit-button:hover {
+  background-color: #43a047;
+}
+
+.submit-button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
 }
 
 /* Verstecke die Scrollbars in Chrome/Safari */
@@ -890,9 +1056,9 @@ select:focus {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
 }
 
