@@ -739,6 +739,7 @@ select:focus {
   width: 100%;
   position: relative;
   padding-right: 20px;
+  padding-top: 0;
 }
 
 /* Große Vorschau Container */
@@ -758,72 +759,62 @@ select:focus {
   flex-direction: column;
 }
 
-/* Integrierte Eingabefelder im großen Vorschaufenster */
-.content-text.editable {
+/* Normale Eingabefelder im großen Vorschaufenster */
+.content-form.large {
   padding: 20px;
 }
 
-.large-input-inline {
-  width: 100%;
-  border: none;
-  background: transparent;
-  transition: background-color 0.3s;
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-}
-
-.large-input-inline:focus {
-  outline: none;
-  background-color: rgba(38, 132, 255, 0.05);
-}
-
-.large-input-inline.title {
-  font-size: 2rem;
-  font-weight: 700;
+.normal-form-group {
   margin-bottom: 15px;
-  color: #222;
-  padding: 5px 0;
-  display: block;
   width: 100%;
-  border-bottom: 2px solid transparent;
 }
 
-.large-input-inline.title:focus {
-  border-bottom: 2px solid rgba(38, 132, 255, 0.6);
+.normal-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: white;
 }
 
-.large-input-inline.content {
-  font-size: 1.2rem;
+.normal-input:focus {
+  border-color: #2684ff;
+  box-shadow: 0 0 0 2px rgba(38, 132, 255, 0.2);
+  outline: none;
+}
+
+.title-input {
+  font-size: 1.5rem;
+  font-weight: 500;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.content-input {
+  font-size: 1.1rem;
   line-height: 1.6;
-  color: #444;
-  min-height: 120px;
+  min-height: 150px;
   resize: vertical;
-  display: block;
-  width: 100%;
-  padding: 5px 0;
-}
-
-.content-wrap.editable {
-  padding: 0 20px 20px 20px;
 }
 
 /* Verstecke die Scrollbars in Firefox */
-.large-input-inline {
+.content-input {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 /* Verstecke die Scrollbars in Chrome/Safari */
-.large-input-inline::-webkit-scrollbar {
+.content-input::-webkit-scrollbar {
   width: 6px;
 }
 
-.large-input-inline::-webkit-scrollbar-track {
+.content-input::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.large-input-inline::-webkit-scrollbar-thumb {
+.content-input::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 20px;
 }

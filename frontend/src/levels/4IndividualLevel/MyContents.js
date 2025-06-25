@@ -170,13 +170,20 @@ const MyContents = () => {
     loadContents();
   }, [isAuthenticated, token, loadContents]);
 
-  // Content Creation functions (from ContentCreator)
+  // Content Creation functions
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+    
+    // Direkter DOM-Update ohne React State zu ändern
+    e.target.value = value;
+    
+    // Warten, bis Event abgeschlossen ist, bevor State aktualisiert wird
+    setTimeout(() => {
+      setFormData(prevData => ({
+        ...prevData,
+        [name]: value
+      }));
+    }, 10);
   };
   
   // Handle file selection for upload
@@ -450,24 +457,39 @@ const MyContents = () => {
                   <img src={formData.mediaUrl} alt={formData.title || ''} className="large-preview-media" />
                 )}
               </div>
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
@@ -479,24 +501,39 @@ const MyContents = () => {
                   <img src={formData.mediaUrl} alt={formData.title || ''} className="large-preview-media" />
                 )}
               </div>
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
@@ -508,24 +545,39 @@ const MyContents = () => {
                   <video src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Videos.</video>
                 )}
               </div>
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
@@ -537,103 +589,163 @@ const MyContents = () => {
                   <video src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Videos.</video>
                 )}
               </div>
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
           
           {formData.type.includes('audio') && (
             <div className="large-preview-item audio">
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
               </div>
               <div className="audio-container large">
                 {formData.mediaUrl && (
                   <audio src={formData.mediaUrl} controls className="large-preview-media">Ihr Browser unterstützt keine Audio-Dateien.</audio>
                 )}
               </div>
-              <div className="content-wrap large editable">
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
           
           {formData.type === 'text' && (
             <div className="large-preview-item text-only">
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
           
           {formData.type === 'discussion' && (
             <div className="large-preview-item discussion">
-              <div className="content-text large editable">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline title"
-                  placeholder="Titel eingeben..."
-                />
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  required
-                  className="large-input-inline content"
-                  placeholder="Inhalt eingeben..."
-                ></textarea>
+              <div className="content-form large">
+                <div className="form-group normal-form-group">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        title: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input title-input"
+                    placeholder="Titel eingeben..."
+                  />
+                </div>
+                <div className="form-group normal-form-group">  
+                  <textarea
+                    name="content"
+                    defaultValue={formData.content}
+                    onBlur={(e) => {
+                      setFormData(prev => ({
+                        ...prev, 
+                        content: e.target.value
+                      }));
+                    }}
+                    required
+                    className="normal-input content-input"
+                    placeholder="Inhalt eingeben..."
+                    rows={5}
+                  ></textarea>
+                </div>
               </div>
             </div>
           )}
