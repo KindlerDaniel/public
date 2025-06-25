@@ -756,14 +756,16 @@ const MyContents = () => {
   
   return (
     <>
-      {/* Plus-Button für die Content-Erstellung */}
-      <button 
-        className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'pulse' : ''}`}
-        onClick={() => setShowContentCreator(!showContentCreator)}
-        aria-label={showContentCreator ? 'Schließen' : 'Neuen Inhalt erstellen'}
-      >
-        {showContentCreator ? '×' : '+'}
-      </button>
+      {/* Plus-Button für die Content-Erstellung - wird nur angezeigt, wenn nicht im Erstellungsmodus */}
+      {!showContentCreator && (
+        <button 
+          className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'pulse' : ''}`}
+          onClick={() => setShowContentCreator(true)}
+          aria-label="Neuen Inhalt erstellen"
+        >
+          +
+        </button>
+      )}
       
       {/* Die große Vorschau wird direkt im content-creator-layout gerendert */}
       
@@ -805,11 +807,11 @@ const MyContents = () => {
                     <div className="content-preview">
                       {formData.type.includes('image-landscape') && (
                         <div className={`preview-container ${formData.type}`}>
-                        <div className="media-container landscape">
-                          {formData.mediaUrl && (
+                        {formData.mediaUrl && (
+                          <div className="media-container landscape">
                             <img src={formData.mediaUrl} alt={formData.title || ''} className="preview-media" />
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="content-text">
                           {formData.title && <h3>{formData.title}</h3>}
                           {formData.content && <p>{formData.content}</p>}
@@ -818,11 +820,11 @@ const MyContents = () => {
                     )}
                     {formData.type.includes('image-portrait') && (
                       <div className={`preview-container ${formData.type}`}>
-                        <div className="media-container portrait">
-                          {formData.mediaUrl && (
+                        {formData.mediaUrl && (
+                          <div className="media-container portrait">
                             <img src={formData.mediaUrl} alt={formData.title || ''} className="preview-media" />
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="content-text">
                           {formData.title && <h3>{formData.title}</h3>}
                           {formData.content && <p>{formData.content}</p>}
@@ -831,11 +833,11 @@ const MyContents = () => {
                     )}
                     {formData.type.includes('video-landscape') && (
                       <div className={`preview-container ${formData.type}`}>
-                        <div className="media-container landscape">
-                          {formData.mediaUrl && (
+                        {formData.mediaUrl && (
+                          <div className="media-container landscape">
                             <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="content-text">
                           {formData.title && <h3>{formData.title}</h3>}
                           {formData.content && <p>{formData.content}</p>}
@@ -844,11 +846,11 @@ const MyContents = () => {
                     )}
                     {formData.type.includes('video-portrait') && (
                       <div className={`preview-container ${formData.type}`}>
-                        <div className="media-container portrait">
-                          {formData.mediaUrl && (
+                        {formData.mediaUrl && (
+                          <div className="media-container portrait">
                             <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="content-text">
                           {formData.title && <h3>{formData.title}</h3>}
                           {formData.content && <p>{formData.content}</p>}
@@ -860,11 +862,11 @@ const MyContents = () => {
                         <div className="content-text">
                           {formData.title && <h3>{formData.title}</h3>}
                         </div>
-                        <div className="audio-container">
-                          {formData.mediaUrl && (
+                        {formData.mediaUrl && (
+                          <div className="audio-container">
                             <audio src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Audio-Dateien.</audio>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         {formData.content && <p>{formData.content}</p>}
                       </div>
                     )}
@@ -887,26 +889,7 @@ const MyContents = () => {
                     </div>
                   )}
                   
-                  {/* Content type selection */}
-                  <div className="form-group">
-                    <label htmlFor="type">Inhaltstyp</label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                    >
-                      <option value="text">Text</option>
-                      <option value="image-landscape">Bild (Querformat)</option>
-                      <option value="image-portrait">Bild (Hochformat)</option>
-                      <option value="video-landscape">Video (Querformat)</option>
-                      <option value="video-portrait">Video (Hochformat)</option>
-                      <option value="audio">Audio</option>
-                      <option value="discussion">Diskussion</option>
-                    </select>
-                  </div>
-                  
-                  {/* Media upload section */}
+                  {/* Media upload section - verschoben nach oben, unter der Vorschau */}
                   <div className="form-group media-upload">
                     {!selectedMedia ? (
                       <div className="upload-file-container">
@@ -948,6 +931,25 @@ const MyContents = () => {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Content type selection */}
+                  <div className="form-group">
+                    <label htmlFor="type">Inhaltstyp</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={formData.type}
+                      onChange={handleInputChange}
+                    >
+                      <option value="text">Text</option>
+                      <option value="image-landscape">Bild (Querformat)</option>
+                      <option value="image-portrait">Bild (Hochformat)</option>
+                      <option value="video-landscape">Video (Querformat)</option>
+                      <option value="video-portrait">Video (Hochformat)</option>
+                      <option value="audio">Audio</option>
+                      <option value="discussion">Diskussion</option>
+                    </select>
+                  </div>
 
                   {/* Leerraum für bessere Optik */}
                   <div className="form-group-spacer"></div>
@@ -971,7 +973,7 @@ const MyContents = () => {
                       className="submit-button"
                       disabled={isUploading}
                     >
-                      {formatType(formData.type)} erstellen
+                      Erstellen
                     </button>
                   </div>
                 </form>

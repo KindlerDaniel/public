@@ -365,8 +365,8 @@ html, body {
 
 /* Anpassungen für die integrierte Content-Erstellung */
 .integrated-content-creator {
-  margin-top: 50px;
-  padding-top: 25px;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .integrated-content-creator .form-group {
