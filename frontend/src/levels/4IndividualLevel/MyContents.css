@@ -38,8 +38,8 @@ html, body {
   word-break: break-word;
   white-space: normal;
   transition: width 0.05s ease; /* Leichte Animation für ein smoothes Resizing */
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
   box-sizing: border-box;
 }
 
@@ -759,30 +759,44 @@ select:focus {
 .integrated-content-creator {
   width: 100%;
   position: relative;
-  padding-right: 20px;
+  padding-right: 0;
   padding-top: 0;
+  padding-left: 0; /* Removed all horizontal padding */
 }
 
-/* Große Vorschau Container */
+/* Content Preview im linken Fenster - reduzierter Außenabstand */
+.integrated-content-creator .content-preview {
+  margin: 20px 0 15px 0; /* More top margin, no horizontal margin */
+  padding: 0;
+}
+
+.integrated-content-creator .preview-container {
+  margin: 0;
+  padding: 8px 0; /* Vertical padding only, no horizontal padding */
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* Large Preview Container */
 .large-preview-container {
   position: fixed;
   top: 40px; /* Aligned with the top header same as the left window */
   left: calc(50px + var(--feed-width)); /* Removed spacing between windows */
-  width: calc(100vw - 50px - var(--feed-width) - 20px); /* Adjusted width calculation */
+  width: calc(100vw - 50px - var(--feed-width) - 10px); /* Adjusted width calculation with less margin */
   height: calc(100vh - 40px); /* Extends to the bottom of the screen */
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 0; /* Removed border radius for a cleaner look */
   overflow: auto;
-  padding: 20px;
+  padding: 10px; /* Reduced padding from 20px to 10px */
   z-index: 10;
   display: flex;
   flex-direction: column;
 }
 
-/* Normale Eingabefelder im großen Vorschaufenster */
+/* Normal input fields in large preview window */
 .content-form.large {
-  padding: 20px;
+  padding: 10px; /* Reduced padding from 20px to 10px */
 }
 
 .normal-form-group {

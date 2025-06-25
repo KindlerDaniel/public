@@ -471,7 +471,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -486,7 +486,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -515,7 +515,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -530,7 +530,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -559,7 +559,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -574,7 +574,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -603,7 +603,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -618,7 +618,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -642,7 +642,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
               </div>
@@ -664,7 +664,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -688,7 +688,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -703,7 +703,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -727,7 +727,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input title-input"
-                    placeholder="Titel eingeben..."
+                    placeholder="Enter title..."
                   />
                 </div>
                 <div className="form-group normal-form-group">  
@@ -742,7 +742,7 @@ const MyContents = () => {
                     }}
                     required
                     className="normal-input content-input"
-                    placeholder="Inhalt eingeben..."
+                    placeholder="Enter content..."
                     rows={5}
                   ></textarea>
                 </div>
@@ -756,18 +756,18 @@ const MyContents = () => {
   
   return (
     <>
-      {/* Plus-Button für die Content-Erstellung - wird nur angezeigt, wenn nicht im Erstellungsmodus */}
+      {/* Plus-Button for content creation - only displayed when not in creation mode */}
       {!showContentCreator && (
         <button 
           className={`create-content-fixed-button ${contents.length > 0 ? 'has-content' : 'no-content'} ${loading ? 'pulse' : ''}`}
           onClick={() => setShowContentCreator(true)}
-          aria-label="Neuen Inhalt erstellen"
+          aria-label="Create new content"
         >
           +
         </button>
       )}
       
-      {/* Die große Vorschau wird direkt im content-creator-layout gerendert */}
+      {/* The large preview is rendered directly in the content-creator-layout */}
       
       {/* Loading indicator was moved to the feed container */}
           
@@ -889,7 +889,7 @@ const MyContents = () => {
                     </div>
                   )}
                   
-                  {/* Media upload section - verschoben nach oben, unter der Vorschau */}
+                  {/* Media upload section - moved up, below the preview */}
                   <div className="form-group media-upload">
                     {!selectedMedia ? (
                       <div className="upload-file-container">
@@ -922,7 +922,7 @@ const MyContents = () => {
                               type="button" 
                               className="remove-media-button" 
                               onClick={handleRemoveMedia}
-                              aria-label="Mediendatei entfernen"
+                              aria-label="Remove media file"
                             >
                               ×
                             </button>
@@ -934,7 +934,7 @@ const MyContents = () => {
                   
                   {/* Content type selection */}
                   <div className="form-group">
-                    <label htmlFor="type">Inhaltstyp</label>
+                    <label htmlFor="type">Content type</label>
                     <select
                       id="type"
                       name="type"
@@ -942,12 +942,12 @@ const MyContents = () => {
                       onChange={handleInputChange}
                     >
                       <option value="text">Text</option>
-                      <option value="image-landscape">Bild (Querformat)</option>
-                      <option value="image-portrait">Bild (Hochformat)</option>
-                      <option value="video-landscape">Video (Querformat)</option>
-                      <option value="video-portrait">Video (Hochformat)</option>
+                      <option value="image-landscape">Image (Landscape)</option>
+                      <option value="image-portrait">Image (Portrait)</option>
+                      <option value="video-landscape">Video (Landscape)</option>
+                      <option value="video-portrait">Video (Portrait)</option>
                       <option value="audio">Audio</option>
-                      <option value="discussion">Diskussion</option>
+                      <option value="discussion">Discussion</option>
                     </select>
                   </div>
 
@@ -959,21 +959,23 @@ const MyContents = () => {
                   {/* Leerraum für bessere Optik */}
                   <div className="form-group-spacer"></div>
                   
-                  {/* Form buttons */}
+                  {/* Form buttons with icons instead of text */}
                   <div className="form-actions">
                     <button 
                       type="button" 
                       className="cancel-button" 
                       onClick={handleCancelContentCreation}
+                      aria-label="Cancel"
                     >
-                      Abbrechen
+                      ✕
                     </button>
                     <button 
                       type="submit" 
                       className="submit-button"
                       disabled={isUploading}
+                      aria-label="Create"
                     >
-                      Erstellen
+                      ✓
                     </button>
                   </div>
                 </form>
