@@ -471,6 +471,169 @@ const MyContents = () => {
           {showContentCreator ? (
             <div className="integrated-content-creator">
               <form onSubmit={handleSubmit}>
+                  {/* Live Preview - ContentCard Style */}
+                  <div className="content-preview">
+                    {formData.type.includes('image-landscape') && (
+                      <div className={`preview-container ${formData.type}`}>
+                        <div className="media-container landscape">
+                          {formData.mediaUrl ? (
+                            <img src={formData.mediaUrl} alt={formData.title || 'Vorschau'} className="preview-media" />
+                          ) : (
+                            <img src="/images/placeholder_landscape.png" alt="Bildvorschau" className="preview-media" />
+                          )}
+                        </div>
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.type.includes('image-portrait') && (
+                      <div className={`preview-container ${formData.type}`}>
+                        <div className="media-container portrait">
+                          {formData.mediaUrl ? (
+                            <img src={formData.mediaUrl} alt={formData.title || 'Vorschau'} className="preview-media" />
+                          ) : (
+                            <img src="/images/placeholder_portrait.png" alt="Bildvorschau" className="preview-media" />
+                          )}
+                        </div>
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.type.includes('video-landscape') && (
+                      <div className={`preview-container ${formData.type}`}>
+                        <div className="media-container landscape">
+                          {formData.mediaUrl ? (
+                            <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
+                          ) : (
+                            <div className="preview-placeholder video-placeholder">
+                              <span>▶</span> Video-Vorschau
+                            </div>
+                          )}
+                        </div>
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.type.includes('video-portrait') && (
+                      <div className={`preview-container ${formData.type}`}>
+                        <div className="media-container portrait">
+                          {formData.mediaUrl ? (
+                            <video src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Videos.</video>
+                          ) : (
+                            <div className="preview-placeholder video-placeholder">
+                              <span>▶</span> Video-Vorschau
+                            </div>
+                          )}
+                        </div>
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.type.includes('audio') && (
+                      <div className="preview-container audio">
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                        </div>
+                        <div className="audio-container">
+                          {formData.mediaUrl ? (
+                            <audio src={formData.mediaUrl} controls className="preview-media">Ihr Browser unterstützt keine Audio-Dateien.</audio>
+                          ) : (
+                            <div className="preview-placeholder">
+                              Audio-Vorschau
+                            </div>
+                          )}
+                        </div>
+                        <p>{formData.content || 'Beschreibung wird hier angezeigt'}</p>
+                      </div>
+                    )}
+                    {formData.type === 'text' && (
+                      <div className="preview-container text-only">
+                        <div className="content-text">
+                          <h3>{formData.title || 'Titel wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Inhalt wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.type === 'discussion' && (
+                      <div className="preview-container discussion">
+                        <div className="content-text">
+                          <h3>{formData.title || 'Diskussionsthema wird hier angezeigt'}</h3>
+                          <p>{formData.content || 'Beschreibung wird hier angezeigt'}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Content type selection */}
+                  <div className="form-group">
+                    <label htmlFor="type">Inhaltstyp</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={formData.type}
+                      onChange={handleInputChange}
+                    >
+                      <option value="text">Text</option>
+                      <option value="image-landscape">Bild (Querformat)</option>
+                      <option value="image-portrait">Bild (Hochformat)</option>
+                      <option value="video-landscape">Video (Querformat)</option>
+                      <option value="video-portrait">Video (Hochformat)</option>
+                      <option value="audio">Audio</option>
+                      <option value="discussion">Diskussion</option>
+                    </select>
+                  </div>
+                  
+                  {/* Media upload section */}
+                  <div className="form-group media-upload">
+                    {!selectedMedia ? (
+                      <div className="upload-file-container">
+                        <label htmlFor="media" className="upload-file-area">
+                          <span className="upload-text">Upload File</span>
+                          <input
+                            type="file"
+                            id="media"
+                            accept="image/*,video/*,audio/*"
+                            onChange={handleFileSelect}
+                            style={{display: 'none'}}
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <div className="selected-media-container">
+                        <div className="file-info">
+                          {isUploading ? (
+                            <div className="upload-loading">
+                              <div className="upload-spinner"></div>
+                              <p className="file-name">{selectedMedia.name}</p>
+                            </div>
+                          ) : (
+                            <p className={`file-name ${formData.mediaUrl ? 'upload-success' : ''}`}>{selectedMedia.name}</p>
+                          )}
+                        </div>
+                        {!isUploading && (
+                          <div className="remove-button-container">
+                            <button 
+                              type="button" 
+                              className="remove-media-button" 
+                              onClick={handleRemoveMedia}
+                              aria-label="Mediendatei entfernen"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Title field */}
                   <div className="form-group">
                     <label htmlFor="title">Titel*</label>
@@ -495,54 +658,6 @@ const MyContents = () => {
                       rows={5}
                       required
                     ></textarea>
-                  </div>
-                  
-                  {/* Content type selection */}
-                  <div className="form-group">
-                    <label htmlFor="type">Inhaltstyp</label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                    >
-                      <option value="text">Text</option>
-                      <option value="image-landscape">Bild (Querformat)</option>
-                      <option value="image-portrait">Bild (Hochformat)</option>
-                      <option value="video-landscape">Video (Querformat)</option>
-                      <option value="video-portrait">Video (Hochformat)</option>
-                      <option value="audio">Audio</option>
-                      <option value="discussion">Diskussion</option>
-                    </select>
-                  </div>
-                  
-                  {/* Media upload section */}
-                  <div className="form-group media-upload">
-                    <label htmlFor="media">Medien-Upload</label>
-                    <input
-                      type="file"
-                      id="media"
-                      accept="image/*,video/*,audio/*"
-                      onChange={handleFileSelect}
-                    />
-                    
-                    {selectedMedia && (
-                      <div className="selected-media">
-                        <div className="media-info">
-                          <p>{isUploading ? 'Wird hochgeladen...' : 'Datei ausgewählt:'} {selectedMedia.name}</p>
-                          {!isUploading && (
-                            <button 
-                              type="button" 
-                              className="remove-media-button" 
-                              onClick={handleRemoveMedia}
-                              aria-label="Mediendatei entfernen"
-                            >
-                              ×
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </div>
                   
                   {/* Tags wurden entfernt */}
